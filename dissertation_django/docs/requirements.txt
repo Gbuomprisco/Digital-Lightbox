@@ -1,0 +1,6 @@
+Requirements:
+
+	- Django 1.4
+	- Django compressor https://github.com/jezdez/django_compressor
+	- Digipal DB
+	- PIL

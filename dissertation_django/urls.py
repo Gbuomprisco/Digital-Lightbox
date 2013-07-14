@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from view import search, save_session, read_image, get_image_manuscript
+from view import search, read_image, get_image_manuscript
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
@@ -9,7 +9,6 @@ urlpatterns = patterns('django.views.generic.simple',
     url(r'^$', 'direct_to_template', {'template': 'index.html'}, name='home'),
     (r'^digipal/', include('digipal.urls')),
     (r'^search/$', search),
-    (r'^save-session/(.+)/$', save_session),
     (r'^read-image/$', read_image),
     (r'^get-image-manuscript/$', get_image_manuscript),
 

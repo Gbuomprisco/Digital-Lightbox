@@ -42,8 +42,6 @@ $(document).ready(function () {
                     this.stylize();
                     var tools = this.makeTools();
                     this.toolbox.append(tools);
-                    this.opacity();
-                    this.brightness();
                     this.buttons();
                     $.fn.crop.init();
                 } else {
@@ -58,12 +56,22 @@ $(document).ready(function () {
                 name_image += "<div class='tool_value' id='name_image'></div></div>";*/
                 var opacity = "<div class='tool'><span class='tool_label'>Opacity</span>";
                 opacity += "<div id='slider' class='slider'></div></div>";
+                var line = "<div class='line'></div>";
                 tools += opacity;
                 var brightness = "<div class='tool'><span class='tool_label'>Brightness</span>";
                 brightness += "<div id='slider_brightness' class='slider'></div></div>";
                 tools += brightness;
-                var comment = "<div class='line'></div><div class='tool' id='box_buttons' style='margin-top:8%;line-height:2.2;'><button id='createComment' class='btn btn-primary btn-small'><i class='icon-book'></i> Add Note</button> <button class='btn btn-primary btn-small crop_button'><i class='icon-resize-small'></i> Activate Crop</button> <button id='crop_image' class='btn btn-small btn-warning'>Crop Image!</button> <button class='btn btn-small btn-danger' id='removeImage'><i class='icon-remove'></i> Remove</button></div>";
-                tools += comment;
+                var rotate = "<div class='tool'><span class='tool_label'>Rotate</span>";
+                rotate += "<div id='slider_rotate' class='slider'></div></div>";
+                tools += rotate;
+                tools += line;
+                var size = "<div class='tool'><span class='tool_label'>Size</span>";
+                size += "<input class='small-input' type='text' id='set_width' /><span class='label_size'>Width</span><input class='small-input' type='text' id='set_height' /><span class='label_size'>Height</span><button style='margin-bottom:3%' id='set_size' class='btn btn-primary btn-small'>Set</button></div>";
+                tools += size;
+                var comment = "<div class='line' style='padding-top:5%'></div><div class='tool'><span class='tool_label'>Notes</span> <button id='createComment' class='btn btn-primary btn-small'><i class='icon-book'></i> Add Note</button></div>";
+                 var crop = "<div class='line'></div><div class='tool'><span class='tool_label'>Crop</span> <button class='btn btn-primary btn-small crop_button'><i class='icon-resize-small'></i> Activate Crop</button> <button id='crop_image' class='btn btn-small btn-warning'>Crop Image!</button></div>";
+                  var remove = "<div class='line'></div><div class='tool'><button class='btn btn-small btn-danger' id='removeImage'><i class='icon-remove'></i> Remove</button> <button class='btn btn-small btn-primary' id='reset_image'>Reset</button></div>";
+                tools += comment + crop + remove;
                 tools += "</div>";
                 return tools;
             },
@@ -98,6 +106,130 @@ $(document).ready(function () {
                 return false; 
             },
 
+            rotate: function(){
+
+                $("#slider_rotate").slider({
+                    min: -180,
+                    max: 180,
+                    value: 0,
+                    slide: function (event, ui) {
+                        $selectedImage.css('transform','rotate(' + ui.value + 'deg)');
+                    }
+                });
+
+
+            },
+
+            size: function(){
+
+                /*
+                var isNumber = function(o) {
+                    return typeof o === 'number' && isFinite(o);
+                };
+                */
+                var size = $selectedImage.data('size').split(',');
+                var width = $('#set_width').val();
+                var height = $('#set_height').val();
+                var ratio = size[0] / size[1];
+                var calc_height;
+                var calc_width;
+
+                if(width && !height){
+                    calc_height = "auto"
+                    calc_width = width;
+                } else if(!width && height){
+                    
+                    calc_height = height;
+                } else {
+                    calc_height = height;
+                    calc_width = width;
+                }
+
+                $selectedImage.children().css({
+                    'width': calc_width,
+                    'height': calc_height
+                });
+
+                $selectedImage.css({
+                    'width': calc_width,
+                    'height': calc_height
+                });
+
+                $selectedImage.children().children('img').css({
+                    'width': calc_width,
+                    'height': calc_height
+                });
+
+                this.refreshSize();
+
+                var position = $selectedImage.offset();
+
+                if(position['top'] < 0){
+                    $selectedImage.animate({
+                        "top": $(window).scrollTop() + 100,
+                        "left": $(window).scrollLeft() + 100
+                    }, 150);
+                }
+
+                $('#mini_' + $selectedImage.attr('id')).animate({
+                    'width': parseInt($selectedImage.children().children('img').css('width')) / 25 + "px",
+                    'height': parseInt($selectedImage.children().children('img').css('height')) / 30  + "px",
+                }, 10);
+
+            },
+
+            reset: function(){
+
+                var size = $selectedImage.data('size').split(',');
+
+                $selectedImage.children().css({
+                    'width': "180px",
+                    'height': "auto",
+                });
+
+                if(document.body.style.webkitFilter !== undefined){
+
+                    $selectedImage.css({
+                        'width': "180px",
+                        'height': "auto",
+                        'transform': "rotate(0deg)",
+                        '-webkit-filter': 'brightness(100%)'
+                    });
+                   
+                } else {
+
+                    $selectedImage.css({
+                        'width': "180px",
+                        'height': "auto",
+                        'transform': "rotate(0deg)",
+                        'polyfilter':'brightness(100%)'
+                    });
+
+                }
+                
+                 $selectedImage.children().children('img').css({
+                        'width': "180px",
+                        'height': "auto",
+                        'opacity': 1
+                });
+
+                var position = $selectedImage.offset();
+
+                if(position['top'] < 0){
+                    $selectedImage.animate({
+                        "top": $(window).scrollTop() + 100,
+                        "left": $(window).scrollLeft() + 100
+                    }, 150);
+                }
+
+                $('#mini_' + $selectedImage.attr('id')).animate({
+                    'width': parseInt($selectedImage.children().children('img').css('width')) / 25 + "px",
+                    'height': parseInt($selectedImage.children().children('img').css('height')) / 30  + "px",
+                }, 10);
+
+                this.refresh();
+
+            },
 
             stylize: function () {
                 this.toolbox.addClass('box').draggable({
@@ -122,7 +254,7 @@ $(document).ready(function () {
             },
 
             hide: function () {
-                $('#buttons').prepend("<button data-toggle='tooltip' title='Show Tools Box' id='button_toolbar' class='btn btn-primary'>Tools</button>");
+                $('#buttons').prepend("<img data-toggle='tooltip' title='Show Tools Box' id='button_toolbar' src='/static/img/tools.png' />");
                 this.buttons_position = $('#button_toolbar').position();
                 this.last_style = this.toolbox.css(['top', 'left', 'width', 'height', 'opacity']);
                 this.toolbox.animate({
@@ -158,6 +290,14 @@ $(document).ready(function () {
                     $.fn.comments.init($selectedImage.attr('id'));
                 });
 
+                $('#reset_image').click(function(){
+                    $.fn.toolbar.reset();
+                });
+
+                $('#set_size').click(function(){
+                    $.fn.toolbar.size();
+                });
+
                 $('#removeImage').click(function(){
                     if(typeof $selectedImage.data('is_letter') == "undefined" || $selectedImage.data('is_letter') == false){
 
@@ -185,6 +325,10 @@ $(document).ready(function () {
                     $.fn.crop.get_image();
                 });
 
+                this.opacity();
+                this.brightness();
+                this.rotate();
+
             },
 
             selectedImage: function(){
@@ -193,6 +337,13 @@ $(document).ready(function () {
                 } else {
                     return undefined;
                 }
+            },
+
+            refreshSize: function(){
+                $('#set_width').val('');
+                $('#set_height').val('');
+                $('#set_width').attr("placeholder", $selectedImage.children().children('img').css('width').replace("px", ''));
+                $('#set_height').attr("placeholder", $selectedImage.children().children('img').css('height').replace("px", ''));
             },
 
             refresh: function () {
@@ -207,11 +358,24 @@ $(document).ready(function () {
                         return mapN.map(Number);
                     };
 
+                    var get_rotation = function(matrix){
+                        if(matrix !== 'none') {
+                            var values = matrix.split('(')[1].split(')')[0].split(',');
+                            var a = values[0];
+                            var b = values[1];
+                            var angle = Math.round(Math.atan2(b, a) * (180/Math.PI));
+                        } else { 
+                            var angle = 0; 
+                        }
+                        return (angle < 0) ? angle += 360 : angle;
+                    };
+
                     //Name
                     if ($.fn.images_on_workspace().length > 0) {
                         var name_image = $selectedImage.data('title');
                         image['name'] = name_image;
                         image['opacity'] = $selectedImage.children().children('img').css('opacity') * 100;
+                        image['rotate'] = get_rotation($selectedImage.css('transform'));
                         if(document.body.style.webkitFilter !== undefined){
                             if($selectedImage.css('-webkit-filter') != "none"){
                                 var brightness = $selectedImage.css('-webkit-filter').getNums() * 2 * 100;
@@ -240,6 +404,10 @@ $(document).ready(function () {
                 var image = features();
                 $("#slider").slider("option", "value", image['opacity']);
                 $('#slider_brightness').slider("option", "value", image['brightness']);
+                $('#slider_rotate').slider("option", "value", image['rotate']);
+
+                this.refreshSize();
+
                 $('#name_image').html(image['name']);
             }
 
@@ -249,13 +417,16 @@ $(document).ready(function () {
 
             imagesSelected: [],
             imagesBox: $('#barLeft'),
+
             init: function(){
                 this.buttons();
             },
 
             show: function(){
                 $('#button_images').tooltip('hide').fadeOut().remove();
-                this.imagesBox.show();
+                this.imagesBox.show().draggable({
+                    handle: '.top_box'
+                });
                 this.imagesBox.animate({
                     "top": "14%",
                     'left': "46%",
@@ -268,7 +439,7 @@ $(document).ready(function () {
 
             hide: function(){
 
-                var button = " <button data-toggle='tooltip' title='Show Images Manuscripts' id='button_images' class='btn'><i class='icon-search'></i> Images</button> ";
+                var button = " <img data-toggle='tooltip' title='Browse Manuscripts' id='button_images' src='/static/img/manuscript.png' />";
                 $('#buttons').prepend(button);
                 
                 this.buttons_position = $('#button_images').position();
@@ -406,9 +577,10 @@ $(document).ready(function () {
                     aspectRatio: true,
                     resize: function(event, ui){
                         $('#mini_' + ui.element.parent().attr('id')).animate({
-                            'width': parseInt(ui.element.css('width')) / 15 + "px",
-                            'height': parseInt(ui.element.css('height')) / 15  + "px",
+                            'width': parseInt($(this).css('width')) / 25 + "px",
+                            'height': parseInt($(this).css('height')) / 30  + "px",
                         }, 10);
+                        $.fn.toolbar.refreshSize();
                     }
                 });
             }
@@ -539,6 +711,10 @@ $(document).ready(function () {
                     complete: function () {
                         $(this).hide();
                         $('#notes_button').show();
+                        $('#notes_button').tooltip({
+                            placement: 'bottom',
+                            trigger: 'hover'
+                        });
                         /*$('#notes_button').click(function(){
                             $.fn.comments.show_notes()
                         });*/
@@ -637,7 +813,7 @@ $(document).ready(function () {
                     var button_position = $('#notes_button').position();
                     $('#notes_button').hide();
                     $('#notes').show().animate({
-                        "top": "12%",
+                        "top": "16%",
                         'left': "46%",
                         'width': "50%",
                         'height': "75%",
@@ -647,13 +823,18 @@ $(document).ready(function () {
                         duration: 250,
                         complete: function () {
                             $('#notes_container').sortable();
-
+                            $('#notes_button').tooltip({
+                                placement: 'bottom',
+                                trigger: 'hover'
+                            });
                             $('#close_notes').click(function(){
                                 $.fn.comments.hide_notes(button_position);
                             });
 
 
                         }
+                    }).draggable({
+                        handle: '.top_box'
                     });
 
                     if($.fn.comments.notes.length == 0){
@@ -727,6 +908,7 @@ $(document).ready(function () {
 
             get_image: function(){
                 var image = $selectedImage.children().children('img');
+
                 var is_letter = function(){
                     if($selectedImage.data('is_letter')){
                         return true;
@@ -748,22 +930,18 @@ $(document).ready(function () {
                     'manuscript': $selectedImage.data('title')
                 };
 
-                if(is_letter()){
-                    data.src = image.attr('src');
-                }
-
                 $.ajax({
                     type:'POST',
                     url:'read-image/',
                     data: data,
                     beforeSend: function(){
                         if($('#letter_wait_box').length == 0){
-                            var loader = "<div class='modal' id='letter_wait_box'><span id='letter_crop_status'>Cropping letter ...</span><div id='letters_buttons_loading_box'><img src='/static/img/ajax-loader2.gif' /></div>";
+                            var loader = "<div class='modal' id='letter_wait_box'><span id='letter_crop_status'>Cropping region ...</span><div id='letters_buttons_loading_box'><img src='/static/img/ajax-loader2.gif' /></div>";
                             $('body').append(loader)
                             $('#letter_wait_box').fadeIn();
                         } else {
                             $('#letters_buttons_loading_box').hide().fadeIn().html("<img src='/static/img/ajax-loader2.gif' />");
-                            $('#letter_crop_status').hide().fadeIn().html("Cropping letter ...");
+                            $('#letter_crop_status').hide().fadeIn().html("Cropping region ...");
                         }
                         /*
                         if($.fn.letters.open){
@@ -779,7 +957,7 @@ $(document).ready(function () {
                         if($.fn.letters.open == false){
                             var buttons = "<button id='open-letter-box' class='btn btn-primary'>Open Letters Window</button> <button class='btn btn-danger' id='close-letter-box'>Close</button>";
                             $('#letters_buttons_loading_box').hide().fadeIn().html(buttons);
-                            $('#letter_crop_status').hide().fadeIn().html("Letter cropped!");
+                            $('#letter_crop_status').hide().fadeIn().html("Region cropped!");
 
                             $('#close-letter-box').click(function(){
                                 $('#letter_wait_box').fadeOut().remove();
@@ -801,7 +979,7 @@ $(document).ready(function () {
 
                     },
                     error: function(){
-                        var buttons = "<button id='open-letter-box' class='btn btn-primary'>Open Letters Window</button> <button class='btn btn-danger' id='close-letter-box'>Close</button>";
+                        var buttons = "<button id='open-letter-box' class='btn btn-primary'>Open Regions Window</button> <button class='btn btn-danger' id='close-letter-box'>Close</button>";
                             $('#letters_buttons_loading_box').hide().fadeIn().html(buttons);
                         $('#letter_crop_status').hide().fadeIn().html("Something went wrong. Try again.!");
                     }
@@ -823,12 +1001,12 @@ $(document).ready(function () {
                 this.buttons(data);
             },
 
-            open_lettersbox:function(){
+            open_lettersbox: function(){
                 var button_position = $('#letters_button').position();
                 $('#letters_button').hide();
                 $('#letters').show().animate({
-                    "top": "12%",
-                    'left': "46%",
+                    "top": "14%",
+                    'left': "43%",
                     'width': "50%",
                     'height': "75%",
                     'opacity': 1,
@@ -855,6 +1033,8 @@ $(document).ready(function () {
                             return false;
                         });
                     }
+                }).draggable({
+                    handle: '.top_box'
                 });
                 this.open = true;
             },
@@ -886,14 +1066,17 @@ $(document).ready(function () {
                 wrap.data('is_letter', true);
                 $('#barRight').append(wrap);
                 wrap.data("title", letter.data('title'));
+                wrap.data('size', letter.data('size'));
                 var page_position = $('#overview').offset();
                 wrap.children().resizable({
                     aspectRatio: true,
                     resize: function(event, ui){
+                        var element = $("#" + ui.attr('id'));
                         $('#mini_' + ui.element.parent().attr('id')).animate({
-                            'width': parseInt(ui.element.css('width')) / 15 + "px",
-                            'height': parseInt(ui.element.css('height')) / 15  + "px",
+                            'width': parseInt(element.css('width')) / 25 + "px",
+                            'height': parseInt(element.css('height')) / 30 + "px",
                         }, 10);
+                        $.fn.toolbar.refreshSize();
                     }
                 });
                 $('#image_' + letter.attr('id')).css(
@@ -919,10 +1102,7 @@ $(document).ready(function () {
                 });
 
                 $.fn.minimap.add_to_minimap('image_' + letter.attr('id'));
-
-
                 letter.remove();
-                return false;
             },
 
             is_selected: function(letter){
@@ -984,7 +1164,7 @@ $(document).ready(function () {
             show_comparison: function(data){
                 var box_comparison = "<div class='modal box_containers' id='comparison_box'><div id='top_comparison_box' class='top_box'><span>" +
                 "Images compared</span><span id='close_comparison_box' class='pull-right'><i class='icon-remove close_box'></i></div>";
-                box_comparison += "<div class='box_container' id='images_compared_div'><div><img id='image_result_compared' src='" + data.getImageDataUrl() + "' /></div></div></div>";
+                box_comparison += "<span style='margin:1%' class='pull-right'><button class='btn btn-small btn-primary' id='image_compared_to_workspace'>Add to workspace</button></span><div class='box_container' id='images_compared_div'><div><img data-is_generated='true' id='image_result_compared' src='" + data.getImageDataUrl() + "' /></div></div></div>";
 
                 $('body').append(box_comparison);
                 $('#comparison_box').show().animate({
@@ -1006,36 +1186,39 @@ $(document).ready(function () {
                                 scroll: true
                             });
                         }
-                }).draggable().resizable();
+                }).draggable({
+                    handle: '.top_box'
+                }).resizable();
+
+                $('#image_compared_to_workspace').click(function(){
+                    $.fn.letters.make_workable($('#image_result_compared'));
+                    $('#comparison_box').fadeOut().remove();
+                });
             },
 
             delete: function(){
-                if($.fn.letters.lettersSelected.length > 0){
-                    var letters_on_workspace = $('.letter');
-                    for(i = 0; i < letters_on_workspace.length; i++){
-                        if($(letters_on_workspace[i]).data('selected') == true){
-                            $.fn.letters.lettersSelected.splice(i, 1);
-                            $(letters_on_workspace[i]).fadeOut().remove();
-                            break;
-                        }
+                if(this.lettersSelected.length > 0){
+                    for(i = 0; i < this.lettersSelected.length; i++){
+                        this.lettersSelected[i].fadeOut().remove();
+                        delete $.fn.letters.lettersSelected[i];
                     }
                 } else {
                     return false;
                 }
+                $.fn.letters.lettersSelected.clean(undefined);
             },
 
             to_workspace: function(){
-                if($.fn.letters.lettersSelected.length > 0){
-                    var letters_on_workspace = $('.letter');
-                    for(i = 0; i < letters_on_workspace.length; i++){
-                        if($(letters_on_workspace[i]).data('selected') == true){
-                            $.fn.letters.lettersSelected.splice(i, 1);
-                            $.fn.letters.make_workable($(letters_on_workspace[i]));
-                        }
+
+                if(this.lettersSelected.length > 0){
+                    for(i = 0; i < this.lettersSelected.length; i++){
+                        $.fn.letters.make_workable(this.lettersSelected[i]);
+                        delete $.fn.letters.lettersSelected[i];
                     }
                 } else {
                     return false;
                 }
+                $.fn.letters.lettersSelected.clean(undefined);
             },
 
             hide_box: function(){
@@ -1066,8 +1249,8 @@ $(document).ready(function () {
                     });
                     $('#load').hide();
                     $('#import').show().animate({
-                        "top": "16%",
-                        'left': "54%",
+                        "top": "14%",
+                        'left': "46%",
                         'width': "40%",
                         'height': "15%",
                         'opacity': 1,
@@ -1084,17 +1267,21 @@ $(document).ready(function () {
                                 $.fn.import.show_manager();
                             });
                         }
+                    }).draggable({
+                        handle: '.top_box'
                     });
                 } else {
                     $('#import').show().animate({
-                        "top": "16%",
-                        'left': "45%",
+                        "top": "14%",
+                        'left': "46%",
                         'width': "50%",
                         'height': "70%",
                         'opacity': 1,
                         'z-index': 400
                     }, {
                         duration: 250,
+                    }).draggable({
+                        handle: '.top_box'
                     }); 
                 }
             },
@@ -1127,18 +1314,18 @@ $(document).ready(function () {
             },
 
             refresh: function(){
-                   for(var i=0, len=localStorage.length; i<len; i++) {
-                        var key = localStorage.key(i);
-                        var value = localStorage[key];
-                        try{
-                          var json = JSON.parse(value);
-                        } catch(e){
-                            continue;
-                        }
-                        if(json['session_file']){
-                            this.files.push([key, value]);
-                        }
+               for(var i=0, len=localStorage.length; i<len; i++) {
+                    var key = localStorage.key(i);
+                    var value = localStorage[key];
+                    try {
+                      var json = JSON.parse(value);
+                    } catch(e){
+                        continue;
                     }
+                    if(json['session_file']){
+                        this.files.push([key, value]);
+                    }
+                }
             },
 
             refreshView: function(){
@@ -1227,8 +1414,8 @@ $(document).ready(function () {
                                     var back = "<button id='open_load_from_pc' class='btn btn-primary'>Load from File</button> <button id='load_from_db' class='btn btn-primary disabled'>Load from your Account</button>";
                                     $("#import").children('.box_container').css('margin', "5%").html(back);
                                     $('#import').show().animate({
-                                        "top": "16%",
-                                        'left': "54%",
+                                        "top": "14%",
+                                        'left': "46%",
                                         'width': "40%",
                                         'height': "15%",
                                         'opacity': 1,
@@ -1242,7 +1429,7 @@ $(document).ready(function () {
                                             });
                                         }
                                     });
-                                });
+                                }).draggable();
                             }
                         });
             },
@@ -1325,7 +1512,7 @@ $(document).ready(function () {
             printLetters: function(images){
                 for(i = 0; i < images.length; i++){
                     var src = unescape(images[i]['src']);
-                    var image = "<div class='image_active' id='" + images[i]['image'] + "'><img src='" + unescape(src) + "' /></div>";
+                    var image = "<div data-size = '" + images[i]['original_size'] + "' class='image_active' id='" + images[i]['image'] + "'><img src='" + unescape(src) + "' /></div>";
                     $('#barRight').append(image);
                     $("#" + images[i]['image']).css({
                             "position": "absolute",
@@ -1353,10 +1540,12 @@ $(document).ready(function () {
                         }).resizable({
                             aspectRatio: true,
                             resize: function(event, ui){
-                                $('#mini_' + ui.element.parent().attr('id')).animate({
-                                    'width': parseInt(ui.element.css('width')) / 15 + "px",
-                                    'height': parseInt(ui.element.css('height')) / 15  + "px",
+                                var element = $("#" + ui.element.parent().attr('id'));
+                                $('#mini_' + ui.element.attr('id')).animate({
+                                    'width': parseInt(element.css('width')) / 25 + "px",
+                                    'height': parseInt(element.css('height')) / 30  + "px",
                                 }, 10);
+                                $.fn.toolbar.refreshSize();
                             }
                         }).children('img').css({
                             "opacity": images[i]['properties']['opacity']
@@ -1372,7 +1561,7 @@ $(document).ready(function () {
 
             printImages: function(images, images_properties){
                 for(i = 0; i < images.length; i++){
-                    var image = '<div data-title = "' + images[i][2] + '" class="image_active" id = "' + parseInt(images[i][1]) + '">' + images[i][0] +  "<div class='image_desc'> <p><b>Manuscript</b>: " + images[i][2] + "</p> " + "<p><b>Repository</b>: " + images[i][3] +  "<p><b>Place</b>: " +  images[i][4] + "</p></div><br clear='all' /></div>";
+                    var image = '<div data-size = "' + images_properties[i]['original_size'] + '" data-title = "' + images[i][2] + '" class="image_active" id = "' + parseInt(images[i][1]) + '">' + images[i][0] +  "<div class='image_desc'> <p><b>Manuscript</b>: " + images[i][2] + "</p> " + "<p><b>Repository</b>: " + images[i][3] +  "<p><b>Place</b>: " +  images[i][4] + "</p></div><br clear='all' /></div>";
                     $("#barRight").append(image)
                     if(images_properties[i]['image'] == images[i][1]){
                         $('#' + images[i][1]).css({
@@ -1403,10 +1592,12 @@ $(document).ready(function () {
                         }).resizable({
                             aspectRatio: true,
                             resize: function(event, ui){
+                                var element = $("#" + ui.attr('id'));
                                 $('#mini_' + ui.element.parent().attr('id')).animate({
-                                    'width': parseInt(ui.element.css('width')) / 15 + "px",
-                                    'height': parseInt(ui.element.css('height')) / 15  + "px",
+                                    'width': parseInt(element.css('width')) / 25 + "px",
+                                    'height': parseInt(element.css('height')) / 30  + "px",
                                 }, 10);
+                                $.fn.toolbar.refreshSize();
                             }
                         });
 
@@ -1468,16 +1659,45 @@ $(document).ready(function () {
                 var position = image.offset();
                 var top = position['top'] / $(window).height() * 30;
                 var left = position['left'] / $(window).width() * 100;
-                var element = "<div id='mini_" + id + "' class='image_map' style='top:" + top +"%; left: " + left + "%'>";
+                var size = image.css(['width', 'height']);
+                var mini_id = 'mini_' + id;
+                var element = $("<div></div>");
+                element.data('image', id);
+                element.attr('id', mini_id);
+                element.attr('class', 'image_map');
                 $('#overview').append(element);
+                element.css({
+                    "width": parseInt(size['width']) / 15 + "px",
+                    "height": parseInt(size['height']) / 15 + "px",
+                    "top": top,
+                    "left": left
+                });
+                //this.make_scrollable("#mini_" + id);
                 this.images.push(element); 
             },
+            /*
+            make_scrollable: function(map_image){
 
+                $(map_image).click(function(){
+
+                    var image = $(map_image).data('image');
+                    var top = $("#" + image).css('top') - 100;
+                    var left = $("#" + image).css('left') - 100;
+
+                    $('html, body').animate({
+                        scrollTop: top,
+                        scrollLeft: left
+                    }, 800);
+
+                });
+
+            },
+            */
             update_mini_map: function(id){
-                var image_on_workspace = $('#' + image);
+                var image_on_workspace = $('#' + id);
                 var image = {
-                    'top': parseInt($('#' + id).css('top')) / $(window).height() * 22,
-                    'left': parseInt($('#' + id).css('left')) / $(window).width() * 80
+                    'top': parseInt(image_on_workspace.css('top')) / $(window).height() * 22,
+                    'left': parseInt(image_on_workspace.css('left')) / $(window).width() * 80
                 };
                 $("#mini_" + id).animate({
                     'left': image['left'],
@@ -1507,14 +1727,14 @@ $(document).ready(function () {
                 var button_position = $('#load').position();
                 $('#export').css({
                     'top': button_position['top'],
-                    'left': button_position['left'] + 300
+                    'left': button_position['left'] + 200
                 });
                 $('#save').hide();
 
                 $('#export').show().animate({
                     "top": "16%",
-                    'left': "54%",
-                    'width': "30%",
+                    'left': "46%",
+                    'width': "35%",
                     'height': "15%",
                     'opacity': 1,
                     'z-index': 400
@@ -1525,7 +1745,7 @@ $(document).ready(function () {
                             $.fn.export.hide();
                         });
                     }
-                });
+                }).draggable();
             },
 
             hide: function(){
@@ -1576,6 +1796,12 @@ $(document).ready(function () {
                         return {"width": dimension['width'], 'height': dimension['height']};
                     };
 
+                    var original_size = function(){
+                        var size = $(images[i]).data('size');
+                        console.log(size)
+                        return size;
+                    };
+
                     var zIndex = function(){
                         return $(images[i]).children().children('img').css('z-index');
                     };
@@ -1603,6 +1829,7 @@ $(document).ready(function () {
                         'image': $(images[i]).attr('id'),
                         'position': position(),
                         'size': size(),
+                        'original_size': original_size(),
                         'properties': propriety,
                         "z-index": zIndex()
                     };
@@ -1724,7 +1951,7 @@ $(document).ready(function () {
 
         $.fn.align = {
 
-            align:function(){
+            align: function(){
                 var images = $('.image_active');
                 for(i = 0; i < images.length; i++){
                     $(images[i]).css({
@@ -1733,11 +1960,44 @@ $(document).ready(function () {
                         "left": "2%"
                     });
                 }
-            }   
+            }  
 
         };
 
+        $.fn.menu = {
+
+            init: function(){
+
+                this.show();
+                this.buttons();
+
+            },
+
+            show: function(){
+
+            },
+
+            hide: function(){
+
+            },
+
+            buttons: function(){
+
+            }
+
+        }
+
         function main(){
+
+            Array.prototype.clean = function(deleteValue) {
+              for (var i = 0; i < this.length; i++) {
+                if (this[i] == deleteValue) {         
+                  this.splice(i, 1);
+                  i--;
+                }
+              }
+              return this;
+            };
 
             $.fn.imagesBox.init(); // Launch window images function
 
@@ -1775,7 +2035,7 @@ $(document).ready(function () {
                 return images;
             };
 
-            $('button').tooltip({
+            $('img').tooltip({
                 placement: 'bottom',
                 trigger: 'hover'
             });
@@ -1789,11 +2049,12 @@ $(document).ready(function () {
                 revert:'invalid'
             });
 
+
             $(window).scroll(function(event){
                 var position = {
                   'top': $(window).scrollTop() / $(window).height() * 19,
                   'left': $(window).scrollLeft() / $(window).width() * 120
-                }
+                };
                 $('#marker').animate({
                     'left': position['left'],
                     'top': position['top']

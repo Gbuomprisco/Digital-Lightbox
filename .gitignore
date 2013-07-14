@@ -2,6 +2,6 @@ settings.py
 local_settings.py
 *~
 *.swp
-/iipimage
-/django-iipimage
-/digipal
+iipimage/
+django-iipimage/
+digipal/

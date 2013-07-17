@@ -560,6 +560,7 @@ $(document).ready(function () {
             },
 
             make_images_draggable: function(){
+                
                 $('.image_active').draggable({
                     revert: false,
                     scroll: true,
@@ -1967,6 +1968,8 @@ $(document).ready(function () {
 
         };
 
+        /*
+
         $.fn.menu = {
 
             init: function(){
@@ -1989,6 +1992,8 @@ $(document).ready(function () {
             }
 
         }
+
+        */
 
         function main(){
 

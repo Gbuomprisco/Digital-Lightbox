@@ -4,12 +4,9 @@ from django.http import HttpResponse
 from digipal.models import Page
 from django.db.models import Q
 from django.utils import simplejson
-import StringIO
 import urllib, cStringIO
 import uuid
 import Image
-from dicttoxml import dicttoxml
-import base64
 
 def search(request):
 	if request.is_ajax():

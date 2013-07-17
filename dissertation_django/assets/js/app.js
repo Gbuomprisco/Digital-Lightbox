@@ -164,7 +164,7 @@ $(document).ready(function () {
 
                 var position = $selectedImage.offset();
 
-                if(position['top'] < 0){
+                if(position['top'] < $(window).scrollTop() || position['left'] < $(window).scrollLeft()){
                     $selectedImage.animate({
                         "top": $(window).scrollTop() + 100,
                         "left": $(window).scrollLeft() + 100
@@ -215,7 +215,7 @@ $(document).ready(function () {
 
                 var position = $selectedImage.offset();
 
-                if(position['top'] < 0){
+                if(position['top'] < $(window).scrollTop()  || position['left'] < $(window).scrollLeft()){
                     $selectedImage.animate({
                         "top": $(window).scrollTop() + 100,
                         "left": $(window).scrollLeft() + 100
@@ -1071,7 +1071,7 @@ $(document).ready(function () {
                 wrap.children().resizable({
                     aspectRatio: true,
                     resize: function(event, ui){
-                        var element = $("#" + ui.attr('id'));
+                        var element = $("#" + ui.element.parent().attr('id'));
                         $('#mini_' + ui.element.parent().attr('id')).animate({
                             'width': parseInt(element.css('width')) / 25 + "px",
                             'height': parseInt(element.css('height')) / 30 + "px",
@@ -1464,7 +1464,8 @@ $(document).ready(function () {
                     comments.push(json['session_properties']['comments'][i]) 
                 }
                 for(i = 0; i < json['session_properties']['letters'].length; i++){ 
-                    letters.push([json['session_properties']['letters'][i]['letter'], json['session_properties']['letters'][i]['src'] ]) 
+                    console.log(json['session_properties']['letters'])
+                    letters.push([json['session_properties']['letters'][i]['letter'], json['session_properties']['letters'][i]['src'], json['session_properties']['letters'][i]['size'] ]) 
                 }
                 this.reset();
                 $.fn.import.reloadImages(images, json['image_properties']);
@@ -1620,7 +1621,8 @@ $(document).ready(function () {
 
             importLetters: function(letters){
                 for(i = 0; i < letters.length; i++){
-                    letter = "<img class='letter' id='" + letters[i][0] + "' src ='" + unescape(letters[i][1]) + "' />";
+                    console.log(letters[i])
+                    letter = "<img class='letter' id='" + letters[i][0] + "' src ='" + unescape(letters[i][1]) + "' data-size = '" + letters[i][2] + "' />";
                     $.fn.letters.addLetter(letter);
                 }
             },
@@ -1856,7 +1858,8 @@ $(document).ready(function () {
 
                         var letter = {
                             'letter': $(letters_cropped[i]).attr('id'),
-                            'src': $(letters_cropped[i]).attr('src')
+                            'src': $(letters_cropped[i]).attr('src'),
+                            'size': $(letters_cropped[i]).data('size')
                         };
 
                         letters.push(letter);

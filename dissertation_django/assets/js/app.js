@@ -64,6 +64,7 @@ $(document).ready(function () {
                 var rotate = "<div class='tool'><span class='tool_label'>Rotate</span>";
                 rotate += "<div id='slider_rotate' class='slider'></div></div>";
                 tools += rotate;
+                tools += "<div class='tool'><span class='tool_label'>Grayscale</span> <div class='slider'><input style='margin-bottom:10px;' type='checkbox' id='grayscale' /></div></div>";
                 tools += line;
                 var size = "<div class='tool'><span class='tool_label'>Size</span>";
                 size += "<input class='small-input' type='text' id='set_width' /><span class='label_size'>Width</span><input class='small-input' type='text' id='set_height' /><span class='label_size'>Height</span><button style='margin-bottom:3%' id='set_size' class='btn btn-primary btn-small'>Set</button></div>";
@@ -117,6 +118,16 @@ $(document).ready(function () {
                     }
                 });
 
+
+            },
+
+            grayscale: function(button){
+
+                if(button.is(':checked')){
+                    $selectedImage.children().children('img').addClass('grayscale');
+                } else {
+                    $selectedImage.children().children('img').removeClass('grayscale');
+                }
 
             },
 
@@ -227,6 +238,8 @@ $(document).ready(function () {
                     'height': parseInt($selectedImage.children().children('img').css('height')) / 30  + "px",
                 }, 10);
 
+                $('#grayscale').prop('checked', false);
+                this.grayscale($('#grayscale'));
                 this.refresh();
 
             },
@@ -296,6 +309,10 @@ $(document).ready(function () {
 
                 $('#set_size').click(function(){
                     $.fn.toolbar.size();
+                });
+
+                $('#grayscale').click(function(){
+                    $.fn.toolbar.grayscale($(this));                   
                 });
 
                 $('#removeImage').click(function(){

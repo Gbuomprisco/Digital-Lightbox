@@ -271,7 +271,7 @@ padding-top: 1.5%;
 	left: 70%;
 	.rounded(5px);
 	.box-shadow(0px, 0px, 10px, #999); 
-	height: 380px;
+	height: 395px;
 	z-index:1500;
 	width: 300px;
 	background: #272b2b; /* Old browsers */
@@ -331,11 +331,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#272b2b', end
 		color: #efefef;
 	}
 	.tool{
-		margin-top: 10px;
-		margin-bottom: 14px;
+		margin-top: 8px;
+		margin-bottom: 12px;
 		height: 20px;
 		margin-left:3px;
 		margin-right:3px;
+		&:first-child{
+			margin-top:2.5px;
+		}
 	}
 	.line{
 		border-bottom: 1px solid #444;
@@ -582,4 +585,17 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#272b2b', end
 ::-webkit-scrollbar {
 	width: 10px;
 	height: 10px;
+}
+
+
+
+// Filters
+.grayscale {
+	-webkit-filter: grayscale(100%);
+	-moz-filter: grayscale(100%);
+	-ms-filter: grayscale(100%);
+	-o-filter: grayscale(100%);
+	filter: grayscale(100%);
+	filter: url(/static/css/svg/grayscale.svg);
+	filter: gray;
 }

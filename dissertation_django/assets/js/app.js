@@ -61,6 +61,14 @@ $(document).ready(function () {
                 var brightness = "<div class='tool'><span class='tool_label'>Brightness</span>";
                 brightness += "<div id='slider_brightness' class='slider'></div></div>";
                 tools += brightness;
+
+                /*
+                if(document.body.style.webkitFilter !== undefined){
+                    var contrast = "<div class='tool'><span class='tool_label'>Contrast</span>";
+                    contrast += "<div id='slider_contrast' class='slider'></div></div>";
+                    tools += contrast;
+                }
+                */
                 var rotate = "<div class='tool'><span class='tool_label'>Rotate</span>";
                 rotate += "<div id='slider_rotate' class='slider'></div></div>";
                 tools += rotate;
@@ -128,6 +136,19 @@ $(document).ready(function () {
                 } else {
                     $selectedImage.children().children('img').removeClass('grayscale');
                 }
+
+            },
+
+            contrast: function(){
+
+                $("#slider_contrast").slider({
+                    min: 0,
+                    max: 200,
+                    value: 100,
+                    slide: function (event, ui) {
+                            $selectedImage.css('-webkit-filter','contrast(' + ui.value + '%) brightness(' + $("#slider_brightness").slider("option", "value") / 2 + '%)');
+                    }
+                });
 
             },
 
@@ -345,6 +366,7 @@ $(document).ready(function () {
                 this.opacity();
                 this.brightness();
                 this.rotate();
+                this.contrast();
 
             },
 
@@ -446,7 +468,7 @@ $(document).ready(function () {
                 });
                 this.imagesBox.animate({
                     "top": "14%",
-                    'left': "46%",
+                    'left': "25%",
                     'width': "50%",
                     'height': "75%",
                     'opacity': 1
@@ -465,7 +487,7 @@ $(document).ready(function () {
                 this.imagesBox.show().animate({
                     position: 'absolute',
                     top: this.buttons_position['top'],
-                    left: this.buttons_position['left'] + 300,
+                    left: this.buttons_position['left'] + 150,
                     width: 0,
                     height: 0,
                     opacity: 0
@@ -549,9 +571,8 @@ $(document).ready(function () {
 
                         $('#barRight').append(new_images);
 
-                        // fires the event to select an image
-                        $('.image_active').click(function () {
-                            $(this).select();
+                        $(images[i]).click(function () {
+                            $(this).select_group();
                         });
 
                         $.fn.minimap.add_to_minimap($(images[i]).attr('id'));
@@ -578,20 +599,23 @@ $(document).ready(function () {
 
             make_images_draggable: function(){
                 
-                $('.image_active').draggable({
-                    revert: false,
-                    scroll: true,
+                var draggableOptions = {
                     opacity: 0.8,
-                    stack: '.image_active',
                     cursor: "move",
-                    drag: function (ui, event) {
+                    start: function(event, ui) {
+                        selectedObjs = $('.selected');
+                    },
+                    drag: function(event, ui) {
                         position = $(this).offset();
                         $.fn.minimap.update_mini_map($(this).attr('id'));
-                    }, 
-                    stop: function(ui, event){
+                    },
+                    stop: function(event, ui){
                         $(ui.helper).css('z-index', 0);
-                    }
-                }).children('img').css('width', '180px').resizable({
+                        $( event.toElement ).one('click', function(e){ e.stopImmediatePropagation(); } );
+
+                    }      
+                };
+                $('.image_active').draggable(draggableOptions).children('img').css('width', '180px').resizable({
                     aspectRatio: true,
                     resize: function(event, ui){
                         $('#mini_' + ui.element.parent().attr('id')).animate({
@@ -614,6 +638,7 @@ $(document).ready(function () {
                 if($('.comment').length > 0){
                     $('.comment').focus();
                 } else {
+
                     var uniqueid = function(){
                         var text = "";
                         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -622,7 +647,7 @@ $(document).ready(function () {
                             text += possible.charAt(Math.floor(Math.random() * possible.length));
 
                         return text;
-                    }
+                    };
 
                     var image_comment = image + '_' + uniqueid();
                     var comment = this.make_comment(image_comment, image);
@@ -720,7 +745,7 @@ $(document).ready(function () {
             hide_notes: function(button_position){
                 $('#notes').animate({
                     "top": button_position['top'],
-                    'left': button_position['left'] + 300,
+                    'left': button_position['left'] + 150,
                     'width': "0%",
                     'height': "0%",
                     'opacity': 0
@@ -832,7 +857,7 @@ $(document).ready(function () {
                     $('#notes_button').hide();
                     $('#notes').show().animate({
                         "top": "16%",
-                        'left': "46%",
+                        'left': "25%",
                         'width': "50%",
                         'height': "75%",
                         'opacity': 1,
@@ -1024,7 +1049,7 @@ $(document).ready(function () {
                 $('#letters_button').hide();
                 $('#letters').show().animate({
                     "top": "14%",
-                    'left': "43%",
+                    'left': "25%",
                     'width': "50%",
                     'height': "75%",
                     'opacity': 1,
@@ -1060,7 +1085,7 @@ $(document).ready(function () {
             hide_letters: function(button_position){
                 $('#letters').animate({
                     "top": button_position['top'],
-                    'left': button_position['left'] + 300,
+                    'left': button_position['left'] + 150,
                     'width': "0%",
                     'height': "0%",
                     'opacity': 0
@@ -1187,7 +1212,7 @@ $(document).ready(function () {
                 $('body').append(box_comparison);
                 $('#comparison_box').show().animate({
                         "top": "30%",
-                        'left': "60%",
+                        'left': "30%",
                         'width': "30%",
                         'height': '50%',
                         'opacity': 1,
@@ -1263,14 +1288,14 @@ $(document).ready(function () {
                     var button_position = $('#load').position();
                     $('#import').css({
                         'top': button_position['top'],
-                        'left': button_position['left'] + 300
+                        'left': button_position['left'] + 150
                     });
                     $('#load').hide();
                     $('#import').show().animate({
                         "top": "14%",
-                        'left': "46%",
+                        'left': "28%",
                         'width': "40%",
-                        'height': "15%",
+                        'height': "25%",
                         'opacity': 1,
                         'z-index': 400
                     }, {
@@ -1291,7 +1316,7 @@ $(document).ready(function () {
                 } else {
                     $('#import').show().animate({
                         "top": "14%",
-                        'left': "46%",
+                        'left': "28%",
                         'width': "50%",
                         'height': "70%",
                         'opacity': 1,
@@ -1310,7 +1335,7 @@ $(document).ready(function () {
 
                 $('#import').animate({
                     "top": button_position['top'],
-                    'left': button_position['left'] + 300,
+                    'left': button_position['left'] + 150,
                     'width': "0%",
                     'height': "0%",
                     'opacity': 0
@@ -1373,7 +1398,7 @@ $(document).ready(function () {
             show_manager: function(){
                 $('#import').show().animate({
                         'top': "16%",
-                        'left': "45%",
+                        'left': "25%",
                         'width': "50%",
                         'height': "70%",
                         'opacity': 1,
@@ -1387,7 +1412,7 @@ $(document).ready(function () {
                                 folder += "<div class='folder' id='" + files[i][0] + "'><img src='/static/img/folder.png' /><div class='folder_title'>" + files[i][0] + "</div></div>";
                             }
                            
-                            var breadcrumb = "<div class='breadcrumb'><li><a id='back_to_load'>Load a session</a> <span class='divider'>/</span></li><li class='active'>Local Manager</li> <li class='offset3' style='position:relative;right:1%;'><button id='load_session_button' class='btn btn-primary'>Load</button> <button id='delete_session_button'  class='btn btn-danger'>Delete</button></li></div>";
+                            var breadcrumb = "<div class='row-fluid'><div style='padding-bottom: 2.5%;margin:0;' class='breadcrumb'><li><a id='back_to_load'>Load a session</a> </li><li class='active'>Local Manager</li> <li class='pull-right'><button id='load_session_button' class='btn btn-small btn-primary'>Load</button> <button id='delete_session_button' class='btn btn-danger btn-small'>Delete</button></li></div></div>";
                             $('#top_load_box').fadeIn().html(breadcrumb);
                             $(this).children('.box_container').css('margin', 0).html(folder);
 
@@ -1430,12 +1455,13 @@ $(document).ready(function () {
                             $('#back_to_load').click(function(){
                                     $('#top_load_box').fadeOut();
                                     var back = "<button id='open_load_from_pc' class='btn btn-primary'>Load from File</button> <button id='load_from_db' class='btn btn-primary disabled'>Load from your Account</button>";
-                                    $("#import").children('.box_container').css('margin', "5%").html(back);
+                                    $("#import").children('.box_container').html(back);
                                     $('#import').show().animate({
                                         "top": "14%",
-                                        'left': "46%",
+                                        'left': "29%",
                                         'width': "40%",
-                                        'height': "15%",
+                                        'height': "25%",
+                                        'margin': 0,
                                         'opacity': 1,
                                         'z-index': 400
                                     }, {
@@ -1611,7 +1637,7 @@ $(document).ready(function () {
                         }).resizable({
                             aspectRatio: true,
                             resize: function(event, ui){
-                                var element = $("#" + ui.attr('id'));
+                                var element = $("#" + ui.element.attr('id'));
                                 $('#mini_' + ui.element.parent().attr('id')).animate({
                                     'width': parseInt(element.css('width')) / 25 + "px",
                                     'height': parseInt(element.css('height')) / 30  + "px",
@@ -1753,9 +1779,9 @@ $(document).ready(function () {
 
                 $('#export').show().animate({
                     "top": "16%",
-                    'left': "46%",
-                    'width': "35%",
-                    'height': "15%",
+                    'left': "29%",
+                    'width': "42%",
+                    'height': "35%",
                     'opacity': 1,
                     'z-index': 400
                 }, {
@@ -1773,7 +1799,7 @@ $(document).ready(function () {
                 var button_position = $('#save').position();
                 $('#export').animate({
                     "top": button_position['top'],
-                    'left': button_position['left'] + 300,
+                    'left': button_position['left'] + 150,
                     'width': "0%",
                     'height': "0%",
                     'opacity': 0
@@ -2043,6 +2069,38 @@ $(document).ready(function () {
                 return false;
             };
 
+            $.fn.select_group = function(){
+                if($(this).data('selected')){
+                    $(this).children().css('box-shadow', 'none');
+                    $(this).removeClass('selected');
+                    $(this).data('selected', false);
+                    $(this).draggable({
+                        alsoDrag: false
+                    });
+                    $(this).children().children('img').resizable({
+                        alsoResize: false
+                    });
+
+                } else {
+                    $(this).children().css('boxShadow', '0px 0px 30px rgba(255, 246, 9, 1)');
+                    $(this).addClass('selected');
+                    $(this).data('selected', true);
+                    $(this).draggable({
+                        alsoDrag: ".selected"
+                    });
+                    $(this).children().children('img').resizable({
+                        alsoResize: '.selected, .selected > div, .selected > div > img'
+                    });
+                }
+                $.fn.toolbar.init();
+                if (!$.fn.toolbar.exists()) {
+                    $.fn.toolbar.create();
+                    $.fn.toolbar.refresh();
+                } else {
+                    $.fn.toolbar.refresh();
+                }
+            }
+
             var images_on_minimap = [];
 
             // Check if the image is selected
@@ -2080,6 +2138,7 @@ $(document).ready(function () {
                   'top': $(window).scrollTop() / $(window).height() * 19,
                   'left': $(window).scrollLeft() / $(window).width() * 120
                 };
+                console.log(position)
                 $('#marker').animate({
                     'left': position['left'],
                     'top': position['top']

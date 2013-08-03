@@ -9,20 +9,24 @@
 			</div>
 		</div>
 		<div class='modal' id='barLeft'>
-			<div id='top_barLeft'><i class='icon-search'></i> Select Manuscript Images <span class='pull-right' id='close_barLeft'><i class='icon-remove'></i></span></div>
+			<div id='top_barLeft'><span class="glyphicon glyphicon-search"> Select Manuscript Images <span class='pull-right' id='close_barLeft'><span class="glyphicon glyphicon-remove"></span></div>
 			
-			<div id='filter_images_form'>
-				<div class="input-append">
-				  <input placeholder='Type here to search images' class="span11" id="search" type="text" required />
-				  <div class="btn-group">
+			<div id='filter_images_form' class='row-fluid'>
+				<div class="input-group col-lg-6">
+				  <input placeholder='Type here to search images' class="form-control" id="search" type="text" required />
+				  <div class="input-group-btn">
 				    <button id='search_button' class="btn">Search</button> 
 				  </div>
 				</div>
-				<img src="/static/img/ajax-loader.gif" id='ajax-loader' style='display:none;'/>
-				<button id='add_to_workspace' class='btn btn-primary pull-right'><i class='icon-plus'></i> Add to workspace</button>
-				<div id='results_counter' class='span2 pull-right'></div>
+				<div class='col-lg-1'>
+					<img src="/static/img/ajax-loader.gif" id='ajax-loader' style='display:none;'/>
+				</div>
+				<div class='pull-right' style='margin-right:1%'>
+					<button id='add_to_workspace' class='btn btn-primary'><span class='glyphicon glyphicon-plus'></span> Add to workspace</button>
+				</div>
+				<div id='results_counter'></div>
 			</div>
-			<div id='images_container'></div>
+			<div class='row-fluid' id='images_container'></div>
 		</div>
 	
 		<div class='row-fluid' id='barRight'></div>
@@ -33,22 +37,22 @@
 	    <div id='marker'></div>
 	</div>
 	<div class='modal box_containers' id='notes'>
-		<div class='top_box' id='top_notes'><i class='icon-book'></i> Notes <span class='pull-right close_box' id='close_notes'><i class='icon-remove'></i></span></div>
+		<div class='top_box' id='top_notes'><i class='icon-book'></i> Notes <span class='pull-right close_box' id='close_notes'><span class="glyphicon glyphicon-remove"></span></span></div>
 		<p id='notes_alert' class='alert alert-warning'></p>
 	    <div class='box_container' id='notes_container'></div>
 	</div>
 	<div class='modal box_containers' id='letters'>
-		<div class='top_box' id='top_letter'><i class='icon-italic'></i> Regions <span class='pull-right close_box' id='close_letters'><i class='icon-remove'></i></span></div>
+		<div class='top_box' id='top_letter'><i class='icon-italic'></i> Regions <span class='pull-right close_box' id='close_letters'><span class="glyphicon glyphicon-remove"></span></span></div>
 		<div id='top_box_letters'><button id='compare_letters' class='btn btn-primary btn-small'>Compare</button> <button id='add_letters' class='btn btn-primary btn-small'>Add to Workspace</button> <button id='delete_letter' class='btn btn-danger btn-small'>Delete</button> </div>
 	    <div class='box_container' id='letters_container'></div>
 	</div>
 	<div class='modal box_containers' id='export'>
-		<div class='top_box' id='top_letter'><i class='icon-download'></i> Save session <span class='pull-right close_box' id='close_export'><i class='icon-remove'></i></span></div> 
-		<div class='box_container'><div class="input-append"><input required placeholder="Type a name for this session" class="span8" id="name_export" type="text"><button id='save_to_pc' class='btn btn-primary'>Save on your PC</button></div><div class='row'><p>or</p></div><div><button id='save_to_db' class='btn btn-primary disabled'>Save on your Account</button></div></div>
+		<div class='top_box'> Save session <span class='pull-right close_box' id='close_export'><span class="glyphicon glyphicon-remove"></span></span></div> 
+		<div class='box_container'><div class='input-group col-lg-3'><div class="input-group-btn"><input required placeholder="Type a name for this session" class=" form-control" id="name_export" type="text"><button id='save_to_pc' class='btn btn-primary'>Save on your PC</button></div></div></div>
 	</div>
 	<div class='modal box_containers' id='import'>
-		<div class='top_box' id='top_letter'><i class='icon-download'></i> Load session <span class='pull-right close_box' id='close_import'><i class='icon-remove'></i></span></div> 
-		<div id='top_load_box' class='container'></div>
+		<div class='top_box'> Load session <span class='pull-right close_box' id='close_import'><span class="glyphicon glyphicon-remove"></span></span></div> 
+		<div id='top_load_box' class='row-fluid'></div>
 		<div class='box_container'><button id='open_load_from_pc' class='btn btn-primary'>Load from File</button> <button id='load_from_db' class='btn btn-primary disabled'>Load from your Account</button> </div>
 	</div>
 

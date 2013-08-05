@@ -35,7 +35,7 @@ $(document).ready(function(){
 								var data_manuscripts = data['manuscripts'];
 								for(i = 0; i < data_manuscripts.length; i++){
 									images += '<div data-size = "' + data_manuscripts[i][5] + '" data-title = "' + data_manuscripts[i][2] + '" class="image" id = "' + data_manuscripts[i][1] + '">' + data_manuscripts[i][0] + 
-									"<div class='col-lg-8 image_desc'><table class='table'><tr><th>Manuscript</th><th>Repository</th><th>Place</th></tr><tr><td>" + data_manuscripts[i][2] + "</td><td>" + data_manuscripts[i][3] + 
+									"<div class='col-lg-8 image_desc'><table class='table table-condensed'><tr><th>Manuscript</th><th>Repository</th><th>Place</th></tr><tr><td>" + data_manuscripts[i][2] + "</td><td>" + data_manuscripts[i][3] + 
 									"</td><td>" +  data_manuscripts[i][4] + "</td></tr></table></div></div>";
 								}
 								$('#images_container').html(images);
@@ -80,12 +80,10 @@ $(document).ready(function(){
 				                				var data = data['manuscripts'];
 												for(i = 0; i < data.length; i++){
 													image = '<div data-size = "' + data[i][5] + '" data-title = "' + data[i][2] + '" class="col-lg-4 image" id = "' + data[i][1] + '">' + data[i][0] + 
-													"<div class='col-lg-8 image_desc'><table class='table'><tr><th>Manuscript</th><th>Repository</th><th>Place</th></tr><tr><td>" + data[i][2] + "</td><td>" + data[i][3] + 
+													"<div class='col-lg-8 image_desc'><table class='table table-condensed'><tr><th>Manuscript</th><th>Repository</th><th>Place</th></tr><tr><td>" + data[i][2] + "</td><td>" + data[i][3] + 
 									"</td><td>" +  data[i][4] + "</td></tr></table></div></div>";
 													$('#images_container').append(image);
-													$('#' +  data[i][1]).click(function(){
-					                    				$.fn.imagesBox.select_image($(this));
-					                				});
+													
 												}
 												
 											} else {
@@ -100,6 +98,10 @@ $(document).ready(function(){
 											$(this).data('requestRunning', false);
 											
 											$('#ajax-loader').fadeOut();
+
+											$('.image').click(function(){
+					                    		$.fn.imagesBox.select_image($(this));
+					                			});
 										}
 						           
 			                		});

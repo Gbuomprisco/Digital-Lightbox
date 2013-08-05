@@ -34,7 +34,7 @@ $(document).ready(function () {
             // Create the structure of the toolbar and put it on the screen
             create: function (options) {
 
-                if ((this.exists() === false) && ($.fn.images_on_workspace().length > 0) && (typeof $selectedImage != "undefined")) {
+                if ((this.exists() === false) && ($.fn.images_on_workspace().length > 0)) {
                     var structure = '<div id=' + this.default_options['id'] + '>';
                     structure += "<div id='topToolbar'><span id='name_image'>Tools</span> <span title='Close toolbar' class='pull-right' id='closeToolbar'>x</span></div>";
                     $(this.default_options['container']).append(structure);
@@ -90,7 +90,9 @@ $(document).ready(function () {
                     slide: function (event, ui) {
                         if ($.fn.images_on_workspace().length > 0) {
                             var opacity = (ui.value / 100);
-                            $selectedImage.children().children('img').css('opacity', opacity);
+                            $.each($.fn.select_group.imagesSelected, function(){
+                                this.children().children('img').css('opacity', opacity);
+                            });
                         }
                     }
                 });
@@ -103,13 +105,15 @@ $(document).ready(function () {
                     max: 300,
                     value: 200,
                     slide: function (event, ui) {
-                        if ($.fn.images_on_workspace().length > 0) {
-                            if(document.body.style.webkitFilter !== undefined){
-                                $selectedImage.css('-webkit-filter', 'brightness(' + ui.value / 2 + '%)');
-                            } else {
-                                $selectedImage.css('polyfilter','brightness(' + ui.value / 2 + '%)');
+                        $.each($.fn.select_group.imagesSelected, function(){
+                            if ($.fn.images_on_workspace().length > 0) {
+                                if(document.body.style.webkitFilter !== undefined){
+                                    this.css('-webkit-filter', 'brightness(' + ui.value / 2 + '%)');
+                                } else {
+                                    this.css('polyfilter','brightness(' + ui.value / 2 + '%)');
+                                }
                             }
-                        }
+                        });
                     }
                 });
                 return false; 
@@ -122,7 +126,9 @@ $(document).ready(function () {
                     max: 180,
                     value: 0,
                     slide: function (event, ui) {
-                        $selectedImage.css('transform','rotate(' + ui.value + 'deg)');
+                        $.each($.fn.select_group.imagesSelected, function(){
+                            this.css('transform','rotate(' + ui.value + 'deg)');
+                        });
                     }
                 });
 
@@ -130,12 +136,13 @@ $(document).ready(function () {
             },
 
             grayscale: function(button){
-
-                if(button.is(':checked')){
-                    $selectedImage.children().children('img').addClass('grayscale');
-                } else {
-                    $selectedImage.children().children('img').removeClass('grayscale');
-                }
+                $.each($.fn.select_group.imagesSelected, function(){
+                    if(button.is(':checked')){
+                        this.children().children('img').addClass('grayscale');
+                    } else {
+                        this.children().children('img').removeClass('grayscale');
+                    }
+                });
 
             },
 
@@ -159,109 +166,113 @@ $(document).ready(function () {
                     return typeof o === 'number' && isFinite(o);
                 };
                 */
-                var size = $selectedImage.data('size').split(',');
-                var width = $('#set_width').val();
-                var height = $('#set_height').val();
-                var ratio = size[0] / size[1];
-                var calc_height;
-                var calc_width;
+                $.each($.fn.select_group.imagesSelected, function(){
+                    var size = this.data('size').split(',');
+                    var width = $('#set_width').val();
+                    var height = $('#set_height').val();
+                    var ratio = size[0] / size[1];
+                    var calc_height;
+                    var calc_width;
 
-                if(width && !height){
-                    calc_height = "auto"
-                    calc_width = width;
-                } else if(!width && height){
-                    
-                    calc_height = height;
-                } else {
-                    calc_height = height;
-                    calc_width = width;
-                }
+                    if(width && !height){
+                        calc_height = "auto"
+                        calc_width = width;
+                    } else if(!width && height){
+                        
+                        calc_height = height;
+                    } else {
+                        calc_height = height;
+                        calc_width = width;
+                    }
 
-                $selectedImage.children().css({
-                    'width': calc_width,
-                    'height': calc_height
+                    this.children().css({
+                        'width': calc_width,
+                        'height': calc_height
+                    });
+
+                    this.css({
+                        'width': calc_width,
+                        'height': calc_height
+                    });
+
+                    this.children().children('img').css({
+                        'width': calc_width,
+                        'height': calc_height
+                    });
+
+                    var position = this.offset();
+
+                    if(position['top'] < $(window).scrollTop() || position['left'] < $(window).scrollLeft()){
+                        this.animate({
+                            "top": $(window).scrollTop() + 100,
+                            "left": $(window).scrollLeft() + 100
+                        }, 150);
+                    }
+
+                    $('#mini_' + this.attr('id')).animate({
+                        'width': parseInt(this.children().children('img').css('width')) / 25 + "px",
+                        'height': parseInt(this.children().children('img').css('height')) / 30  + "px",
+                    }, 10);
                 });
 
-                $selectedImage.css({
-                    'width': calc_width,
-                    'height': calc_height
-                });
-
-                $selectedImage.children().children('img').css({
-                    'width': calc_width,
-                    'height': calc_height
-                });
-
-                this.refreshSize();
-
-                var position = $selectedImage.offset();
-
-                if(position['top'] < $(window).scrollTop() || position['left'] < $(window).scrollLeft()){
-                    $selectedImage.animate({
-                        "top": $(window).scrollTop() + 100,
-                        "left": $(window).scrollLeft() + 100
-                    }, 150);
-                }
-
-                $('#mini_' + $selectedImage.attr('id')).animate({
-                    'width': parseInt($selectedImage.children().children('img').css('width')) / 25 + "px",
-                    'height': parseInt($selectedImage.children().children('img').css('height')) / 30  + "px",
-                }, 10);
+                $.fn.toolbar.refreshSize();
 
             },
 
             reset: function(){
+                $.each($.fn.select_group.imagesSelected, function(){
 
-                var size = $selectedImage.data('size').split(',');
+                    var size = this.data('size').split(',');
 
-                $selectedImage.children().css({
-                    'width': "180px",
-                    'height': "auto",
-                });
-
-                if(document.body.style.webkitFilter !== undefined){
-
-                    $selectedImage.css({
+                    this.children().css({
                         'width': "180px",
                         'height': "auto",
-                        'transform': "rotate(0deg)",
-                        '-webkit-filter': 'brightness(100%)'
-                    });
-                   
-                } else {
-
-                    $selectedImage.css({
-                        'width': "180px",
-                        'height': "auto",
-                        'transform': "rotate(0deg)",
-                        'polyfilter':'brightness(100%)'
                     });
 
-                }
-                
-                 $selectedImage.children().children('img').css({
-                        'width': "180px",
-                        'height': "auto",
-                        'opacity': 1
+                    if(document.body.style.webkitFilter !== undefined){
+
+                        this.css({
+                            'width': "180px",
+                            'height': "auto",
+                            'transform': "rotate(0deg)",
+                            '-webkit-filter': 'brightness(100%)'
+                        });
+                       
+                    } else {
+
+                        this.css({
+                            'width': "180px",
+                            'height': "auto",
+                            'transform': "rotate(0deg)",
+                            'polyfilter':'brightness(100%)'
+                        });
+
+                    }
+                    
+                    this.children().children('img').css({
+                            'width': "180px",
+                            'height': "auto",
+                            'opacity': 1
+                    });
+
+                    var position = this.offset();
+
+                    if(position['top'] < $(window).scrollTop()  || position['left'] < $(window).scrollLeft()){
+                        this.animate({
+                            "top": $(window).scrollTop() + 100,
+                            "left": $(window).scrollLeft() + 100
+                        }, 150);
+                    }
+
+                    $('#mini_' + this.attr('id')).animate({
+                        'width': parseInt(this.children().children('img').css('width')) / 25 + "px",
+                        'height': parseInt(this.children().children('img').css('height')) / 30  + "px",
+                    }, 10);
+
+                    $('#grayscale').prop('checked', false);
+                    $.fn.toolbar.grayscale($('#grayscale'));
+                    $.fn.toolbar.refresh();
                 });
-
-                var position = $selectedImage.offset();
-
-                if(position['top'] < $(window).scrollTop()  || position['left'] < $(window).scrollLeft()){
-                    $selectedImage.animate({
-                        "top": $(window).scrollTop() + 100,
-                        "left": $(window).scrollLeft() + 100
-                    }, 150);
-                }
-
-                $('#mini_' + $selectedImage.attr('id')).animate({
-                    'width': parseInt($selectedImage.children().children('img').css('width')) / 25 + "px",
-                    'height': parseInt($selectedImage.children().children('img').css('height')) / 30  + "px",
-                }, 10);
-
-                $('#grayscale').prop('checked', false);
-                this.grayscale($('#grayscale'));
-                this.refresh();
 
             },
 
@@ -321,7 +332,7 @@ $(document).ready(function () {
                 });
 
                 $('#createComment').click(function(){
-                    $.fn.comments.init($selectedImage.attr('id'));
+                    $.fn.comments.init($(this).attr('id'));
                 });
 
                 $('#reset_image').click(function(){
@@ -370,84 +381,187 @@ $(document).ready(function () {
 
             },
 
-            selectedImage: function(){
-                if(($.fn.images_on_workspace().length > 0) && (typeof $selectedImage != "undefined")){
-                    return $selectedImage;
-                } else {
-                    return undefined;
-                }
-            },
-
             refreshSize: function(){
-                $('#set_width').val('');
-                $('#set_height').val('');
-                $('#set_width').attr("placeholder", $selectedImage.children().children('img').css('width').replace("px", ''));
-                $('#set_height').attr("placeholder", $selectedImage.children().children('img').css('height').replace("px", ''));
+                $.each($.fn.select_group.imagesSelected, function(){
+                    $('#set_width').val('');
+                    $('#set_height').val('');
+                    $('#set_width').attr("placeholder", this.children().children('img').css('width').replace("px", ''));
+                    $('#set_height').attr("placeholder", this.children().children('img').css('height').replace("px", ''));
+                });
             },
 
             refresh: function () {
+                $('#images_group').popover('destroy');
+                $.each($.fn.select_group.imagesSelected, function(index, value){
+                    var features = function () {
 
-                var features = function () {
+                        var image = {};
 
-                    var image = {};
+                        String.prototype.getNums = function(){
+                            var rx=/[+-]?((\.\d+)|(\d+(\.\d+)?)([eE][+-]?\d+)?)/g,
+                            mapN= this.match(rx) || [];
+                            return mapN.map(Number);
+                        };
 
-                    String.prototype.getNums = function(){
-                        var rx=/[+-]?((\.\d+)|(\d+(\.\d+)?)([eE][+-]?\d+)?)/g,
-                        mapN= this.match(rx) || [];
-                        return mapN.map(Number);
-                    };
+                        var get_rotation = function(matrix){
+                            if(matrix !== 'none') {
+                                var values = matrix.split('(')[1].split(')')[0].split(',');
+                                var a = values[0];
+                                var b = values[1];
+                                var angle = Math.round(Math.atan2(b, a) * (180/Math.PI));
+                            } else { 
+                                var angle = 0; 
+                            }
+                            return (angle < 0) ? angle += 360 : angle;
+                        };
 
-                    var get_rotation = function(matrix){
-                        if(matrix !== 'none') {
-                            var values = matrix.split('(')[1].split(')')[0].split(',');
-                            var a = values[0];
-                            var b = values[1];
-                            var angle = Math.round(Math.atan2(b, a) * (180/Math.PI));
-                        } else { 
-                            var angle = 0; 
-                        }
-                        return (angle < 0) ? angle += 360 : angle;
-                    };
+                        //Name
+                        if ($.fn.images_on_workspace().length > 0) {
+                            var name_image = value.data('title');
+                            if($.fn.select_group.imagesSelected.length > 1){
+                                image['name'] = "<span id='images_group'>" + $.fn.select_group.imagesSelected.length + " images selected</span>";
+                                $('#name_image').html(image['name']);
 
-                    //Name
-                    if ($.fn.images_on_workspace().length > 0) {
-                        var name_image = $selectedImage.data('title');
-                        image['name'] = name_image;
-                        image['opacity'] = $selectedImage.children().children('img').css('opacity') * 100;
-                        image['rotate'] = get_rotation($selectedImage.css('transform'));
-                        if(document.body.style.webkitFilter !== undefined){
-                            if($selectedImage.css('-webkit-filter') != "none"){
-                                var brightness = $selectedImage.css('-webkit-filter').getNums() * 2 * 100;
-                                image['brightness'] = brightness;
+                                $('#images_group').popover({
+                                    trigger: 'click',
+                                    placement: 'right',
+                                    title: 'Images selected',
+                                    container: '#toolbar',
+                                    html: true,
+                                    content: function(){
+                                        var s = '';
+                                        $.each($.fn.select_group.imagesSelected, function(){
+                                            var position = this.offset();
+                                            var top = position.top;
+                                            var left = position.left;
+                                            var title = function(title){
+                                                if(title.length > 25){
+                                                    return title.substr(0, 25) + '...';
+                                                } else {
+                                                    return title;
+                                                }
+                                            }
+                                            s += "<p data-image = '" + this.attr('id') + "'  class='images_selected row-fluid'><span data-coords = " + top + "," + left + " class='title-image-selected col-lg-9' title = 'Go to " + this.data('title') + "'>" +  title(this.data('title')) + "</span> <span data-image = " + this.attr('id') + " title='Hide Image' class='icons-tool col-lg-1 hide-image glyphicon glyphicon-eye-close'></span> <span data-image = " + this.attr('id') + " title='Delete Image' class='icons-tool col-lg-1 delete-image glyphicon glyphicon-trash'></span></p>";
+                                        });
+                                        return s;
+                                    }
+                                    
+                                });
+                                
+                                $('#images_group').on('shown.bs.popover', function () {
+                                    $('.images_selected .title-image-selected').click(function(){
+                                        var coords = $(this).data('coords').split(',');
+                                        $('html, body').animate({
+                                            scrollTop: coords[0] - 100,
+                                            scrollLeft: coords[1] - 100
+                                        }, 500);
+                                    });
+
+                                    function highlight(){
+                                        
+                                    }
+
+                                    function hide(){
+                                        var id = $(this).data('image');
+                                        $('#' + id).fadeOut();
+                                        $(this).removeClass('glyphicon-eye-close');
+                                        $(this).removeClass('hide-image');
+                                        $(this).addClass('glyphicon-eye-open');
+                                        $(this).attr('title', 'Show Image');
+                                        $(this).addClass('show-image');
+                                        $(this).unbind();
+                                        $(this).on('click', show);
+                                        console.log($(this));
+                                    }
+
+                                    function show(){
+                                        var id = $(this).data('image');
+                                        $('#' + id).fadeIn();
+                                        $(this).removeClass('glyphicon-eye-open');
+                                        $(this).removeClass('show-image');
+                                        $(this).addClass('glyphicon-eye-close');
+                                        $(this).attr('title', 'Hide Image');
+                                        $(this).addClass('hide-image');
+                                        $(this).unbind()
+                                        $(this).on('click', hide);
+                                        console.log($(this));
+                                    }
+
+                                    $('.hide-image').on('click', hide);
+
+                                    $('.images_selected').hover(function(){
+                                        var id = $(this).data('image');
+                                        $('#mini_' + id).animate({
+                                            'background-color': 'yellow'
+                                        }, 250);
+                                    });
+
+                                    $('.images_selected').mouseout(function(){
+                                        var id = $(this).data('image');
+                                        $('#mini_' + id).animate({
+                                            'background-color': 'red'
+                                        }, 250);
+                                    });
+
+                                    $('.delete-image').click(function(){
+                                        var id = $(this).data('image');
+                                        $('#' + id).fadeOut().remove();
+                                        var imagesSelected = $.fn.select_group.imagesSelected;
+                                        for (var i = 0; i < imagesSelected.length; i++) {
+                                            if ($(imagesSelected[i]).attr('id') == id) {         
+                                              imagesSelected.splice(i, 1);
+                                              i--;
+                                            }
+                                        }
+                                        $('#mini_' + id).remove();
+                                        $.fn.toolbar.refresh();
+                                    });
+
+                                });
                             } else {
-                                image['brightness'] = 200;
+                                if(name_image.length > 32){
+                                     image['name'] = name_image.substr(0, 32) + '...';
+                                } else {
+                                     image['name'] = name_image;
+                                }
+                                $('#name_image').html(image['name']);
+                                $('#name_image').attr('title', name_image);
+                            }
+                            image['opacity'] = value.children().children('img').css('opacity') * 100;
+                            image['rotate'] = get_rotation(value.css('transform'));
+                            if(document.body.style.webkitFilter !== undefined){
+                                if(value.css('-webkit-filter') != "none"){
+                                    var brightness = value.css('-webkit-filter').getNums() * 2 * 100;
+                                    image['brightness'] = brightness;
+                                } else {
+                                    image['brightness'] = 200;
+                                }
+                            } else {
+                                if(typeof document.getElementById(value.attr('id')).style.polyfilterStore != "undefined"){
+                                    var brightness = document.getElementById(value.attr('id')).style.polyfilterStore.getNums();
+                                    image['brightness'] = brightness * 2;
+                                } else {
+                                    image['brightness'] = 200;
+                                }
                             }
                         } else {
-                            if(typeof document.getElementById($selectedImage.attr('id')).style.polyfilterStore != "undefined"){
-                                var brightness = document.getElementById($selectedImage.attr('id')).style.polyfilterStore.getNums();
-                                image['brightness'] = brightness * 2;
-                            } else {
-                                image['brightness'] = 200;
-                            }
+                            name_image = '';
+                            image['opacity'] = 100;
+                            image['brightness'] = 200;
                         }
-                    } else {
-                        name_image = '';
-                        image['opacity'] = 100;
-                        image['brightness'] = 200;
+
+                        return image;
                     }
 
-                    return image;
+                    var image = features();
+                    $("#slider").slider("option", "value", image['opacity']);
+                    $('#slider_brightness').slider("option", "value", image['brightness']);
+                    $('#slider_rotate').slider("option", "value", image['rotate']);
 
-                };
+                    $.fn.toolbar.refreshSize();
 
-                var image = features();
-                $("#slider").slider("option", "value", image['opacity']);
-                $('#slider_brightness').slider("option", "value", image['brightness']);
-                $('#slider_rotate').slider("option", "value", image['rotate']);
 
-                this.refreshSize();
-
-                $('#name_image').html(image['name']);
+                });
             }
 
         };
@@ -460,7 +574,8 @@ $(document).ready(function () {
             init: function(){
                 this.buttons();
             },
-
+  
+  
             show: function(){
                 $('#button_images').tooltip('hide').fadeOut().remove();
                 this.imagesBox.show().draggable({
@@ -487,7 +602,7 @@ $(document).ready(function () {
                 this.imagesBox.show().animate({
                     position: 'absolute',
                     top: this.buttons_position['top'],
-                    left: this.buttons_position['left'] + 150,
+                    left: this.buttons_position['left'],
                     width: 0,
                     height: 0,
                     opacity: 0
@@ -572,7 +687,7 @@ $(document).ready(function () {
                         $('#barRight').append(new_images);
 
                         $(images[i]).click(function () {
-                            $(this).select_group();
+                            $.fn.select_group.select($(this));
                         });
 
                         $.fn.minimap.add_to_minimap($(images[i]).attr('id'));
@@ -657,7 +772,7 @@ $(document).ready(function () {
                         cursor: 'move',
                         stack: '.image',
                         appendTo: 'body',
-                        zIndex: 401
+                        zIndex: 500
                     });
                     if(content || title || image_id && image){
                         $('#' + image_comment).children('.comment_wrapper').children('.comment_content').html(content);
@@ -672,14 +787,18 @@ $(document).ready(function () {
                  $('.removeComment').click(function(){
                     var notes = $.fn.comments.notes;
                     var note = $(this).parent().parent('.comment');
-                    for(i = 0; i < notes.length; i++){
-                        if(notes[i]['id'] == note.data('id')){
-                            //delete notes[i];
-                            $.fn.comments.notes.splice(i, 1);
-                            break;
+                    for (var i = 0; i < notes.length; i++) {
+                        if (notes[i]['id'] == note.data('id')) {         
+                          $.fn.comments.notes.splice(i, 1);
+                          i--;
                         }
                     }
                     note.fadeOut().remove();
+                    if($.fn.comments.notes.length == 0){
+                        $('#notes_alert').fadeIn().html("No notes created");
+                    } else {
+                        $('#notes_alert').fadeOut().html('');
+                    }
                 });
 
                  $('.minimizeNote').click(function(){
@@ -688,7 +807,8 @@ $(document).ready(function () {
 
                 $('#bold').on("click", function(){document.execCommand('bold',false,null);});
                 $('#italic').on("click", function(){document.execCommand('italic',false,null);});
-                $('#underline').on("click", function(){document.execCommand('underline',false,null);});                
+                $('#underline').on("click", function(){document.execCommand('underline',false,null);});  
+                $('#link').on("click", document.execCommand("CreateLink", false, $('#text_link').val()));              
             },
 
             minimizeNote: function(note_this){
@@ -732,11 +852,11 @@ $(document).ready(function () {
             make_comment: function(image, id_image){
                 var comment = "<div class='comment' id='" + image + "' data-image = '" + id_image +"'>";
                 comment += "<div class='top_comment'>";
-                comment += "<button class='btn btn-small btn-danger removeComment' title='Remove note'><i class='icon-remove'></i> Remove</button>";
-                comment += ' <div class="btn-group" data-toggle="buttons-checkbox"><button type="button" id="bold" class="btn btn-small">b</button><button type="button" id="italic" class="btn btn-small">i</button><button type="button" id="underline" class="btn btn-small">u</button></div> ';
-                comment += "<span class='btn btn-small pull-right minimizeNote' title='Minimize note' style='font-weight:bold;'><i class='icon-remove'></i></span></div>";
+                comment += "<button class='btn btn-small btn-danger removeComment' title='Delete Note'><i class='icon-remove'></i> Delete</button>";
+                comment += ' <div class="btn-group" data-toggle="buttons-checkbox"><button type="button" id="bold" class="btn btn-small">b</button><button type="button" id="italic" class="btn btn-small">i</button><button type="button" id="underline" class="btn btn-small">u</button><button class="btn btn-small" id="link"><span class="glyphicon glyphicon-globe"></button><button class="btn btn-small" id="annotate"><span class="glyphicon glyphicon-pushpin" ></span></button></div>';
+                comment += "<span class='pull-right minimizeNote' title='Minimize note'><span style='font-weight:bold;color:white;font-size:15px;cursor:pointer;margin:0.5%;' class='glyphicon glyphicon-remove'></span></span></div>";
                 comment += "<div class='comment_wrapper'>";
-                comment += "<input class='commentTitle' class='hidden' placeholder='Comment title here ...' />";
+                comment += "<input class='commentTitle' class='hidden' placeholder='Title ...' />";
                 comment += "<div class='comment_content' contenteditable></div></div>";       
                 return comment;
             },
@@ -745,7 +865,7 @@ $(document).ready(function () {
             hide_notes: function(button_position){
                 $('#notes').animate({
                     "top": button_position['top'],
-                    'left': button_position['left'] + 150,
+                    'left': button_position['left'],
                     'width': "0%",
                     'height': "0%",
                     'opacity': 0
@@ -777,24 +897,22 @@ $(document).ready(function () {
                             var title = notes[i]['title'];
                             var content = notes[i]['content'];
                             var position = notes[i]['position'];
-                            $(note).stop().animate({
-                                position: "absolute",
+                            $(note).animate({
+                                position: "fixed",
                                 top: notes[i]['position']['top'],
                                 left: notes[i]['position']['left'],
-                                backgroundColor: "rgb(0, 109, 204)",
-                                width: "0px",
-                                height: "0px",
                                 opacity: 0
                             }, {
                                 duration: 300,
                                 complete: function () {
                                    $(this).hide();
                                    $.fn.comments.init(image, content, title, id);
-                                   $('.comment').css({
+                                   $('.comment').animate({
                                         'position': "fixed",
                                         'top': position['top'],
-                                        'left': position['left']
-                                   });
+                                        'left': position['left'],
+                                        'opacity': 1
+                                   }, 200);
                                 }
                             });
                         }
@@ -810,9 +928,7 @@ $(document).ready(function () {
 
             update_notes: function(note){
                 var button_position = $('#notes_button').position();
-                var notes_html = "<div class = 'note' data-id = '" + note['id'] + "'><span class='note_box_title'>" + note['title'] + "</span>" + 
-                    "<p class='pull-right'><button class='btn btn-primary btn-small edit_comment_from_box'>Edit</button> <button class='btn btn-danger btn-small remove_comment_from_box'>Remove</button></p>" +
-                    "<p class='note_box_content'>" + note['content'] + "</p></div>";
+                var notes_html = "<div class = 'note' data-id = '" + note['id'] + "'><p style='padding:0' class='note_box_title col-lg-9'>" + note['title'] + "</p><p class='pull-right'><span title='Edit Note' class='glyphicon glyphicon-pencil edit_comment_from_box'></span> <span title='Delete Note' class='glyphicon glyphicon-remove remove_comment_from_box'></span></p><div class='note_box_content'>" + note['content'] + "</div></div>";
                 
                 $('#notes_container').append(notes_html);
 
@@ -825,11 +941,10 @@ $(document).ready(function () {
                 $('.remove_comment_from_box').click(function(){
                     var notes = $.fn.comments.notes;
                     var note = $(this).parent().parent('.note');
-                    for(i = 0; i < notes.length; i++){
-                        if(notes[i]['id'] == note.data('id')){
-                            //delete notes[i];
-                            $.fn.comments.notes.splice(i, 1);
-                            break;
+                    for (var i = 0; i < notes.length; i++) {
+                        if (notes[i]['id'] == note.data('id')) {         
+                          $.fn.comments.notes.splice(i, 1);
+                          i--;
                         }
                     }
                     $(note).stop().animate({
@@ -844,6 +959,11 @@ $(document).ready(function () {
                            $(this).hide().remove();
                         }
                     });
+                    if($.fn.comments.notes.length == 0){
+                        $('#notes_alert').fadeIn().html("No notes created");
+                    } else {
+                        $('#notes_alert').fadeOut().html('');
+                    }
                 });
 
                 $('.edit_comment_from_box').click(function(){
@@ -854,7 +974,6 @@ $(document).ready(function () {
 
             show_notes: function(){
                     var button_position = $('#notes_button').position();
-                    $('#notes_button').hide();
                     $('#notes').show().animate({
                         "top": "16%",
                         'left': "25%",
@@ -865,6 +984,7 @@ $(document).ready(function () {
                     }, {
                         duration: 250,
                         complete: function () {
+                            $('#notes_button').hide();
                             $('#notes_container').sortable();
                             $('#notes_button').tooltip({
                                 placement: 'bottom',
@@ -1085,7 +1205,7 @@ $(document).ready(function () {
             hide_letters: function(button_position){
                 $('#letters').animate({
                     "top": button_position['top'],
-                    'left': button_position['left'] + 150,
+                    'left': button_position['left'],
                     'width': "0%",
                     'height': "0%",
                     'opacity': 0
@@ -1141,7 +1261,7 @@ $(document).ready(function () {
                 });
 
                 $('#image_' + letter.attr('id')).click(function(){
-                    $(this).select();
+                    $.fn.select_group.select($(this));
                 });
 
                 $.fn.minimap.add_to_minimap('image_' + letter.attr('id'));
@@ -1288,7 +1408,7 @@ $(document).ready(function () {
                     var button_position = $('#load').position();
                     $('#import').css({
                         'top': button_position['top'],
-                        'left': button_position['left'] + 150
+                        'left': button_position['left']
                     });
                     $('#load').hide();
                     $('#import').show().animate({
@@ -1335,7 +1455,7 @@ $(document).ready(function () {
 
                 $('#import').animate({
                     "top": button_position['top'],
-                    'left': button_position['left'] + 150,
+                    'left': button_position['left'],
                     'width': "0%",
                     'height': "0%",
                     'opacity': 0
@@ -1412,8 +1532,8 @@ $(document).ready(function () {
                                 folder += "<div class='folder' id='" + files[i][0] + "'><img src='/static/img/folder.png' /><div class='folder_title'>" + files[i][0] + "</div></div>";
                             }
                            
-                            var breadcrumb = "<div class='row-fluid'><div style='padding-bottom: 2.5%;margin:0;' class='breadcrumb'><li><a id='back_to_load'>Load a session</a> </li><li class='active'>Local Manager</li> <li class='pull-right'><button id='load_session_button' class='btn btn-small btn-primary'>Load</button> <button id='delete_session_button' class='btn btn-danger btn-small'>Delete</button></li></div></div>";
-                            $('#top_load_box').fadeIn().html(breadcrumb);
+                            var breadcrumb = "<div class='row-fluid'><div style='line-height:3;margin:0;' class='breadcrumb'><li><a id='back_to_load'>Load a session</a> </li><li class='active'>Local Manager</li> <li class='pull-right no-before'><button id='load_session_button' class='btn btn-small btn-primary'>Load</button> <button id='delete_session_button' class='btn btn-danger btn-small'>Delete</button></li></div></div>";
+                            $('#top_load_box').html(breadcrumb).slideDown(100);
                             $(this).children('.box_container').css('margin', 0).html(folder);
 
                             $('.folder').click(function(){
@@ -1453,29 +1573,30 @@ $(document).ready(function () {
 
                             $.fn.import.manager = true;
                             $('#back_to_load').click(function(){
-                                    $('#top_load_box').fadeOut();
-                                    var back = "<button id='open_load_from_pc' class='btn btn-primary'>Load from File</button> <button id='load_from_db' class='btn btn-primary disabled'>Load from your Account</button>";
-                                    $("#import").children('.box_container').html(back);
-                                    $('#import').show().animate({
-                                        "top": "14%",
-                                        'left': "29%",
-                                        'width': "40%",
-                                        'height': "25%",
-                                        'margin': 0,
-                                        'opacity': 1,
-                                        'z-index': 400
-                                    }, {
-                                        duration: 250,
-                                        complete: function(){
-                                            $.fn.import.manager = false;
-                                            $('#open_load_from_pc').click(function(){
-                                                $.fn.import.show_manager();
-                                            });
-                                        }
-                                    });
-                                }).draggable();
-                            }
-                        });
+                                var back = "<button id='open_load_from_pc' class='btn btn-primary'>Load from File</button> <button id='load_from_db' class='btn btn-primary disabled'>Load from your Account</button>";
+                                $("#import").children('.box_container').html(back);
+                                $('#top_load_box').slideUp(100);
+                                $('#import').show().animate({
+                                    "top": "14%",
+                                    'left': "29%",
+                                    'width': "40%",
+                                    'height': "25%",
+                                    'margin': 0,
+                                    'opacity': 1,
+                                    'z-index': 400
+                                }, {
+                                    duration: 250,
+                                    complete: function(){
+                                        $.fn.import.manager = false;
+                                        
+                                        $('#open_load_from_pc').click(function(){
+                                            $.fn.import.show_manager();
+                                        });
+                                    }
+                                });
+                            }).draggable();
+                        }
+                    });
             },
 
             delete_session: function(file){
@@ -1597,7 +1718,7 @@ $(document).ready(function () {
                         });
 
                         $('#' + images[i]['image']).click(function(){
-                            $(this).select();
+                           $.fn.select_group.select($(this));
                         });
 
                         $.fn.minimap.add_to_minimap(images[i]['image']);
@@ -1647,7 +1768,7 @@ $(document).ready(function () {
                         });
 
                         $("#" + images[i][1]).click(function(){
-                            $(this).select();
+                           $.fn.select_group.select($(this));
                         });
 
                         $.fn.minimap.add_to_minimap(images[i][1]);
@@ -1718,27 +1839,22 @@ $(document).ready(function () {
                     "top": top,
                     "left": left
                 });
-                //this.make_scrollable("#mini_" + id);
+                this.make_scrollable(element);
                 this.images.push(element); 
             },
-            /*
+            
             make_scrollable: function(map_image){
-
                 $(map_image).click(function(){
-
-                    var image = $(map_image).data('image');
-                    var top = $("#" + image).css('top') - 100;
-                    var left = $("#" + image).css('left') - 100;
-
+                    var image = map_image.data('image');
+                    var position = $('#' + image).offset();
                     $('html, body').animate({
-                        scrollTop: top,
-                        scrollLeft: left
+                        scrollTop: position.top - 100,
+                        scrollLeft: position.left - 50
                     }, 800);
-
                 });
 
             },
-            */
+            
             update_mini_map: function(id){
                 var image_on_workspace = $('#' + id);
                 var image = {
@@ -1770,14 +1886,9 @@ $(document).ready(function () {
             },
 
             show: function(){
-                var button_position = $('#load').position();
-                $('#export').css({
-                    'top': button_position['top'],
-                    'left': button_position['left'] + 200
-                });
                 $('#save').hide();
-
-                $('#export').show().animate({
+                $('#export').show();
+                $('#export').animate({
                     "top": "16%",
                     'left': "29%",
                     'width': "42%",
@@ -1799,7 +1910,7 @@ $(document).ready(function () {
                 var button_position = $('#save').position();
                 $('#export').animate({
                     "top": button_position['top'],
-                    'left': button_position['left'] + 150,
+                    'left': button_position['left'],
                     'width': "0%",
                     'height': "0%",
                     'opacity': 0
@@ -1926,8 +2037,7 @@ $(document).ready(function () {
                     if($.fn.toolbar.exists()){
 
                         var toolbar = {
-                            'position': $.fn.toolbar.toolbox.position(),
-                            'selectedImage': $selectedImage.attr('id')
+                            'position': $.fn.toolbar.toolbox.position()
                         };
 
                     } else {
@@ -2011,34 +2121,9 @@ $(document).ready(function () {
 
         };
 
-        /*
-
-        $.fn.menu = {
-
-            init: function(){
-
-                this.show();
-                this.buttons();
-
-            },
-
-            show: function(){
-
-            },
-
-            hide: function(){
-
-            },
-
-            buttons: function(){
-
-            }
-
-        }
-
-        */
-
         function main(){
+
+            $.fn.toolbar.init();
 
             Array.prototype.clean = function(deleteValue) {
               for (var i = 0; i < this.length; i++) {
@@ -2069,37 +2154,52 @@ $(document).ready(function () {
                 return false;
             };
 
-            $.fn.select_group = function(){
-                if($(this).data('selected')){
-                    $(this).children().css('box-shadow', 'none');
-                    $(this).removeClass('selected');
-                    $(this).data('selected', false);
-                    $(this).draggable({
-                        alsoDrag: false
-                    });
-                    $(this).children().children('img').resizable({
-                        alsoResize: false
-                    });
+            $.fn.select_group = {
 
-                } else {
-                    $(this).children().css('boxShadow', '0px 0px 30px rgba(255, 246, 9, 1)');
-                    $(this).addClass('selected');
-                    $(this).data('selected', true);
-                    $(this).draggable({
-                        alsoDrag: ".selected"
-                    });
-                    $(this).children().children('img').resizable({
-                        alsoResize: '.selected, .selected > div, .selected > div > img'
-                    });
+                imagesSelected: [],
+
+                select: function(image){
+                    if(image.hasClass('selected') === true){
+                        image.children().css('box-shadow', 'none');
+                        image.removeClass('selected');
+                        image.data('selected', false);
+                        image.draggable({
+                            alsoDrag: false
+                        });
+                        image.children().children('img').resizable({
+                            alsoResize: false
+                        });
+                        for (var i = 0; i < this.imagesSelected.length; i++) {
+                            if ($(this.imagesSelected[i]).attr('id') == image.attr('id')) {         
+                              this.imagesSelected.splice(i, 1);
+                              i--;
+                            }
+                        }
+                        if(this.imagesSelected.length == 0){
+                            $.fn.toolbar.toolbox.remove();
+                            return false;
+                        }
+
+                    } else {
+                        image.children().css('boxShadow', '0px 0px 30px rgba(255, 246, 9, 1)');
+                        image.addClass('selected');
+                        image.data('selected', true);
+                        image.draggable({
+                            alsoDrag: ".selected"
+                        });
+                        image.children().children('img').resizable({
+                            alsoResize: '.selected, .selected > div, .selected > div > img'
+                        });
+                        $.fn.select_group.imagesSelected.push(image);
+                    }
+                    if (!$.fn.toolbar.exists()) {
+                        $.fn.toolbar.create();
+                        $.fn.toolbar.refresh();
+                    } else {
+                        $.fn.toolbar.refresh();
+                    }
                 }
-                $.fn.toolbar.init();
-                if (!$.fn.toolbar.exists()) {
-                    $.fn.toolbar.create();
-                    $.fn.toolbar.refresh();
-                } else {
-                    $.fn.toolbar.refresh();
-                }
-            }
+            };
 
             var images_on_minimap = [];
 
@@ -2138,7 +2238,6 @@ $(document).ready(function () {
                   'top': $(window).scrollTop() / $(window).height() * 19,
                   'left': $(window).scrollLeft() / $(window).width() * 120
                 };
-                console.log(position)
                 $('#marker').animate({
                     'left': position['left'],
                     'top': position['top']

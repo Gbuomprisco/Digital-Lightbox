@@ -24,6 +24,7 @@
 		<script type="text/javascript" src="/static/js/jcrop.min.js"></script>
 		<script type="text/javascript" src="/static/js/resemble.js"></script>
 		<script type="text/javascript" src="/static/js/multidraggable.js"></script>
+		<script type="text/javascript" src="/static/js/jquery.zoomooz.min.js"></script>
 		<script>  
 			var polyfilter_scriptpath = '/static/js/lib/';
 		</script>
@@ -47,11 +48,7 @@
 		{% block extra_head %}{% endblock %}
 	</head>
 {% endblock %}
-	<body>
-		<div class='row-fluid'>
-			<!-- {% include "menu.html" %} -->
+	<body class="row-fluid">
 			{% block main %}
 			{% endblock %}
-			<div class='row-fluid'>{% block footer %}{% endblock %}</div>
-		</div>
 	</body>

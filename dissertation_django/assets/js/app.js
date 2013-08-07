@@ -44,6 +44,7 @@ $(document).ready(function () {
                     this.toolbox.append(tools);
                     this.buttons();
                     $.fn.crop.init();
+                    this.toolbox.show();
                 } else {
                     console.log('Toolbar not initialized, or no images on workspace');
                 }
@@ -74,8 +75,8 @@ $(document).ready(function () {
                 tools += rotate;
                 tools += "<div class='tool'><span class='tool_label'>Grayscale</span> <div class='slider'><input style='margin-bottom:10px;' type='checkbox' id='grayscale' /></div></div>";
                 tools += line;
-                var size = "<div class='tool'><span class='tool_label'>Size</span>";
-                size += "<input class='small-input' type='text' id='set_width' /><span class='label_size'>Width</span><input class='small-input' type='text' id='set_height' /><span class='label_size'>Height</span><button style='margin-bottom:3%' id='set_size' class='btn btn-primary btn-small'>Set</button></div>";
+                var size = "<div class='tool'><span class='tool_label' style='padding-top: 5px;'>Size</span>";
+                size += "<input class='small-input' type='text' id='set_width' /><span class='label_size'>Width</span><input class='small-input' type='text' id='set_height' /><span class='label_size'>Height</span><button id='set_size' class='btn btn-primary btn-small'>Set</button></div>";
                 tools += size;
                 var comment = "<div class='line' style='padding-top:5%'></div><div class='tool'><span class='tool_label'>Notes</span> <button id='createComment' class='btn btn-primary btn-small'><i class='icon-book'></i> Add Note</button></div>";
                  var crop = "<div class='line'></div><div class='tool'><span class='tool_label'>Crop</span> <button class='btn btn-primary btn-small crop_button'><i class='icon-resize-small'></i> Activate Crop</button> <button id='crop_image' class='btn btn-small btn-warning'>Crop Image!</button></div>";
@@ -299,22 +300,22 @@ $(document).ready(function () {
             },
 
             hide: function () {
-                $('#buttons').prepend("<img data-toggle='tooltip' title='Show Tools Box' id='button_toolbar' src='/static/img/tools.png' />");
+                $('#buttons').prepend("<img data-toggle='tooltip' title='Show Tools Box' id='button_toolbar' src='/static/img/_tools.png' />");
                 this.buttons_position = $('#button_toolbar').position();
                 this.last_style = this.toolbox.css(['top', 'left', 'width', 'height', 'opacity']);
                 this.toolbox.animate({
                     position: 'absolute',
-                    top: this.buttons_position['top'],
-                    left: this.buttons_position['left'],
+                    top: "95%",
+                    left: this.buttons_position['left'] + $('#buttons').position().left + 30,
                     width: 0,
                     height: 0,
                     opacity: 0
                 }, {
-                    duration: 310,
+                    duration: 250,
                     complete: function () {
                         $(this).hide();    
                         $('#button_toolbar').tooltip({
-                            placement: 'bottom',
+                            placement: 'top',
                             trigger: 'hover'
                         });
                         $('#button_toolbar').click(function () {
@@ -348,25 +349,25 @@ $(document).ready(function () {
                 });
 
                 $('#removeImage').click(function(){
-                    if(typeof $selectedImage.data('is_letter') == "undefined" || $selectedImage.data('is_letter') == false){
+                    $.each($.fn.select_group.imagesSelected, function(){
+                        if(typeof $(this).data('is_letter') == "undefined" || $(this).data('is_letter') === false){
 
-                        $('#images_container').append($selectedImage.unbind().attr('style', '').draggable("destroy").removeClass('image_active').addClass('image').data('selected', false).children().children('img').resizable("destroy").css("box-shadow", "none").attr('style', '').parent('.image').children('.image_desc').css('box-shadow', 'none').parent(".image"));
+                            $('#images_container').append($(this).unbind().attr('style', '').draggable("destroy").removeClass('image_active').addClass('image').data('selected', false).children().children('img').resizable("destroy").css("box-shadow", "none").attr('style', '').parent('.image').children('.image_desc').css('box-shadow', 'none').parent(".image"));
 
-                        $("#" + $selectedImage.attr('id')).click(function(){
-                            $.fn.imagesBox.select_image($(this));
-                        });
-                    } else {
-
-                        var image_id = $selectedImage.attr('id');
-                        $('#letters_container').append($selectedImage.unbind().attr('style', '').draggable("destroy").removeClass('image_active').data('selected', false).children().children('img').resizable("destroy").css("box-shadow", "none").attr('style', '').addClass('letter').attr('id', image_id));
-                        $selectedImage.remove();
-                        $('#' + image_id).click(function(){
-                            $.fn.letters.selectLetter($(this));
-                        });
-                    }
-                    $('#mini_' + $selectedImage.attr('id')).remove();
-                    $selectedImage = undefined;
-                    $.fn.toolbar.toolbox.remove();
+                            $("#" + $(this).attr('id')).click(function(){
+                                $.fn.imagesBox.select_image($(this));
+                            });
+                        } else {
+                            var image_id = $(this).attr('id');
+                            $('#letters_container').append($(this).unbind().attr('style', '').draggable("destroy").removeClass('image_active').data('selected', false).children().children('img').resizable("destroy").css("box-shadow", "none").attr('style', '').addClass('letter').attr('id', image_id));
+                            $(this).remove();
+                            $('#' + image_id).click(function(){
+                                $.fn.letters.selectLetter($(this));
+                            });
+                        }
+                        $('#mini_' + $(this).attr('id')).remove();
+                        $.fn.toolbar.toolbox.remove();
+                    });
                 });
 
                 $('#crop_image').click(function(e){
@@ -489,18 +490,18 @@ $(document).ready(function () {
 
                                     $('.hide-image').on('click', hide);
 
-                                    $('.images_selected').hover(function(){
-                                        var id = $(this).data('image');
+                                    $('.title-image-selected').hover(function(){
+                                        var id = $(this).parent().data('image');
                                         $('#mini_' + id).animate({
                                             'background-color': 'yellow'
-                                        }, 250);
+                                        }, 50);
                                     });
 
                                     $('.images_selected').mouseout(function(){
                                         var id = $(this).data('image');
                                         $('#mini_' + id).animate({
                                             'background-color': 'red'
-                                        }, 250);
+                                        }, 50);
                                     });
 
                                     $('.delete-image').click(function(){
@@ -519,8 +520,8 @@ $(document).ready(function () {
 
                                 });
                             } else {
-                                if(name_image.length > 32){
-                                     image['name'] = name_image.substr(0, 32) + '...';
+                                if(name_image.length > 30){
+                                     image['name'] = name_image.substr(0, 30) + '...';
                                 } else {
                                      image['name'] = name_image;
                                 }
@@ -582,7 +583,7 @@ $(document).ready(function () {
                     handle: '.top_box'
                 });
                 this.imagesBox.animate({
-                    "top": "14%",
+                    "top": "10%",
                     'left': "25%",
                     'width': "50%",
                     'height': "75%",
@@ -593,25 +594,23 @@ $(document).ready(function () {
 
             hide: function(){
 
-                var button = " <img data-toggle='tooltip' title='Browse Manuscripts' id='button_images' src='/static/img/manuscript.png' />";
+                var button = " <img data-toggle='tooltip' title='Browse Manuscripts' id='button_images' src='/static/img/_manuscript.png' />";
                 $('#buttons').prepend(button);
                 
                 this.buttons_position = $('#button_images').position();
-                
 
                 this.imagesBox.show().animate({
-                    position: 'absolute',
-                    top: this.buttons_position['top'],
-                    left: this.buttons_position['left'],
+                    top: "95%",
+                    left: $('#buttons').position().left + this.buttons_position['left'] + 30,
                     width: 0,
                     height: 0,
                     opacity: 0
                 }, {
-                    duration: 350,
+                    duration: 250,
                     complete: function () {
                         $(this).hide();
                         $('#button_images').tooltip({
-                            placement: 'bottom',
+                            placement: 'top',
                             trigger: 'hover'
                         });
                         $('#button_images').click(function () {
@@ -675,18 +674,19 @@ $(document).ready(function () {
             to_workspace: function(){
                 var images = $.fn.imagesBox.imagesSelected;
                 var images_on_workspace = $('.image');
-                var page_position = $('#overview').offset();
+                var page_position = $('#overview').position();
                 if(images.length > 0){
                     for(i = 0; i < images.length; i++){
 
                         var new_images = $(images[i]).unbind().removeClass('image').addClass('image_active').css({
-                            'top': page_position['top'] - 500  + "px",
-                            'left': page_position['left'] - 10 + "px"
+                            'top': page_position['top'] / 100 +"%",
+                            'left': page_position['left'] / 100 +"%"
                         });
+                        console.log(page_position)
 
                         $('#barRight').append(new_images);
 
-                        $(images[i]).click(function () {
+                        $(images[i]).dblclick(function () {
                             $.fn.select_group.select($(this));
                         });
 
@@ -715,8 +715,11 @@ $(document).ready(function () {
             make_images_draggable: function(){
                 
                 var draggableOptions = {
+                    revert: 'valid',
                     opacity: 0.8,
                     cursor: "move",
+                    scroll: false,
+                    containment: '#barRight',
                     start: function(event, ui) {
                         selectedObjs = $('.selected');
                     },
@@ -852,8 +855,8 @@ $(document).ready(function () {
             make_comment: function(image, id_image){
                 var comment = "<div class='comment' id='" + image + "' data-image = '" + id_image +"'>";
                 comment += "<div class='top_comment'>";
+                comment += ' <div class="btn-group" data-toggle="buttons-checkbox"><button type="button" id="bold" class="btn btn-small">b</button><button type="button" id="italic" class="btn btn-small">i</button><button type="button" id="underline" class="btn btn-small">u</button><button class="btn btn-small" id="link"><span class="glyphicon glyphicon-globe"></button><button class="btn btn-small" id="annotate"><span class="glyphicon glyphicon-pushpin" ></span></button></div> ';
                 comment += "<button class='btn btn-small btn-danger removeComment' title='Delete Note'><i class='icon-remove'></i> Delete</button>";
-                comment += ' <div class="btn-group" data-toggle="buttons-checkbox"><button type="button" id="bold" class="btn btn-small">b</button><button type="button" id="italic" class="btn btn-small">i</button><button type="button" id="underline" class="btn btn-small">u</button><button class="btn btn-small" id="link"><span class="glyphicon glyphicon-globe"></button><button class="btn btn-small" id="annotate"><span class="glyphicon glyphicon-pushpin" ></span></button></div>';
                 comment += "<span class='pull-right minimizeNote' title='Minimize note'><span style='font-weight:bold;color:white;font-size:15px;cursor:pointer;margin:0.5%;' class='glyphicon glyphicon-remove'></span></span></div>";
                 comment += "<div class='comment_wrapper'>";
                 comment += "<input class='commentTitle' class='hidden' placeholder='Title ...' />";
@@ -864,8 +867,8 @@ $(document).ready(function () {
 
             hide_notes: function(button_position){
                 $('#notes').animate({
-                    "top": button_position['top'],
-                    'left': button_position['left'],
+                    "top": "95%",
+                    'left': $('#buttons').position().left + button_position['left'] + 30,
                     'width': "0%",
                     'height': "0%",
                     'opacity': 0
@@ -875,7 +878,7 @@ $(document).ready(function () {
                         $(this).hide();
                         $('#notes_button').show();
                         $('#notes_button').tooltip({
-                            placement: 'bottom',
+                            placement: 'top',
                             trigger: 'hover'
                         });
                         /*$('#notes_button').click(function(){
@@ -974,8 +977,12 @@ $(document).ready(function () {
 
             show_notes: function(){
                     var button_position = $('#notes_button').position();
+                    $('#notes').css({
+                        "top": "95%",
+                        'left': $('#buttons').position().left  + button_position.left + 30
+                    });
                     $('#notes').show().animate({
-                        "top": "16%",
+                        "top": "10%",
                         'left': "25%",
                         'width': "50%",
                         'height': "75%",
@@ -987,7 +994,7 @@ $(document).ready(function () {
                             $('#notes_button').hide();
                             $('#notes_container').sortable();
                             $('#notes_button').tooltip({
-                                placement: 'bottom',
+                                placement: 'top',
                                 trigger: 'hover'
                             });
                             $('#close_notes').click(function(){
@@ -1025,42 +1032,42 @@ $(document).ready(function () {
             crop: function(image){
                 var jcrop_api;
                 
-                var image_crop = $(image).children().children('img')
-                image_crop.Jcrop({
-                    keySupport: false,
-                    setSelect: [
-                        image_crop.width()/8,
-                        image_crop.height()/8,
-                        (image_crop.width()/4)*2,
-                        (image_crop.height()/4)*2
-                    ],
+                var image_crop = image.children().children('img');
+                    $(image_crop).Jcrop({
+                        keySupport: false,
+                        setSelect: [
+                            image_crop.width() / 8,
+                            image_crop.height() / 8,
+                            (image_crop.width() / 4) * 2,
+                            (image_crop.height() / 4) * 2
+                        ],
 
-                    onSelect: function(){
-                        jcrop_api = this;
-                        $('#crop_image').fadeIn();
+                        onSelect: function(){
+                            jcrop_api = this;
+                            $('#crop_image').fadeIn();
 
-                    },
+                        },
 
-                    onChange: this.show_coords,
+                        onChange: this.show_coords,
 
-                    onRelease: function(){
-                        jcrop_api = this;
-                        jcrop_api.destroy();
-                        $('.crop_button').removeClass('active');
-                        $('#crop_image').fadeOut();
-                    }
-                });
+                        onRelease: function(){
+                            jcrop_api = this;
+                            jcrop_api.destroy();
+                            $('.crop_button').removeClass('active');
+                            $('#crop_image').fadeOut();
+                        }
+                    });
             },
 
             show_coords: function(c){
-                $.fn.crop.coords = [c.x, c.y, c.x2, c.y2];  
+                $.fn.crop.coords = [c.x, c.y, c.x2, c.y2];
             },
 
             buttons: function(){
                 $('.crop_button').click(function(){
                     if(!$(this).hasClass('active')){
                         $(this).addClass('active');
-                        $.fn.crop.crop($selectedImage);
+                        $.fn.crop.crop($('.selected'));
                     } else {
                         return false;
                     }
@@ -1070,83 +1077,88 @@ $(document).ready(function () {
 
 
             get_image: function(){
-                var image = $selectedImage.children().children('img');
 
-                var is_letter = function(){
-                    if($selectedImage.data('is_letter')){
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-                
-                var width = image.width();
-                var height = image.height();
+                $.each($.fn.select_group.imagesSelected, function(){
+                    var image = $(this).children().children('img');
 
-                var data = {
-                    'id': $selectedImage.attr('id'), 
-                    'image': image.attr('src'), 
-                    'is_letter': is_letter(),
-                    'height': height, 
-                    'width': width, 
-                    'box': JSON.stringify($.fn.crop.coords),
-                    'manuscript': $selectedImage.data('title')
-                };
-
-                $.ajax({
-                    type:'POST',
-                    url:'read-image/',
-                    data: data,
-                    beforeSend: function(){
-                        if($('#letter_wait_box').length == 0){
-                            var loader = "<div class='modal' id='letter_wait_box'><span id='letter_crop_status'>Cropping region ...</span><div id='letters_buttons_loading_box'><img src='/static/img/ajax-loader2.gif' /></div>";
-                            $('body').append(loader)
-                            $('#letter_wait_box').fadeIn();
+                    var is_letter = function(){
+                        if($(this).data('is_letter')){
+                            return true;
                         } else {
-                            $('#letters_buttons_loading_box').hide().fadeIn().html("<img src='/static/img/ajax-loader2.gif' />");
-                            $('#letter_crop_status').hide().fadeIn().html("Cropping region ...");
-                        }
-                        /*
-                        if($.fn.letters.open){
-                            $('#top_box_letters').append('<img id="loading_letter_ajax" src="/static/img/ajax-loader.gif" />')
-                        }
-                        */
-                    },     
-                    success: function(data){
-                        $.fn.letters.addLetter(data);
-                        return false;
-                    },
-                    complete: function(){
-                        if($.fn.letters.open == false){
-                            var buttons = "<button id='open-letter-box' class='btn btn-primary'>Open Letters Window</button> <button class='btn btn-danger' id='close-letter-box'>Close</button>";
-                            $('#letters_buttons_loading_box').hide().fadeIn().html(buttons);
-                            $('#letter_crop_status').hide().fadeIn().html("Region cropped!");
-
-                            $('#close-letter-box').click(function(){
-                                $('#letter_wait_box').fadeOut().remove();
-                            });
-
-                            $('#open-letter-box').click(function(){
-                                $('#letter_wait_box').fadeOut().remove();
-                                $.fn.letters.open_lettersbox();
-                            });
-
-                            $('#letter_wait_box').data('completed', true);
-                            return false;
-
-                        } else {
-                            $('#letter_wait_box').fadeOut().remove();
-                            $('#importing_letter_ajax').fadeOut().remove();
                             return false;
                         }
-
-                    },
-                    error: function(){
-                        var buttons = "<button id='open-letter-box' class='btn btn-primary'>Open Regions Window</button> <button class='btn btn-danger' id='close-letter-box'>Close</button>";
-                            $('#letters_buttons_loading_box').hide().fadeIn().html(buttons);
-                        $('#letter_crop_status').hide().fadeIn().html("Something went wrong. Try again.!");
                     }
+                    
+                    var width = image.width();
+                    var height = image.height();
 
+                    var data = {
+                        'id': $(this).attr('id'), 
+                        'image': image.attr('src'), 
+                        'is_letter': is_letter(),
+                        'height': height, 
+                        'width': width, 
+                        'box': JSON.stringify($.fn.crop.coords),
+                        'manuscript': $(this).data('title')
+                    };
+
+                    console.log(data);
+
+                    $.ajax({
+                        type:'POST',
+                        url:'read-image/',
+                        data: data,
+                        beforeSend: function(){
+                            if($('#letter_wait_box').length == 0){
+                                var loader = "<div class='modal' id='letter_wait_box'><span id='letter_crop_status'>Cropping region ...</span><div id='letters_buttons_loading_box'><img src='/static/img/ajax-loader2.gif' /></div>";
+                                $('body').append(loader)
+                                $('#letter_wait_box').fadeIn();
+                            } else {
+                                $('#letters_buttons_loading_box').hide().fadeIn().html("<img src='/static/img/ajax-loader2.gif' />");
+                                $('#letter_crop_status').hide().fadeIn().html("Cropping region ...");
+                            }
+                            /*
+                            if($.fn.letters.open){
+                                $('#top_box_letters').append('<img id="loading_letter_ajax" src="/static/img/ajax-loader.gif" />')
+                            }
+                            */
+                        },     
+                        success: function(data){
+                            $.fn.letters.addLetter(data);
+                            return false;
+                        },
+                        complete: function(){
+                            if($.fn.letters.open == false){
+                                var buttons = "<button id='open-letter-box' class='btn btn-primary'>Open Letters Window</button> <button class='btn btn-danger' id='close-letter-box'>Close</button>";
+                                $('#letters_buttons_loading_box').hide().fadeIn().html(buttons);
+                                $('#letter_crop_status').hide().fadeIn().html("Region cropped!");
+
+                                $('#close-letter-box').click(function(){
+                                    $('#letter_wait_box').fadeOut().remove();
+                                });
+
+                                $('#open-letter-box').click(function(){
+                                    $('#letter_wait_box').fadeOut().remove();
+                                    $.fn.letters.open_lettersbox();
+                                });
+
+                                $('#letter_wait_box').data('completed', true);
+                                return false;
+
+                            } else {
+                                $('#letter_wait_box').fadeOut().remove();
+                                $('#importing_letter_ajax').fadeOut().remove();
+                                return false;
+                            }
+
+                        },
+                        error: function(){
+                            var buttons = "<button id='open-letter-box' class='btn btn-primary'>Open Regions Window</button> <button class='btn btn-danger' id='close-letter-box'>Close</button>";
+                                $('#letters_buttons_loading_box').hide().fadeIn().html(buttons);
+                            $('#letter_crop_status').hide().fadeIn().html("Something went wrong. Try again.!");
+                        }
+
+                    });
                 });
             }
 
@@ -1166,9 +1178,13 @@ $(document).ready(function () {
 
             open_lettersbox: function(){
                 var button_position = $('#letters_button').position();
+                $('#letters').css({
+                    'top': "95%",
+                    'left': $('#buttons').position().left + button_position.left + 30
+                });
                 $('#letters_button').hide();
                 $('#letters').show().animate({
-                    "top": "14%",
+                    "top": "10%",
                     'left': "25%",
                     'width': "50%",
                     'height': "75%",
@@ -1204,8 +1220,8 @@ $(document).ready(function () {
 
             hide_letters: function(button_position){
                 $('#letters').animate({
-                    "top": button_position['top'],
-                    'left': button_position['left'],
+                    "top":"95%",
+                    'left': $('#buttons').position().left + button_position['left'] + 30,
                     'width': "0%",
                     'height': "0%",
                     'opacity': 0
@@ -1260,7 +1276,7 @@ $(document).ready(function () {
                     }
                 });
 
-                $('#image_' + letter.attr('id')).click(function(){
+                $('#image_' + letter.attr('id')).dblclick(function(){
                     $.fn.select_group.select($(this));
                 });
 
@@ -1407,12 +1423,12 @@ $(document).ready(function () {
                 if(this.manager == false){
                     var button_position = $('#load').position();
                     $('#import').css({
-                        'top': button_position['top'],
-                        'left': button_position['left']
+                        'top': "95%",
+                        'left': $('#buttons').position().left + button_position['left'] + 30
                     });
                     $('#load').hide();
                     $('#import').show().animate({
-                        "top": "14%",
+                        "top": "20%",
                         'left': "28%",
                         'width': "40%",
                         'height': "25%",
@@ -1454,13 +1470,13 @@ $(document).ready(function () {
                 var button_position = $('#load').position();
 
                 $('#import').animate({
-                    "top": button_position['top'],
-                    'left': button_position['left'],
+                    "top": "95%",
+                    'left': $('#buttons').position().left + button_position['left'] + 30,
                     'width': "0%",
                     'height': "0%",
                     'opacity': 0
                 }, {
-                    duration: 350,
+                    duration: 250,
                     complete: function () {
                         $(this).hide();
                     }
@@ -1717,7 +1733,7 @@ $(document).ready(function () {
                             "opacity": images[i]['properties']['opacity']
                         });
 
-                        $('#' + images[i]['image']).click(function(){
+                        $('#' + images[i]['image']).dblclick(function(){
                            $.fn.select_group.select($(this));
                         });
 
@@ -1767,7 +1783,7 @@ $(document).ready(function () {
                             }
                         });
 
-                        $("#" + images[i][1]).click(function(){
+                        $("#" + images[i][1]).dblclick(function(){
                            $.fn.select_group.select($(this));
                         });
 
@@ -1859,7 +1875,7 @@ $(document).ready(function () {
                 var image_on_workspace = $('#' + id);
                 var image = {
                     'top': parseInt(image_on_workspace.css('top')) / $(window).height() * 22,
-                    'left': parseInt(image_on_workspace.css('left')) / $(window).width() * 80
+                    'left': parseInt(image_on_workspace.css('left')) / $(window).width() * 40
                 };
                 $("#mini_" + id).animate({
                     'left': image['left'],
@@ -1886,10 +1902,13 @@ $(document).ready(function () {
             },
 
             show: function(){
-                $('#save').hide();
-                $('#export').show();
+                var button_position = $('#save').position();
+                $('#export').css({
+                    "top": "95%",
+                    'left': $('#buttons').position().left + $('#save').position().left + 30
+                }).show();
                 $('#export').animate({
-                    "top": "16%",
+                    "top": "20%",
                     'left': "29%",
                     'width': "42%",
                     'height': "35%",
@@ -1900,7 +1919,10 @@ $(document).ready(function () {
                     complete: function () {
                         $('#close_export').click(function(){
                             $.fn.export.hide();
+                        console.log(button_position);
+
                         });
+                        $('#save').hide();
                     }
                 }).draggable();
             },
@@ -1909,15 +1931,16 @@ $(document).ready(function () {
                 $('#save').show();
                 var button_position = $('#save').position();
                 $('#export').animate({
-                    "top": button_position['top'],
-                    'left': button_position['left'],
+                    "top": "95%",
+                    'left': $('#buttons').position().left + $('#save').position().left + 30,
                     'width': "0%",
                     'height': "0%",
                     'opacity': 0
                 }, {
-                    duration: 350,
+                    duration: 250,
                     complete: function () {
                         $(this).hide();
+                        console.log(button_position);
                     }
                 });
 
@@ -2121,10 +2144,45 @@ $(document).ready(function () {
 
         };
 
+        $.fn.menu = {
+
+            init: function(){
+                $('#menu').data('status', 'hidden');
+                this.buttons();
+            },
+
+            show: function(){
+                $('#nav').animate({'bottom':'12%'}, 300);
+                $('#menu').data('status', 'shown');
+                $('#icon-up').css({
+                    'background-position': '-60px 0'
+                });
+            },
+
+            hide: function(){
+                $('#nav').animate({'bottom':'0%'}, 300);
+                $('#menu').data('status', 'hidden');
+                $('#icon-up').css({
+                    'background-position': '-45px -15px'
+                });
+            },
+
+            buttons: function(){
+                $('#menu').click(function(){
+                    var status = $(this).data('status');
+                    if(status == 'hidden'){
+                        $.fn.menu.show();
+                    } else {
+                        $.fn.menu.hide();
+                    }
+                });
+            }
+        };
+
         function main(){
 
             $.fn.toolbar.init();
-
+            $.fn.menu.init();
             Array.prototype.clean = function(deleteValue) {
               for (var i = 0; i < this.length; i++) {
                 if (this[i] == deleteValue) {         
@@ -2175,10 +2233,7 @@ $(document).ready(function () {
                               i--;
                             }
                         }
-                        if(this.imagesSelected.length == 0){
-                            $.fn.toolbar.toolbox.remove();
-                            return false;
-                        }
+                        
 
                     } else {
                         image.children().css('boxShadow', '0px 0px 30px rgba(255, 246, 9, 1)');
@@ -2188,6 +2243,8 @@ $(document).ready(function () {
                             alsoDrag: ".selected"
                         });
                         image.children().children('img').resizable({
+                            aspectRatio: true,
+                            animate: true,
                             alsoResize: '.selected, .selected > div, .selected > div > img'
                         });
                         $.fn.select_group.imagesSelected.push(image);
@@ -2219,7 +2276,7 @@ $(document).ready(function () {
             };
 
             $('img').tooltip({
-                placement: 'bottom',
+                placement: 'top',
                 trigger: 'hover'
             });
             
@@ -2235,8 +2292,8 @@ $(document).ready(function () {
 
             $(window).scroll(function(event){
                 var position = {
-                  'top': $(window).scrollTop() / $(window).height() * 19,
-                  'left': $(window).scrollLeft() / $(window).width() * 120
+                  'top': $(window).scrollTop() / $(window).height() * 15,
+                  'left': $(window).scrollLeft() / $(window).width() * 100
                 };
                 $('#marker').animate({
                     'left': position['left'],
@@ -2254,7 +2311,36 @@ $(document).ready(function () {
 
             $.fn.export.init();
             $.fn.import.init();
-
+            var flag = 0;
+            $('#workspace').click(function(){
+                if(flag == 0){
+                    $('#barRight, #barRight2').animate({
+                        'background-color': '#666',
+                        'zoom': '30%',
+                        'margin':'0.65%'
+                    }, 300).mouseover(function() {
+                        $(this).animate({
+                            'background-color': '#ccc'
+                        }, 250);
+                    }).mouseout(function() {
+                        $(this).animate({
+                            'background-color': '#666'
+                        }, 250);
+                    });
+                    flag = 1;
+                    $(this).animate({'background-color': '#444'});
+                    $('html, body').css('width','auto');
+                } else {
+                    $('#barRight, #barRight2').animate({
+                        'background-color': '#ccc',
+                        'zoom': 1,
+                        'margin':'0'
+                    }, 300).unbind('mouseover, mouseout');
+                    flag = 0;
+                    $(this).animate({'background-color': 'transparent'});
+                    $('html, body').css('width','4450px');
+                }
+            });
         }
 
         main();

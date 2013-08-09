@@ -2,7 +2,7 @@
 
 html, body{
 	background: rgba(0,0,0,0.75);
-	width: 4450px;
+	width: 6050px;
 }
 .image_active .image_desc{
 	display: none;
@@ -159,11 +159,11 @@ html, body{
 
 #barLeft {
 	position:fixed;
-	height:85%;
+	height:77%;
 	display: block;
 	opacity: 1;
 	left:25%;
-	top:5%;
+	top:4%;
 	overflow: hidden;
 	width: 50%;
 	z-index: 400;
@@ -218,8 +218,8 @@ html, body{
 
 #barRight{
 	z-index:2;
-	width:2200px;
-	height:1900px;
+	width:3000px;
+	height:2700px;
 	background: #888;
 	margin-right: 10px;
 	padding:0;
@@ -233,8 +233,8 @@ html, body{
 }
 #barRight2{
 	z-index:2;
-	width:2200px;
-	height:1900px;
+	width:3000px;
+	height:2700px;
 	background: #888;
 	margin: 0;
 	float: left;
@@ -247,6 +247,14 @@ html, body{
 	}
 }
 
+
+.toggle{
+	.transition(all, 0.5s);
+	cursor: pointer;
+	&:hover{
+		background-color: #ccc !important;
+	}
+}
 #top_box_letters{
 	padding: 8px 15px;
 	background-color: rgb(245, 245, 245);
@@ -264,6 +272,9 @@ html, body{
 #notes_alert{
 	display: none;
 	margin: 0;
+	.alert{
+		.rounded(0px);
+	}
 }
 
 .popover{
@@ -307,23 +318,23 @@ html, body{
 	z-index: 120;
 	bottom: 0;
 	#buttons {
-		width: 50%;
 		position: absolute;
-		top: 0%;
-		left: 26%;
+		padding: 2%;
+		padding-top: 1%;
+		background: #222;
+		box-shadow: -1px -1px 2px 0px rgba(0,0,0,0.1),1px -1px 2px 0px rgba(0,0,0,0.1);
 		> img {
 			cursor: pointer;
-			margin:0;
-			padding:0;
+			padding-bottom:30px;
 			.transition(all, 0.15s linear);
+			margin-left: 25px; margin-right: 25px;
 			&:hover{
 				-webkit-transform: scale(1.25);
 			     -moz-transform: scale(1.25); 
 			      -ms-transform: scale(1.25);  
 			       -o-transform: scale(1.25);  
 			          transform: scale(1.25);
-				margin-left: 25px; margin-right: 25px;
-				margin-bottom:35px;
+				margin-left: 40px; margin-right: 40px;				
 			}
 		}
 
@@ -331,35 +342,40 @@ html, body{
 }
 
 #menu{
-border-top-left-radius: 5px;
-border-top-right-radius: 5px;
-border-bottom-left-radius: 0px;
-border-bottom-right-radius: 0px;
-box-shadow: -1px -1px 2px 0px rgba(0,0,0,0.1),1px -1px 2px 0px rgba(0,0,0,0.1);
-color: #222;
-background: none;
-height: auto;
-text-align: center;
-white-space: nowrap;
-overflow: hidden;
-cursor: pointer;
-height: 32px;
-width: 113px;
-position: absolute;
-bottom: 0;
-z-index: 1;
-background-color: #222;
-color: #d3d3d3;
-border-radius: 2px;
-padding: 0;
-font-size: 12px;
-border: none;
-line-height: 2.5;
-box-shadow: 0px 1px 4px rgba(0,0,0,0.3);
--webkit-transform: translateZ(0);
--moz-transform: translateZ(0);
--ms-transform: translateZ(0);
-transform: translateZ(0);
+	border-top-left-radius: 0px;
+	border-top-right-radius: 5px;
+	border-bottom-left-radius: 0px;
+	border-bottom-right-radius: 0px;
+	box-shadow: -1px -1px 2px 0px rgba(0,0,0,0.1),1px -1px 2px 0px rgba(0,0,0,0.1);
+	color: #222;
+	background: none;
+	height: auto;
+	margin:0;
+	text-align: center;
+	white-space: nowrap;
+	overflow: hidden;
+	cursor: pointer;
+	height: 32px;
+	width: 113px;
+	position: absolute;
+	bottom: 0;
+	z-index: 1;
+	background-color: #222;
+	color: #d3d3d3;
+	padding: 0;
+	font-size: 13.5px;
+	border: 1px solid #000;
+	line-height: 2.5;
+	box-shadow: 0px 0px 4px rgba(0,0,0,0.3);
+	-webkit-transform: translateZ(0);
+	-moz-transform: translateZ(0);
+	-ms-transform: translateZ(0);
+	transform: translateZ(0);
+	.transition(all, 0.5s);
+	border-bottom: 1px solid #222;
+	&:hover{
+		.box-shadow(0px, -2px, 16px, rgba(0,0,0,0.75));
+	}
 }
 #icon-up{
 	background: transparent url(/static/img/expander-sprite-1x.png);
@@ -489,8 +505,8 @@ transform: translateZ(0);
     background: #efefef;
     .rounded(2px);
     position:fixed;
-    top: 86%;
-	left: 87%;
+    top: 86.5%;
+	left: 87.5%;
 	width: 12%;
 	height: 12.5%;
     .box-shadow(0px, 0px, 6px, rgba(0,0,0,0.7));
@@ -637,6 +653,7 @@ li.no-before, li.no-before:before{
 	left:96%;
 	width:40px;
 	cursor: pointer;
+	z-index: 600;
 	height:40px;
 	opacity:0.7;
 	.transition(all, 0.5s);

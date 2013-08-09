@@ -78,9 +78,9 @@ $(document).ready(function () {
                 var size = "<div class='tool'><span class='tool_label' style='padding-top: 5px;'>Size</span>";
                 size += "<input class='small-input' type='text' id='set_width' /><span class='label_size'>Width</span><input class='small-input' type='text' id='set_height' /><span class='label_size'>Height</span><button id='set_size' class='btn btn-primary btn-small'>Set</button></div>";
                 tools += size;
-                var comment = "<div class='line' style='padding-top:5%'></div><div class='tool'><span class='tool_label'>Notes</span> <button id='createComment' class='btn btn-primary btn-small'><i class='icon-book'></i> Add Note</button></div>";
+                var comment = "<div class='line' style='padding-top:5%'></div><div class='tool'><span class='tool_label'>Notes</span> <button id='createComment' class='btn btn-primary btn-small'><span class='glyphicon glyphicon-book'></span> Add Note</button></div>";
                  var crop = "<div class='line'></div><div class='tool'><span class='tool_label'>Crop</span> <button class='btn btn-primary btn-small crop_button'><i class='icon-resize-small'></i> Activate Crop</button> <button id='crop_image' class='btn btn-small btn-warning'>Crop Image!</button></div>";
-                  var remove = "<div class='line'></div><div class='tool'><button class='btn btn-small btn-danger' id='removeImage'><i class='icon-remove'></i> Remove</button> <button class='btn btn-small btn-primary' id='reset_image'>Reset</button></div>";
+                  var remove = "<div class='line'></div><div class='tool'><button class='btn btn-small btn-danger' id='removeImage'><span class='glyphicon glyphicon-remove'></span> Remove</button> <button class='btn btn-small btn-primary' id='reset_image'>Reset</button></div>";
                 tools += comment + crop + remove;
                 tools += "</div>";
                 return tools;
@@ -583,10 +583,10 @@ $(document).ready(function () {
                     handle: '.top_box'
                 });
                 this.imagesBox.animate({
-                    "top": "10%",
+                    "top": "4%",
                     'left': "25%",
                     'width': "50%",
-                    'height': "75%",
+                    'height': "77%",
                     'opacity': 1
                 }, 250);
                 return false;
@@ -856,7 +856,7 @@ $(document).ready(function () {
                 var comment = "<div class='comment' id='" + image + "' data-image = '" + id_image +"'>";
                 comment += "<div class='top_comment'>";
                 comment += ' <div class="btn-group" data-toggle="buttons-checkbox"><button type="button" id="bold" class="btn btn-small">b</button><button type="button" id="italic" class="btn btn-small">i</button><button type="button" id="underline" class="btn btn-small">u</button><button class="btn btn-small" id="link"><span class="glyphicon glyphicon-globe"></button><button class="btn btn-small" id="annotate"><span class="glyphicon glyphicon-pushpin" ></span></button></div> ';
-                comment += "<button class='btn btn-small btn-danger removeComment' title='Delete Note'><i class='icon-remove'></i> Delete</button>";
+                comment += "<button class='btn btn-small btn-danger removeComment' title='Delete Note'><span class='glyphicon glyphicon-remove'></span> Delete</button>";
                 comment += "<span class='pull-right minimizeNote' title='Minimize note'><span style='font-weight:bold;color:white;font-size:15px;cursor:pointer;margin:0.5%;' class='glyphicon glyphicon-remove'></span></span></div>";
                 comment += "<div class='comment_wrapper'>";
                 comment += "<input class='commentTitle' class='hidden' placeholder='Title ...' />";
@@ -982,10 +982,10 @@ $(document).ready(function () {
                         'left': $('#buttons').position().left  + button_position.left + 30
                     });
                     $('#notes').show().animate({
-                        "top": "10%",
+                        "top": "4%",
                         'left': "25%",
                         'width': "50%",
-                        'height': "75%",
+                        'height': "77%",
                         'opacity': 1,
                         'z-index': 400
                     }, {
@@ -1184,10 +1184,10 @@ $(document).ready(function () {
                 });
                 $('#letters_button').hide();
                 $('#letters').show().animate({
-                    "top": "10%",
+                    "top": "4%",
                     'left': "25%",
                     'width': "50%",
-                    'height': "75%",
+                    'height': "77%",
                     'opacity': 1,
                     'z-index': 400
                 }, {
@@ -1342,7 +1342,7 @@ $(document).ready(function () {
 
             show_comparison: function(data){
                 var box_comparison = "<div class='modal box_containers' id='comparison_box'><div id='top_comparison_box' class='top_box'><span>" +
-                "Images compared</span><span id='close_comparison_box' class='pull-right'><i class='icon-remove close_box'></i></div>";
+                "Images compared</span><span id='close_comparison_box' class='pull-right'><span class='glyphicon glyphicon-remove close_box'></span></div>";
                 box_comparison += "<span style='margin:1%' class='pull-right'><button class='btn btn-small btn-primary' id='image_compared_to_workspace'>Add to workspace</button></span><div class='box_container' id='images_compared_div'><div><img data-is_generated='true' id='image_result_compared' src='" + data.getImageDataUrl() + "' /></div></div></div>";
 
                 $('body').append(box_comparison);
@@ -1903,9 +1903,10 @@ $(document).ready(function () {
 
             show: function(){
                 var button_position = $('#save').position();
+                $('#save').hide();
                 $('#export').css({
                     "top": "95%",
-                    'left': $('#buttons').position().left + $('#save').position().left + 30
+                    'left': $('#buttons').position().left + button_position.left + 30
                 }).show();
                 $('#export').animate({
                     "top": "20%",
@@ -1922,7 +1923,6 @@ $(document).ready(function () {
                         console.log(button_position);
 
                         });
-                        $('#save').hide();
                     }
                 }).draggable();
             },
@@ -2316,29 +2316,23 @@ $(document).ready(function () {
                 if(flag == 0){
                     $('#barRight, #barRight2').animate({
                         'background-color': '#666',
-                        'zoom': '30%',
-                        'margin':'0.65%'
-                    }, 300).mouseover(function() {
-                        $(this).animate({
-                            'background-color': '#ccc'
-                        }, 250);
-                    }).mouseout(function() {
-                        $(this).animate({
-                            'background-color': '#666'
-                        }, 250);
-                    });
+                        '-moz-transform':'scale(0.22)',
+                        'margin':'0.65%',
+                        'zoom': '22%'
+                    }, 300).addClass('toggle');
                     flag = 1;
                     $(this).animate({'background-color': '#444'});
                     $('html, body').css('width','auto');
                 } else {
                     $('#barRight, #barRight2').animate({
                         'background-color': '#ccc',
-                        'zoom': 1,
-                        'margin':'0'
-                    }, 300).unbind('mouseover, mouseout');
+                        '-moz-transform': 'scale(1)',
+                        'margin':'0',
+                        'zoom': 1
+                    }, 300).removeClass('toggle');
                     flag = 0;
                     $(this).animate({'background-color': 'transparent'});
-                    $('html, body').css('width','4450px');
+                    $('html, body').css('width','6050px');
                 }
             });
         }

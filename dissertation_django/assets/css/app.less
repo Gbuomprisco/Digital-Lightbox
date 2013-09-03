@@ -28,6 +28,7 @@ html, body{
 	&:last-child{
 		margin-bottom:10%;
 	}
+
 	> img {
 		max-width: 180px;
 		float:left;
@@ -40,13 +41,14 @@ html, body{
 	.image_desc{
 		font-size: 13px;
 		word-wrap: break-word;
-		padding: 0.5%;
-		margin: 0.5%;
 		position: relative;
-		left: 6%;
+		left: 3%;
 	}
 }
-
+#upload_image{
+		position: relative;
+		right:15%;
+	}
 .note{
 	width: 30%;
 	height: 40%;
@@ -112,6 +114,7 @@ html, body{
 		border-top-left-radius: 4px;
 		border-top-right-radius: 4px;
 		background: #fff;
+
 	}
 	.box_container{
 		background: #fff;
@@ -156,25 +159,28 @@ html, body{
 	display: none;
 	margin:0;
 }
-
+.table{
+	margin:0;
+	padding:0;
+}
 #barLeft {
 	position:fixed;
-	height:77%;
+	height: 82%;
 	display: block;
 	opacity: 1;
-	left:25%;
-	top:4%;
+	left: 25%;
+	top: 2%;
 	overflow: hidden;
 	width: 50%;
 	z-index: 400;
-	border: 10px solid rgba(82, 82, 82, .7);
+	border: 10px solid rgba(82, 82, 82, .9);
 	.rounded(8px);
 	color: rgba(82, 82, 82, 1);
-	background: rgba(82, 82, 82, .7);
+	background: #fff;
 	#top_barLeft{
 		font-weight: bold;
 		border-bottom: 1px solid #ccc;
-		padding-top: 1.5%;
+		padding-top: 1.9%;
 		padding-bottom: 1.5%;
 		border-top-left-radius: 4px;
 		border-top-right-radius: 4px;
@@ -182,9 +188,10 @@ html, body{
 	}
 	#images_container{
 		background: #fff;
+		padding: 0.5%;
 		overflow-y: auto;
 		overflow-x: hidden;
-		height:95%;
+		height:75%;
 	}
 	#close_barLeft{
 		font-weight: bold;
@@ -208,7 +215,8 @@ html, body{
 	}
 	#results_counter{
 		font-weight: bold;
-		line-height: 2.74;
+		position: relative;
+		left: 1%;
 	}
 	#ajax-loader{
 		margin-right: 5%;
@@ -224,11 +232,17 @@ html, body{
 	margin-right: 10px;
 	padding:0;
 	float: left;
+	overflow: hidden;
+	.rounded(2px);
 	.image_active{
 		float:left;
 		margin:2%;
 		max-width: 180px;
 		max-height: 90px;
+		&:after{
+			position: relative;
+			margin-left:0.5%;
+		}
 	}
 }
 #barRight2{
@@ -239,9 +253,11 @@ html, body{
 	margin: 0;
 	float: left;
 	padding:0;
+	overflow: hidden;
+	.rounded(2px);
 	.image_active{
 		float:left;
-		margin:2%;
+		margin: 2%;
 		max-width: 180px;
 		max-height: 90px;
 	}
@@ -252,7 +268,7 @@ html, body{
 	.transition(all, 0.5s);
 	cursor: pointer;
 	&:hover{
-		background-color: #ccc !important;
+		box-shadow: 0px 0px 10px 10px #ccc;
 	}
 }
 #top_box_letters{
@@ -272,9 +288,7 @@ html, body{
 #notes_alert{
 	display: none;
 	margin: 0;
-	.alert{
-		.rounded(0px);
-	}
+	.rounded(0px);
 }
 
 .popover{
@@ -320,12 +334,11 @@ html, body{
 	#buttons {
 		position: absolute;
 		padding: 2%;
-		padding-top: 1%;
+		padding-top: 2%;
 		background: #222;
 		box-shadow: -1px -1px 2px 0px rgba(0,0,0,0.1),1px -1px 2px 0px rgba(0,0,0,0.1);
 		> img {
 			cursor: pointer;
-			padding-bottom:30px;
 			.transition(all, 0.15s linear);
 			margin-left: 25px; margin-right: 25px;
 			&:hover{
@@ -346,7 +359,6 @@ html, body{
 	border-top-right-radius: 5px;
 	border-bottom-left-radius: 0px;
 	border-bottom-right-radius: 0px;
-	box-shadow: -1px -1px 2px 0px rgba(0,0,0,0.1),1px -1px 2px 0px rgba(0,0,0,0.1);
 	color: #222;
 	background: none;
 	height: auto;
@@ -366,7 +378,7 @@ html, body{
 	font-size: 13.5px;
 	border: 1px solid #000;
 	line-height: 2.5;
-	box-shadow: 0px 0px 4px rgba(0,0,0,0.3);
+	box-shadow: 0px -2px 4px rgba(0,0,0,0.3);
 	-webkit-transform: translateZ(0);
 	-moz-transform: translateZ(0);
 	-ms-transform: translateZ(0);
@@ -476,7 +488,7 @@ html, body{
 		margin-left:3px;
 		margin-right:3px;
 		padding: 2px 7px;
-		.btn-small{
+		.btn-sm{
 			font-size: 11.5px;
 			padding: 1.5px 4px;
 		}
@@ -563,7 +575,7 @@ html, body{
 }
 
 #export .box_container, #import .box_container{
-	padding: 4%;
+	padding: 2%;
 	margin: 0;
 	text-align: center;
 }
@@ -581,8 +593,7 @@ li.no-before, li.no-before:before{
 	content:none !important;
 }
 .folder{
-	margin-left: 2%;
-	margin-bottom: 2%;
+	margin: 2%;
 	padding: 0.8%;
 	float: left;
 	width: 100px;
@@ -591,8 +602,9 @@ li.no-before, li.no-before:before{
 		opacity:0.7;
 	}
 	.folder_title{
-		font-size: 11px;
+		font-size: 12px;
 		font-weight: bold;
+		margin-top:3%;
 		word-wrap: break-word;
 	}
 }
@@ -730,7 +742,9 @@ li.no-before, li.no-before:before{
     	line-height:2;
     }
 }
-
+.breadcrumb{
+	.rounded(0px);
+}
 .breadcrumb li > a{
 	cursor: pointer;
 }
@@ -740,11 +754,14 @@ li.no-before, li.no-before:before{
 /* Letters */
 
 .letter{
-	margin:1.5%;
+	margin-left:3%;
 }
 
 
-
+#load_more{
+	cursor:pointer;
+	line-height: 3;
+}
 /* Scrollbar */
 
 ::-webkit-scrollbar-thumb:vertical {
@@ -799,40 +816,30 @@ li.no-before, li.no-before:before{
 	filter: url('/static/css/svg/contrast.svg');
 }
 
-
-//Buttons
-
-#button_toolbar{
-	.transition(all, 0.5s);
+.manuscript_pack{
+	margin: 3%;
+	margin-left:6%; 
+	float:left;
+	cursor: pointer;
+	opacity: 0.8;
+	width: 16%;
+	.folder_title{
+		font-weight: bold;
+		margin-top: 7%;
+		word-wrap: break-word;
+		font-size: 10px;
+		margin-left: -16%;
+	}
 	&:hover{
-		background: url('/static/img/_tools2.png');
+		opacity: 1;
 	}
 }
 
-#letters_button{
-	.transition(all, 0.5s);
-	&:hover{
-		background: url('/static/img/_letters2.png');
-	}
-}
-
-#notes_button{
-	.transition(all, 0.5s);
-	&:hover{
-		background: url('/static/img/_notes2.png');
-	}
-}
-
-#save{
-	.transition(all, 0.5s);
-	&:hover{
-		background: url('/static/img/_save2.png');
-	}
-}
-
-#load{
-	.transition(all, 0.5s);
-	&:hover{
-		background: url('/static/img/_load2.png');
-	}
+*{
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }

@@ -56,7 +56,7 @@ def read_image(request):
 			image = tmp.getvalue().encode('base64')
 			tmp.close()
 			unique_id = uuid.uuid4()
-			return HttpResponse('<img data-title ="Region from ' + manuscript + '" class="letter" id="letter_' + image_id + '_' + str(unique_id) + '"  data-size = "' + str(area.size[0]) + ',' + str(area.size[1]) + '"  src="data:image/png;base64,' + image + '" />')
+			return HttpResponse('<img data-manuscript_id = "' + image_id + '" data-manuscript= "' + manuscript + '" data-title ="Region from ' + manuscript + '" class="letter" id="letter_' + image_id + '_' + str(unique_id) + '"  data-size = "' + str(area.size[0]) + ',' + str(area.size[1]) + '"  src="data:image/png;base64,' + image + '" />')
 		else:
 			image = image.replace('data:image/png;base64,', '')
 			width = int(src_width)

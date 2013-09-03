@@ -14,7 +14,7 @@
 		{% endcompress %}
 		{% compress js %}
 		<script type="text/javascript" src="/static/js/jquery-1.9.1.js"></script>
-		<script type="text/javascript" src="/static/js/jquery-ui-1.10.2.custom.min.js"></script>		
+		<script type="text/javascript" src="/static/js/jquery-ui-1.10.2.custom.min.js"></script>
 		<script type="text/javascript" src="/static/js/app.js"></script>
 		<script type="text/javascript" src="/static/js/css3-mediaqueries.js"></script>
 		<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
@@ -24,9 +24,16 @@
 		<script type="text/javascript" src="/static/js/jcrop.min.js"></script>
 		<script type="text/javascript" src="/static/js/resemble.js"></script>
 		<script type="text/javascript" src="/static/js/multidraggable.js"></script>
-		<script type="text/javascript" src="/static/js/jquery.zoomooz.min.js"></script>
 		<script>  
 			var polyfilter_scriptpath = '/static/js/lib/';
+			document.onmousedown=disableclick;
+                function disableclick(event)
+                {
+                  if(event.button==2)
+                   {
+                     return false;    
+                   }
+                }
 		</script>
 		<script src="/static/js/lib/cssParser.js"></script>
 		<script src="/static/js/lib/css-filters-polyfill.js"></script>
@@ -48,7 +55,7 @@
 		{% block extra_head %}{% endblock %}
 	</head>
 {% endblock %}
-	<body class="row-fluid">
+	<body oncontextmenu="return false" class="row-fluid">
 			{% block main %}
 			{% endblock %}
 	</body>

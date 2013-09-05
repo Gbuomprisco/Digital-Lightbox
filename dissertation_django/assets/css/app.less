@@ -88,9 +88,7 @@ html, body{
 		.text-shadow(0px, 1px, 4px, #444);
 	}
 }
-#notes_container{
-	padding:2%;
-}
+
 .box_containers{
 	position:fixed;
 	display: none;
@@ -268,7 +266,7 @@ html, body{
 	.transition(all, 0.5s);
 	cursor: pointer;
 	&:hover{
-		box-shadow: 0px 0px 10px 10px #ccc;
+		box-shadow: 0px 0px 35px 15px #ccc;
 	}
 }
 #top_box_letters{
@@ -326,28 +324,31 @@ html, body{
 }
 
 #nav{
-	text-align: center;
-	position: fixed;
-	width: 100%;
 	z-index: 120;
-	bottom: 0;
+	position: fixed;
+			top:0;
+		left:0;
 	#buttons {
-		position: absolute;
-		padding: 2%;
-		padding-top: 2%;
+		position: fixed;
+		width: 6%;
+		padding:1%;
+		padding-top: 5%;
+		height:100%;
 		background: #222;
 		box-shadow: -1px -1px 2px 0px rgba(0,0,0,0.1),1px -1px 2px 0px rgba(0,0,0,0.1);
 		> img {
+			float:left;
+			clear:both;
 			cursor: pointer;
+			margin-bottom:100%;
 			.transition(all, 0.15s linear);
-			margin-left: 25px; margin-right: 25px;
 			&:hover{
 				-webkit-transform: scale(1.25);
 			     -moz-transform: scale(1.25); 
 			      -ms-transform: scale(1.25);  
 			       -o-transform: scale(1.25);  
 			          transform: scale(1.25);
-				margin-left: 40px; margin-right: 40px;				
+			          margin-left:10px;
 			}
 		}
 
@@ -356,9 +357,9 @@ html, body{
 
 #menu{
 	border-top-left-radius: 0px;
-	border-top-right-radius: 5px;
+	border-top-right-radius: 0px;
 	border-bottom-left-radius: 0px;
-	border-bottom-right-radius: 0px;
+	border-bottom-right-radius: 5px;
 	color: #222;
 	background: none;
 	height: auto;
@@ -369,8 +370,9 @@ html, body{
 	cursor: pointer;
 	height: 32px;
 	width: 113px;
-	position: absolute;
-	bottom: 0;
+	position: fixed;
+	top: 0;
+	left:0;
 	z-index: 1;
 	background-color: #222;
 	color: #d3d3d3;
@@ -399,7 +401,12 @@ html, body{
 	color: black;
 	cursor: pointer;
 	left: 83%;
-	top: 25%
+	top: 25%;
+	-webkit-transform: rotate(270deg);
+	-moz-transform: rotate(270deg);
+	-ms-transform: rotate(270deg);
+	-o-transform: rotate(270deg);
+	transform: rotate(270deg);
 }
 
 #icon-down{
@@ -454,12 +461,11 @@ html, body{
 	#closeToolbar{
 		font-weight: bold;
 		font-size: 100%;
-		color: #888;
-		padding-right:5px;
-		padding-left:5px;
+		color: #efefef;
+		.transition(all, 0.25s);
 		cursor:pointer;
 		&:hover{
-			color: #fff;
+			text-shadow: 0px 0px 4px #fff;
 		}
 	}
 
@@ -681,35 +687,37 @@ li.no-before, li.no-before:before{
 	left:40%;
     width:300px;
     height:280px;
-    background: #fee756;
+    background: #f5f5f5;
+    overflow:hidden;
     .rounded(4px);
 	z-index:1300;
+	    box-shadow:0px 0px 12px #999;
+
 }
 .comment_wrapper{
-	background: #fee756;
-	height:100%;
+	background: #f5f5f5;
 	overflow-x: hidden;
     overflow-y: auto;
-    box-shadow:0px 0px 12px #999;
 }
 .commentTitle{
-	background: #fee756;
+	background: #f5f5f5;
 	border: none;
 	outline: none;
 	width: 100%;
 	padding-bottom: 3px;
-	padding: 1.5%;
+	padding: 10px;
 	font-weight: bold;
 	border-bottom: 1px dashed #999;
 	color: #444;
-	font-size: 13.5px;
+	font-size: 14.5px;
 }
 .top_comment{
 	box-shadow:0px 0px 12px #999;
-    padding:3%; 
+    padding:10px; 
     margin:0;
     height:45px;
-    background-color: #1b1b1b;
+    max-height:45px;
+    background-color: #222;
 	background-image: -moz-linear-gradient(top, #222222, #111111);
 	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#222222), to(#111111));
 	background-image: -webkit-linear-gradient(top, #222222, #111111);
@@ -733,9 +741,8 @@ li.no-before, li.no-before:before{
     }
 }
 .comment_content{
-    font-size:13px;
-    font-weight: 200;
-    padding: 3%;
+    font-size:13.5px;
+    padding: 10px;
     word-wrap: break-word;
     outline:none;
     > div{
@@ -748,8 +755,38 @@ li.no-before, li.no-before:before{
 .breadcrumb li > a{
 	cursor: pointer;
 }
-
-
+#breadcrumb_notes_container, #breadcrumb_notes{
+	margin:0;
+}
+#rich_buttons{
+	position:absolute;
+	left:10px;
+	bottom:10px;
+	border: 1px solid #ccc;
+	.rounded(3px);
+}
+.note_folders{
+	margin: 3%;
+	margin-left: 6%;
+	float: left;
+	cursor: pointer;
+	opacity: 0.8;
+	width: 16%;
+	&:hover{
+		opacity:0.7;
+	}
+}
+.note_folders_title{
+	font-weight: bold;
+	margin-top: 7%;
+	word-wrap: break-word;
+	font-size: 10px;
+	margin-left: -16%;
+	display: block;
+}
+#open_notes{
+	margin-left:1.5%;
+}
 
 /* Letters */
 

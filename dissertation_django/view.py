@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from django.http import HttpResponse
-from digipal.models import Page
+from digipal.models import Image
 from django.db.models import Q
 from django.utils import simplejson
 import urllib, cStringIO
 import uuid
-import Image
+import Image as Img
 
 def search(request):
 	if request.is_ajax():
@@ -17,10 +17,10 @@ def search(request):
 		else:
 			x = 0
 		if pattern.strip() != "" and len(pattern.strip()) > 2:
-			manuscripts = Page.objects.filter(
+			manuscripts = Image.objects.filter(
 			Q(item_part__current_item__repository__place__name__icontains = pattern) | \
 			Q(item_part__current_item__repository__name__icontains=pattern)).distinct()[x:n]
-			count = Page.objects.filter(
+			count = Image.objects.filter(
 			Q(item_part__current_item__repository__place__name__icontains = pattern) | \
 			Q(item_part__current_item__repository__name__icontains=pattern)).count()
 			list_manuscripts = []
@@ -44,10 +44,10 @@ def read_image(request):
 		is_letter = request.POST.get('is_letter', '')
 		if is_letter == "false":
 			file = cStringIO.StringIO(urllib.urlopen(image).read())
-			image_resize = Image.open(file)
+			image_resize = Img.open(file)
 			width = int(src_width)
 			height = int(src_height)
-			img = image_resize.resize((width, height), Image.ANTIALIAS)
+			img = image_resize.resize((width, height), Img.ANTIALIAS)
 			box_to_crop = simplejson.loads(box)
 			coords = (box_to_crop[0], box_to_crop[1], box_to_crop[2], box_to_crop[3])
 			area = img.crop(coords)
@@ -78,7 +78,7 @@ def read_image(request):
 def get_image_manuscript(request):
 	if request.is_ajax():
 		image_id = request.POST.get('image', '')
-		manuscript = Page.objects.get(id=image_id)
+		manuscript = Image.objects.get(id=image_id)
 		image = [manuscript.thumbnail(), manuscript.pk, manuscript.display_label, manuscript.item_part.current_item.repository.name, manuscript.item_part.current_item.repository.place.name]
 		return HttpResponse(simplejson.dumps(image), mimetype='application/json')
 

@@ -26,14 +26,20 @@
 		<script type="text/javascript" src="/static/js/multidraggable.js"></script>
 		<script>  
 			var polyfilter_scriptpath = '/static/js/lib/';
-			document.onmousedown=disableclick;
-                function disableclick(event)
-                {
+			var development = true;
+			if(!development){
+				document.onmousedown = disableclick;
+                function disableclick(event){
+	                $(document).on('contextmenu', function() {
+					    return false;
+					});
+                
                   if(event.button==2)
                    {
                      return false;    
                    }
                 }
+            }
 		</script>
 		<script src="/static/js/lib/cssParser.js"></script>
 		<script src="/static/js/lib/css-filters-polyfill.js"></script>
@@ -55,7 +61,7 @@
 		{% block extra_head %}{% endblock %}
 	</head>
 {% endblock %}
-	<body oncontextmenu="return false" class="row-fluid">
+	<body class="row-fluid">
 			{% block main %}
 			{% endblock %}
 	</body>

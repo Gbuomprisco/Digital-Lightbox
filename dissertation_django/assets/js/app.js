@@ -36,7 +36,7 @@ $(document).ready(function () {
 
                 if ((this.exists() === false) && ($.fn.images_on_workspace().length > 0)) {
                     var structure = '<div id=' + this.default_options['id'] + '>';
-                    structure += "<div id='topToolbar'><span id='name_image'>Tools</span> <span title='Close toolbar' class='pull-right' id='closeToolbar'>x</span></div>";
+                    structure += "<div id='topToolbar'><span id='name_image'>Tools</span> <span title='Close toolbar' class='pull-right glyphicon glyphicon-remove' id='closeToolbar'></span></div>";
                     $(this.default_options['container']).append(structure);
                     this.toolbox = $('#' + this.default_options['id']);
                     this.stylize();
@@ -58,6 +58,9 @@ $(document).ready(function () {
                 $('#grayscale').attr('disabled', 'disabled');
                 $('#toolbar button').addClass('disabled').attr('disabled', true);
                 $('#name_image').html("No images selected");
+                $('#crop_image').fadeOut();
+                $('.crop_button').removeClass('active');
+                $('#select_all').attr('disabled', false).removeClass('disabled');
             },
 
             enable: function(){
@@ -66,6 +69,7 @@ $(document).ready(function () {
                 $('#slider').slider('option', 'disabled', false);
                 $('#grayscale').attr('disabled', false);
                 $('#toolbar button').removeClass('disabled').attr('disabled', false);
+                
             },
 
             makeTools: function () {
@@ -95,9 +99,9 @@ $(document).ready(function () {
                 var size = "<div class='tool'><span class='tool_label' style='padding-top: 5px;'>Size</span>";
                 size += "<input class='small-input' type='text' id='set_width' /><span class='label_size'>Width</span><input class='small-input' type='text' id='set_height' /><span class='label_size'>Height</span><button id='set_size' class='btn btn-primary btn-sm disabled' disabled>Set</button></div>";
                 tools += size;
-                var comment = "<div class='line' style='padding-top:5%'></div><div class='tool'><span class='tool_label'>Notes</span> <button id='createComment' class='btn btn-primary btn-sm disabled' disabled><span class='glyphicon glyphicon-book'></span> Add Note</button></div>";
+                var comment = "<div class='line' style='padding-top:5%'></div><div class='tool'><span class='tool_label'>Notes</span> <button id='createComment' class='btn btn-primary btn-sm disabled' disabled><span class='glyphicon glyphicon-book'></span> Add Note</button> </div>";
                  var crop = "<div class='line'></div><div class='tool'><span class='tool_label'>Crop</span> <button class='btn btn-primary btn-sm crop_button disabled' disabled><i class='icon-resize-small'></i> Activate Crop</button> <button id='crop_image' class='btn btn-sm btn-warning'>Crop Image!</button></div>";
-                  var remove = "<div class='line'></div><div class='tool'><button disabled class='disabled btn btn-sm btn-danger' id='removeImage'><span class='glyphicon glyphicon-remove'></span> Remove</button> <button class='disabled btn btn-sm btn-primary' id='reset_image' disabled>Reset</button></div>";
+                  var remove = "<div class='line'></div><div class='tool'><button class='btn btn-sm btn-primary' id='select_all'>Select</button> <button class='disabled btn btn-sm btn-primary' id='deselect_all' disabled>Deselect</button> <button class='disabled btn btn-sm btn-warning' id='reset_image' disabled>Reset</button> <button disabled class='disabled btn btn-sm btn-danger' id='removeImage'><span class='glyphicon glyphicon-remove'></span> Remove</button></div>";
                 tools += comment + crop + remove;
                 tools += "</div>";
                 return tools;
@@ -243,6 +247,44 @@ $(document).ready(function () {
 
             },
 
+            selectAll: function(){
+                var images = $('.image_active');
+                $.fn.select_group.imagesSelected = [];
+                $.each(images, function(){
+                    $(this).children().css('boxShadow', '0px 0px 30px rgba(255, 246, 9, 1)');
+                    $(this).addClass('selected');
+                    $(this).data('selected', true);
+                    $(this).draggable({
+                        alsoDrag: ".selected"
+                    });
+                    $(this).children().children('img').resizable({
+                        aspectRatio: true,
+                        animate: true,
+                        alsoResize: '.selected, .selected > div, .selected > div > img'
+                    });
+                    $.fn.select_group.imagesSelected.push($(this))
+                });
+                $.fn.toolbar.refresh();
+            },
+
+            deselectAll: function(){
+                var images = $('.image_active');
+                $.each(images, function(){
+                    $(this).children().css('box-shadow', 'none');
+                    $(this).removeClass('selected');
+                    $(this).data('selected', false);
+                    $(this).draggable({
+                        alsoDrag: false
+                    });
+                    $(this).children().children('img').resizable({
+                        alsoResize: false
+                    });
+                    $.fn.select_group.imagesSelected = [];
+                });
+                $('#open_notes').fadeOut().remove();
+                $.fn.toolbar.refresh();
+            },
+
             reset: function(){
                 $.each($.fn.select_group.imagesSelected, function(){
 
@@ -328,8 +370,8 @@ $(document).ready(function () {
                 this.last_style = this.toolbox.css(['top', 'left', 'width', 'height', 'opacity']);
                 this.toolbox.animate({
                     position: 'absolute',
-                    top: "98%",
-                    left: this.buttons_position['left'] + $('#buttons').position().left + 30,
+                    top: this.buttons_position['top'] + $('#buttons').position().top + 30,
+                    left: "2%",
                     width: 0,
                     height: 0,
                     opacity: 0
@@ -338,7 +380,7 @@ $(document).ready(function () {
                     complete: function () {
                         $(this).hide();    
                         $('#button_toolbar').tooltip({
-                            placement: 'top',
+                            placement: 'right',
                             trigger: 'hover'
                         });
                         $('#button_toolbar').click(function () {
@@ -355,9 +397,6 @@ $(document).ready(function () {
                     this.is_hidden = true;
                 });
 
-                $('#createComment').click(function(){
-                    $.fn.comments.init($(this).attr('id'));
-                });
 
                 $('#reset_image').click(function(){
                     $.fn.toolbar.reset();
@@ -373,22 +412,9 @@ $(document).ready(function () {
 
                 $('#removeImage').click(function(){
                     $.each($.fn.select_group.imagesSelected, function(){
-                        if(typeof $(this).data('is_letter') == "undefined" || $(this).data('is_letter') === false){
-                            $('#images_container').append($(this).unbind().attr('style', '').draggable("destroy").removeClass('image_active').addClass('image').data('selected', false).children().children('img').resizable("destroy").css("box-shadow", "none").attr('style', '').parent('.image').children('.image_desc').css('box-shadow', 'none').parent(".image"));
-
-                            $("#" + $(this).attr('id')).click(function(){
-                                $.fn.imagesBox.select_image($(this));
-                            });
-                        } else {
-                            var image_id = $(this).attr('id');
-                            $('#letters_container').append($(this).unbind().attr('style', '').draggable("destroy").removeClass('image_active').data('selected', false).children().children('img').resizable("destroy").css("box-shadow", "none").attr('style', '').addClass('letter').attr('id', image_id));
-                            $(this).remove();
-                            $('#' + image_id).click(function(){
-                                $.fn.letters.selectLetter($(this));
-                            });
-                        }
                         $('#mini_' + $(this).attr('id')).remove();
                         $.fn.toolbar.disable();
+                        $(this).remove();
                     });
                     $.fn.select_group.imagesSelected = [];
                     if($('#toolbar .popover').length > 0){
@@ -399,6 +425,14 @@ $(document).ready(function () {
                 $('#crop_image').click(function(e){
                     e.preventDefault();
                     $.fn.crop.get_image();
+                });
+
+                $('#select_all').click(function(){
+                    $.fn.toolbar.selectAll();
+                });
+
+                $('#deselect_all').click(function(){
+                    $.fn.toolbar.deselectAll();
                 });
 
 
@@ -595,11 +629,15 @@ $(document).ready(function () {
                     $("#slider").slider("option", "value", image['opacity']);
                     $('#slider_brightness').slider("option", "value", image['brightness']);
                     $('#slider_rotate').slider("option", "value", image['rotate']);
-
+                    
                     $.fn.toolbar.refreshSize();
 
-
                 });
+                if($.fn.select_group.imagesSelected.length > 0){
+                    $.fn.toolbar.enable();
+                } else{
+                    $.fn.toolbar.disable();
+                }
             }
 
         };
@@ -620,10 +658,10 @@ $(document).ready(function () {
                     handle: '.top_box'
                 });
                 this.imagesBox.animate({
-                    "top": "2%",
+                    "top": "5%",
                     'left': "25%",
                     'width': "50%",
-                    'height': "82%",
+                    'height': "85%",
                     'opacity': 1
                 }, 250);
                 return false;
@@ -637,8 +675,8 @@ $(document).ready(function () {
                 this.buttons_position = $('#button_images').position();
 
                 this.imagesBox.show().animate({
-                    top: "98%",
-                    left: $('#buttons').position().left + this.buttons_position['left'] + 30,
+                    top: $('#buttons').position().top + this.buttons_position['top'] + 30,
+                    left: "2%",
                     width: 0,
                     height: 0,
                     opacity: 0
@@ -647,7 +685,7 @@ $(document).ready(function () {
                     complete: function () {
                         $(this).hide();
                         $('#button_images').tooltip({
-                            placement: 'top',
+                            placement: 'right',
                             trigger: 'hover'
                         });
                         $('#button_images').click(function () {
@@ -766,7 +804,8 @@ $(document).ready(function () {
                     },
                     drag: function(event, ui) {
                         position = $(this).offset();
-                        $.fn.minimap.update_mini_map();
+                        console.log(ui)
+                        $.fn.minimap.update_mini_map(ui);
                     },
                     stop: function(event, ui){
                         $(ui.helper).css('z-index', 0);
@@ -776,18 +815,16 @@ $(document).ready(function () {
                 $('.image_active').draggable(draggableOptions).children('img').css('width', '180px').resizable({
                     aspectRatio: true,
                     resize: function(event, ui){
-                        if($.fn.select_group.imagesSelected.length == 1){
+                        if($.fn.select_group.imagesSelected.length <= 1){
                             $('#mini_' + ui.element.parent().attr('id')).animate({
                                 'width': parseInt($(this).css('width')) / 25 + "px",
                                 'height': parseInt($(this).css('height')) / 30  + "px",
                             }, 10);
                         } else {
-                            $.each($.fn.select_group.imagesSelected, function(){
-                                var mini_image = $(this);
-                                console.log($(this))
-                                 $('#mini_' + mini_image.attr('id')).animate({
-                                    'width': parseInt(mini_image.css('width')) / 25 + "px",
-                                    'height': parseInt(mini_image.css('height')) / 30  + "px",
+                            $.each($('.selected'), function(){
+                                 $('#mini_' + $(this).attr('id')).animate({
+                                    'width': parseInt($(this).children().css('width')) / 25 + "px",
+                                    'height': parseInt($(this).children().css('height')) / 30  + "px",
                                 }, 10);
                             });
                         }
@@ -803,38 +840,64 @@ $(document).ready(function () {
 
             notes: [],
             open: false,
+            openFolder: false,
+            currentFolder: null,
 
-            init: function(image, content, title, image_id){
+            init: function(bool, image, content, title, image_id, size, position){
                 if($('.comment').length > 0){
                     $('.comment').focus();
                 } else {
+                    if(bool){
+                        var image_comment = image_id;
+                        var comment = this.make_comment(image_comment, image);
+                        $('body').append(comment);
+                        $('#' + image_comment).children('.comment_wrapper').children('.comment_content').html(content);
+                        $('#' + image_comment).data('id', image_id);
+                        $('#' + image_comment).data('image_note', image);
 
-                    var uniqueid = function(){
-                        var text = "";
-                        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                        $('#' + image_comment).children('.comment_wrapper').children('.commentTitle').val(title);
+                        $('#' + image_comment).animate({
+                            'position': 'fixed',
+                            'top': position.top,
+                            'left': position.left,
+                            'height': size.height,
+                            'width': size.width
+                        }, 100);
 
-                        for( var i=0; i < 5; i++ )
-                            text += possible.charAt(Math.floor(Math.random() * possible.length));
+                    } else {
+                        var uniqueid = function(){
+                            var text = "";
+                            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-                        return text;
-                    };
+                            for( var i=0; i < 5; i++ )
+                                text += possible.charAt(Math.floor(Math.random() * possible.length));
 
-                    var image_comment = image + '_' + uniqueid();
-                    var comment = this.make_comment(image_comment, image);
-                    $('body').append(comment);
+                            return text;
+                        };
+
+                        var image_comment = "note_" + image + '_' + uniqueid();
+                        var comment = this.make_comment(image_comment, image);
+                        $('body').append(comment);
+                        var title = $('#' + image).data('title');
+                        $('#' + image_comment).data('image_note', image);
+                        $('#' + image_comment).data('title', title);
+                    }
+                  
                     $('#' + image_comment).draggable({
                         handle: '.top_comment',
                         cursor: 'move',
-                        stack: '.image',
+                        stack: 'div',
                         appendTo: 'body',
-                        zIndex: 500
+                        zIndex: 1000
+                    }).resizable({
+                            maxHeight: 600,
+                            maxWidth: 700,
+                            minHeight: 300,
+                            minWidth: 350
                     });
-                    if(content || title || image_id && image){
-                        $('#' + image_comment).children('.comment_wrapper').children('.comment_content').html(content);
-                        $('#' + image_comment).data('id', image_id);
-                        $('#' + image_comment).children('.comment_wrapper').children('.commentTitle').val(title);
-                    }
-                    this.buttons(); 
+
+                    this.buttons();
+                    $('#notes_alert').hide().html('');
                 }
             },
 
@@ -843,16 +906,18 @@ $(document).ready(function () {
                     var notes = $.fn.comments.notes;
                     var note = $(this).parent().parent('.comment');
                     for (var i = 0; i < notes.length; i++) {
-                        if (notes[i]['id'] == note.data('id')) {         
-                          $.fn.comments.notes.splice(i, 1);
-                          i--;
+                        for(var j = 0; j < notes[j].notes.length; j++){
+                            if (notes[i].notes[j].id == note.data('id')) {         
+                              $.fn.comments.notes[i].notes.splice(j, 1);
+                              j--;
+                            }
                         }
                     }
                     note.fadeOut().remove();
                     if($.fn.comments.notes.length == 0){
-                        $('#notes_alert').fadeIn().html("No notes created");
+                        $('#notes_alert').show().html("No notes created");
                     } else {
-                        $('#notes_alert').fadeOut().html('');
+                        $('#notes_alert').hide().html('');
                     }
                 });
 
@@ -863,7 +928,7 @@ $(document).ready(function () {
                 $('#bold').on("click", function(){document.execCommand('bold',false,null);});
                 $('#italic').on("click", function(){document.execCommand('italic',false,null);});
                 $('#underline').on("click", function(){document.execCommand('underline',false,null);});  
-                $('#link').on("click", document.execCommand("CreateLink", false, $('#text_link').val()));              
+                                           
             },
 
             minimizeNote: function(note_this){
@@ -871,27 +936,86 @@ $(document).ready(function () {
                 var note_content = note_this.children('.comment_wrapper').children('.comment_content').html();
                 var note_title = note_this.children('.comment_wrapper').children('.commentTitle').val();
                 var note_id = note_this.attr('id');
-                var image_id = note_this.data('image');
+                var image_id = note_this.data('image_note');
+                var title = note_this.data('title');
+                var size = {
+                    "height": note_this.css('height'),
+                    "width": note_this.css('width')
+                };
+               
                 var note = {
                     'title': note_title,
                     'content': note_content,
                     'position': note_position,
                     'id': note_id,
-                    'image': image_id
-                }
-                this.notes.push(note);
+                    'image': image_id,
+                    'image_title': title,
+                    'size': size
+                };
 
-                // Updating notes into the window
-                this.update_notes(note);
-                if(!this.open){
-                    var notes_button_position = {'top': '98%', 'left': $('#notes_button').position().left};
-                } else {
-                    var notes_button_position = $('#notes').position();
+          
+
+                var flag = false;
+                for(i = 0; i < this.notes.length; i++){
+                        if(this.notes[i].image == image_id){
+                            flag = false;
+                            break;
+                        } else {
+                            flag = true;
+                        }
+                    
                 }
+
+                if(flag || this.notes.length == 0){
+
+                    var image = {
+                        'image': note.image,
+                        'title': note.image_title,
+                        'notes': [note]
+                    };
+
+                    this.notes.push(image);
+
+                } else {
+                    this.notes[i].notes.push(note);
+                }
+
+
+                if(!this.open){
+                    var notes_button_position = {
+                        'top': $('#notes_button').position().top,
+                        'left': "2%"
+                    };
+                } else {
+                    if($('#notes .note:last-child').length > 0){
+                        var notes_button_position = {
+                            'top': $('#notes .note:last-child').position().top + 50,
+                            'left': $('#notes .note:last-child').position().left + 50
+                        };
+
+                    } else {
+                        var notes_button_position = {
+                            'top': $('#notes').position().top + 50,
+                            'left': $('#notes').position().left + 50
+                        };
+
+                    }
+                }
+
+                if(this.openFolder){
+                    var note_2 = '';
+                    if(this.currentFolder == note.image){
+                        note_2 += this.create_note(note.title, note.id, note.content);
+                    }
+                    
+                    $('#notes_container').append(note_2);
+                    $.fn.comments.events_on_notes();
+                }
+
                 note_this.animate({
                     position: 'absolute',
                     top: notes_button_position['top'],
-                    left: notes_button_position['left'] + 50,
+                    left: notes_button_position['left'],
                     width: 0,
                     height: 0,
                     opacity: 0
@@ -902,104 +1026,34 @@ $(document).ready(function () {
                     }
                 });
 
+                // Updating notes into the window
+                this.update_notes();
+
             },
 
             make_comment: function(image, id_image){
                 var comment = "<div class='comment' id='" + image + "' data-image = '" + id_image +"'>";
                 comment += "<div class='top_comment'>";
-                comment += ' <div class="btn-group" data-toggle="buttons-checkbox"><button type="button" id="bold" class="btn btn-sm">b</button><button type="button" id="italic" class="btn btn-sm">i</button><button type="button" id="underline" class="btn btn-sm">u</button><button class="btn btn-sm" id="link"><span class="glyphicon glyphicon-globe"></button><button class="btn btn-sm" id="annotate"><span class="glyphicon glyphicon-pushpin" ></span></button></div> ';
                 comment += "<button class='btn btn-sm btn-danger removeComment' title='Delete Note'><span class='glyphicon glyphicon-remove'></span> Delete</button>";
                 comment += "<span class='pull-right minimizeNote' title='Minimize note'><span style='font-weight:bold;color:white;font-size:15px;cursor:pointer;margin:0.5%;' class='glyphicon glyphicon-remove'></span></span></div>";
                 comment += "<div class='comment_wrapper'>";
                 comment += "<input class='commentTitle' class='hidden' placeholder='Title ...' />";
-                comment += "<div class='comment_content' contenteditable></div></div>";       
+                comment += "<div class='comment_content' contenteditable></div>";
+                comment += ' <div id="rich_buttons" class="btn-group" data-toggle="buttons-checkbox"><button type="button" id="bold" class="btn btn-sm" title="bold">b</button><button type="button" id="italic" class="btn btn-sm" title="italic">i</button><button type="button" id="underline" class="btn btn-sm" title="underline">u</button></div></div>';
+
                 return comment;
             },
 
-
-            hide_notes: function(button_position){
-                $('#notes').animate({
-                    "top": "98%",
-                    'left': $('#buttons').position().left + button_position['left'] + 30,
-                    'width': "0%",
-                    'height': "0%",
-                    'opacity': 0
-                }, {
-                    duration: 250,
-                    complete: function () {
-                        $(this).hide();
-                        $('#notes_button').show();
-                        $('#notes_button').tooltip({
-                            placement: 'top',
-                            trigger: 'hover'
-                        });
-                        /*$('#notes_button').click(function(){
-                            $.fn.comments.show_notes()
-                        });*/
-                    }
-                });
-                this.open = false;
-            },
-
-            show_comment: function(note_button){
-                if($('.comment').length == 0){
-                    var notes = $.fn.comments.notes;
-                    var note = note_button.parent().parent('.note');
-                    for(i = 0; i < notes.length; i++){
-                        if(notes[i]['id'] == note.data('id')){
-                            var id = notes[i]['id'];
-                            var image = notes[i]['image'];
-                            var title = notes[i]['title'];
-                            var content = notes[i]['content'];
-                            var position = notes[i]['position'];
-                            $(note).animate({
-                                position: "fixed",
-                                top: notes[i]['position']['top'],
-                                left: notes[i]['position']['left'],
-                                opacity: 0
-                            }, {
-                                duration: 300,
-                                complete: function () {
-                                   $(this).hide();
-                                   $.fn.comments.init(image, content, title, id);
-                                   $('.comment').animate({
-                                        'position': "fixed",
-                                        'top': position['top'],
-                                        'left': position['left'],
-                                        'opacity': 1
-                                   }, 200);
-                                }
-                            });
-                        }
-                    }
-                } else {
-                    $('body').append("<div id='notification_comment' class='notify notify-error'>A note window is already open on the workspace.</div>");
-                    $('#notification_comment').notify({
-                        "close-button": false,
-                        "position": {'top':"12%", 'left': '70%'}
-                    });
-                }
-            },
-
-            update_notes: function(note){
-                var button_position = $('#notes_button').position();
-                var notes_html = "<div class = 'note' data-id = '" + note['id'] + "'><p style='padding:0' class='note_box_title col-lg-9'>" + note['title'] + "</p><p class='pull-right'><span title='Edit Note' class='glyphicon glyphicon-pencil edit_comment_from_box'></span> <span title='Delete Note' class='glyphicon glyphicon-remove remove_comment_from_box'></span></p><div class='note_box_content'>" + note['content'] + "</div></div>";
-                
-                $('#notes_container').append(notes_html);
-
-                if($.fn.comments.notes.length == 0){
-                    $('#notes_alert').fadeIn().html("No notes created");
-                } else {
-                    $('#notes_alert').fadeOut().html('');
-                }
-
-                $('.remove_comment_from_box').click(function(){
-                    var notes = $.fn.comments.notes;
+            events_on_notes: function(){
+                var notes = this.notes;
+                $('.note .remove_comment_from_box').click(function(){
                     var note = $(this).parent().parent('.note');
-                    for (var i = 0; i < notes.length; i++) {
-                        if (notes[i]['id'] == note.data('id')) {         
-                          $.fn.comments.notes.splice(i, 1);
-                          i--;
+                    for(var i = 0; i < notes.length; i++) {
+                        for(var j = 0; j < notes[i].notes.length; j++){
+                            if (notes[i].notes[j].id == note.data('id')) {         
+                                $.fn.comments.notes[i].notes.splice(j, 1);
+                                j--;
+                            }
                         }
                     }
                     $(note).stop().animate({
@@ -1014,46 +1068,197 @@ $(document).ready(function () {
                            $(this).hide().remove();
                         }
                     });
-                    if($.fn.comments.notes.length == 0){
+                    if(notes.length == 0){
                         $('#notes_alert').fadeIn().html("No notes created");
+                        $.fn.comments.back_to_notes();
                     } else {
-                        $('#notes_alert').fadeOut().html('');
+                        $('#notes_alert').hide().html('');
                     }
                 });
 
                 $('.edit_comment_from_box').click(function(){
                     $.fn.comments.show_comment($(this));
                 });
+            },
+
+
+            hide_notes: function(button_position){
+                $('#notes').animate({
+                    "top": $('#buttons').position().top + button_position['top'],
+                    'left': "2%",
+                    'width': "0%",
+                    'height': "0%",
+                    'opacity': 0
+                }, {
+                    duration: 250,
+                    complete: function () {
+                        $(this).hide();
+                        $('#notes_button').show();
+                        $('#notes_button').tooltip({
+                            placement: 'right',
+                            trigger: 'hover'
+                        });
+                        /*$('#notes_button').click(function(){
+                            $.fn.comments.show_notes()
+                        });*/
+                    }
+                });
+                this.open = false;
+            },
+
+            create_note: function(title, id, content){
+                var notes_html = "<div class = 'note' data-id = '" + id + "'><p style='padding:0' class='note_box_title col-lg-9'>" + title + "</p><p class='pull-right'><span title='Edit Note' class='glyphicon glyphicon-pencil edit_comment_from_box'></span> <span title='Delete Note' class='glyphicon glyphicon-remove remove_comment_from_box'></span></p><div class='note_box_content'>" + content + "</div></div>";
+                return notes_html;
+            },
+
+            open_notes: function(image){
+                var folder = $("<div>");
+                folder.data('image', image.attr('id'));
+                folder.data('image_title', image.data('title'));
+                if(this.open && !this.openFolder){
+                    this.openFolder_notes(folder);
+                } else if(this.open && this.openFolder && this.currentFolder == image.attr('id')){
+                    return;
+                } else {
+                    this.show_notes();
+                    this.openFolder_notes(folder);      
+                }
+            },
+
+            show_comment: function(note_button){
+                if($('.comment').length == 0){
+                    var notes = this.notes;
+                    var note = note_button.parent().parent('.note');
+                    for(i = 0; i < notes.length; i++){
+                        for(j = 0; j < notes[i].notes.length; j++){
+                            if(notes[i].notes[j].id == note.data('id')){
+                                var id = notes[i].notes[j].id;
+                                var image = notes[i].notes[j].image;
+                                var title = notes[i].notes[j].title;
+                                var content = notes[i].notes[j].content;
+                                var position = notes[i].notes[j].position;
+                                var size = notes[i].notes[j].size;
+                                $(note).animate({
+                                    'position': "fixed",
+                                    'top': position.top,
+                                    'left': position.left,
+                                    'width': size.width,
+                                    'height': size.height,
+                                    'opacity': 1
+                                }, {
+                                    duration: 300,
+                                    complete: function () {
+                                       $(this).hide();
+                                       $.fn.comments.init(true, image, content, title, id, size, position);
+                                    }
+                                });
+                            }
+                        }
+                    }
+                } else {
+                    $('body').append("<div id='notification_comment' class='notify notify-error'>A note window is already open on the workspace.</div>");
+                    $('#notification_comment').notify({
+                        "close-button": false,
+                        "position": {'top':"12%", 'left': '70%'}
+                    });
+                }
+            },
+
+            openFolder_notes: function(image_note){
+                this.openFolder = true;
+                this.currentFolder = image_note.data('image');
+                var breadcrumb = $('<div>');
+                breadcrumb.attr({
+                    'class': 'breadcrumb',
+                    'display':'none',
+                    'id': 'breadcrumb_notes'
+                }).css({
+                    'border-bottom': '1px solid #ddd'
+                });
+                var folder = image_note.data('image'); 
+                if($('#breadcrumb_notes').length == 0){  
+                    $('#breadcrumb_notes_container').append(breadcrumb);
+                    var li = "<li><a class='link' id='to_notes'>Notes</a></li>";
+                    li += "<li class='active'>" + image_note.data('image_title') + "</li>";   
+                    $('#breadcrumb_notes').html(li);
+                }
+                $('#to_notes').click(function(){
+                    $.fn.comments.back_to_notes();
+                });
+                var note = '';
+                for(i = 0; i < this.notes.length; i++){
+                    if(this.notes[i].image == image_note.data('image')){
+                        for(j = 0; j < this.notes[i].notes.length; j++){
+                            note += this.create_note(this.notes[i].notes[j].title, this.notes[i].notes[j].id, this.notes[i].notes[j].content);
+                        }
+                   }
+                }
+                $('#notes_container').html(note);
+                $.fn.comments.events_on_notes();
+                
+                if($.fn.comments.notes.length == 0){
+                    $('#notes_alert').show().html("No notes created");
+                } else {
+                    $('#notes_alert').hide().html('');
+                }
+                
+                $('.note_folders').fadeOut(100).remove();
+            },
+
+            back_to_notes: function(){
+                $('#breadcrumb_notes, .note').hide().remove();
+                this.openFolder = false;
+                this.currentFolder = null;
+                $('#notes_container').html('');
+                this.update_notes();
+            },
+
+            update_notes: function(){
+                var notes = this.notes;
+                var folders = $('.note_folders');
+                if(!this.openFolder){
+                    for(i = 0; i < notes.length; i++){
+                        var id = $(folders[i]).data('image');
+                        if(notes[i].image != id){
+                            var folder = $("<div class='note_folders'><img src='/static/img/folder-documents.png' /><span class='note_folders_title'></span></div>");
+                            folder.data('image', notes[i].image);
+                            folder.data('image_title', notes[i].title)
+                            folder.children('span').html(notes[i].title);
+                            $('#notes_container').append(folder);
+                            folder.dblclick(function(){
+                                $.fn.comments.openFolder_notes($(this));
+                            });      
+                        }                
+                    }                    
+                }                
 
             },
 
             show_notes: function(){
                     var button_position = $('#notes_button').position();
                     $('#notes').css({
-                        "top": "98%",
-                        'left': $('#buttons').position().left  + button_position.left + 30
+                        "top": $('#buttons').position().top  + button_position.top,
+                        'left': "2%"
                     });
                     $('#notes').show().animate({
-                        "top": "4%",
+                        "top": "5%",
                         'left': "25%",
                         'width': "50%",
-                        'height': "77%",
+                        'height': "85%",
                         'opacity': 1,
                         'z-index': 400
                     }, {
                         duration: 250,
                         complete: function () {
                             $('#notes_button').hide();
-                            $('#notes_container').sortable();
+                            //$('#notes_container').sortable();
                             $('#notes_button').tooltip({
-                                placement: 'top',
+                                placement: 'right',
                                 trigger: 'hover'
                             });
                             $('#close_notes').click(function(){
                                 $.fn.comments.hide_notes(button_position);
                             });
-
-
                         }
                     }).draggable({
                         handle: '.top_box'
@@ -1163,8 +1368,11 @@ $(document).ready(function () {
                         beforeSend: function(){
                             if($('#letter_wait_box').length == 0){
                                 var loader = "<div class='modal' id='letter_wait_box'><span id='letter_crop_status'>Cropping region ...</span><div id='letters_buttons_loading_box'><img src='/static/img/ajax-loader2.gif' /></div>";
-                                $('body').append(loader)
+                                $('body').append(loader);
                                 $('#letter_wait_box').fadeIn();
+
+                                
+
                             } else {
                                 $('#letters_buttons_loading_box').hide().fadeIn().html("<img src='/static/img/ajax-loader2.gif' />");
                                 $('#letter_crop_status').hide().fadeIn().html("Cropping region ...");
@@ -1234,15 +1442,15 @@ $(document).ready(function () {
             open_lettersbox: function(){
                 var button_position = $('#letters_button').position();
                 $('#letters').css({
-                    'top': "98%",
-                    'left': $('#buttons').position().left + button_position.left + 30
+                    'top': $('#buttons').position().top + button_position.top + 30,
+                    'left': "2%"
                 });
                 $('#letters_button').hide();
                 $('#letters').show().animate({
-                    "top": "4%",
+                    "top": "5%",
                     'left': "25%",
                     'width': "50%",
-                    'height': "77%",
+                    'height': "85%",
                     'opacity': 1,
                     'z-index': 400
                 }, {
@@ -1275,8 +1483,8 @@ $(document).ready(function () {
 
             hide_letters: function(button_position){
                 $('#letters').animate({
-                    "top":"98%",
-                    'left': $('#buttons').position().left + button_position['left'] + 30,
+                    "top":$('#buttons').position().top + button_position['top'] + 30,
+                    'left': "2%",
                     'width': "0%",
                     'height': "0%",
                     'opacity': 0
@@ -1411,6 +1619,8 @@ $(document).ready(function () {
                 if(this.is_selected(letter)){
                     letter.data('selected', false);
                     letter.css('boxShadow', 'none');
+                    console.log(letter)
+                    console.log("now false")
                     if(letter.length == 0){
                         null;
                     } else {
@@ -1425,7 +1635,9 @@ $(document).ready(function () {
                     if(typeof letter != "undefined"){
                         this.lettersSelected.push(letter);
                         letter.data('selected', true);
-                        letter.css('boxShadow', '0px 0px 18px rgba(255, 246, 9, 0.94)');
+                        console.log(letter)
+                        console.log("now true")
+                        letter.css('boxShadow', '0px 0px 8px 6px rgba(255, 246, 9, 0.94)');
                     }
                 }
                 var selected_letters_number = $('#selected_letters_number');
@@ -1452,6 +1664,27 @@ $(document).ready(function () {
                 var li = "<li><a class='link' id='to_regions'>Regions</a></li>";
                 li += "<li class='active'>" + data.data('manuscript').title + "</li>";   
                 $('#breadcrumb_letters').html(li);
+                n = 0;
+                var lettersSelected = $.fn.letters.lettersSelected;
+                if(lettersSelected.length > 0){    
+                    for(i = 0; i < lettersSelected.length; i++){
+                        if(lettersSelected[i].data('manuscript_id') == data.data('manuscript').id){
+                            n++;
+                            if(n > data.data('manuscript').letters.length){
+                                break;
+                            } else {
+                                for(j = 0; j < data.data('manuscript').letters.length; j++){
+                                    var letter = data.data('manuscript').letters[j];
+                                    if(lettersSelected[i].attr('id') == letter.attr('id')){
+                                        letter.data('selected', true);
+                                    } else {
+                                        letter.data('selected', false);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                 var i = 0;
                 while(i < data.data('manuscript').letters.length){
                     var letter = data.data('manuscript').letters[i];
@@ -1461,15 +1694,7 @@ $(document).ready(function () {
                     });
                     i++;
                 }
-                if($.fn.letters.lettersSelected.length > 0){
-                    for(i = 0; i < $.fn.letters.lettersSelected.length; i++){
-                        var letter_2 = $.fn.letters.lettersSelected[i];
-                        var letter = data.data('manuscript').letters[i];
-                        if(letter.attr('id') == letter_2.attr('id')){
-                            letter.data('selected', true);
-                        }
-                    }
-                }
+                
                 $('#to_regions').click(function(){
                     $('.letter').remove();
                     $('.manuscript_pack').fadeIn(150);
@@ -1546,7 +1771,7 @@ $(document).ready(function () {
 
                 $('#image_compared_to_workspace').click(function(){
                     $.fn.letters.make_workable($('#image_result_compared'));
-                    $('#comparison_box').fadeOut().remove();
+                    $('#comparison_box').fadeOut(350).remove();
                 });
             },
 
@@ -1560,6 +1785,8 @@ $(document).ready(function () {
                     return false;
                 }
                 $.fn.letters.lettersSelected.clean(undefined);
+                var selected_letters_number = $('#selected_letters_number');
+                selected_letters_number.html(this.lettersSelected.length + " selected")
             },
 
             to_workspace: function(){
@@ -1573,6 +1800,8 @@ $(document).ready(function () {
                     return false;
                 }
                 $.fn.letters.lettersSelected.clean(undefined);
+                var selected_letters_number = $('#selected_letters_number');
+                selected_letters_number.html(this.lettersSelected.length + " selected")
             },
 
             hide_box: function(){
@@ -1598,8 +1827,8 @@ $(document).ready(function () {
                 if(this.manager == false){
                     var button_position = $('#load').position();
                     $('#import').css({
-                        'top': "98%",
-                        'left': $('#buttons').position().left + button_position['left'] + 30
+                        'top': $('#buttons').position().top + button_position['top'],
+                        'left': "2%"
                     });
                     $('#load').hide();
                     $('#import').show().animate({
@@ -1626,10 +1855,10 @@ $(document).ready(function () {
                     });
                 } else {
                     $('#import').show().animate({
-                        "top": "4%",
+                        "top": "5%",
                         'left': "25%",
                         'width': "50%",
-                        'height': "80%",
+                        'height': "85%",
                         'opacity': 1,
                         'z-index': 400
                     }, {
@@ -1645,8 +1874,8 @@ $(document).ready(function () {
                 var button_position = $('#load').position();
 
                 $('#import').animate({
-                    "top": "98%",
-                    'left': $('#buttons').position().left + button_position['left'] + 30,
+                    "top": $('#buttons').position().top + button_position['top'],
+                    'left':  "2%",
                     'width': "0%",
                     'height': "0%",
                     'opacity': 0
@@ -1708,10 +1937,10 @@ $(document).ready(function () {
 
             show_manager: function(){
                 $('#import').show().animate({
-                        'top': "4%",
+                        'top': "5%",
                         'left': "25%",
                         'width': "50%",
-                        'height': "80%",
+                        'height': "85%",
                         'opacity': 1,
                         'z-index': 400
                     }, {
@@ -1820,8 +2049,7 @@ $(document).ready(function () {
                     comments.push(json['session_properties']['comments'][i]) 
                 }
                 for(i = 0; i < json['session_properties']['letters'].length; i++){ 
-                    console.log(json['session_properties']['letters'])
-                    letters.push([json['session_properties']['letters'][i]['letter'], json['session_properties']['letters'][i]['src'], json['session_properties']['letters'][i]['size'] ]) 
+                    letters.push(json['session_properties']['letters'][i]); 
                 }
                 this.reset();
                 $.fn.import.reloadImages(images, json['image_properties']);
@@ -1977,8 +2205,19 @@ $(document).ready(function () {
 
             importLetters: function(letters){
                 for(i = 0; i < letters.length; i++){
-                    letter = "<img class='letter' id='" + letters[i][0] + "' src ='" + unescape(letters[i][1]) + "' data-size = '" + letters[i][2] + "' />";
-                    $.fn.letters.addLetter(letter);
+                    for(j = 0; j < letters[i].letters.length; j++){
+                        console.log(letters[i].letters[j])
+                        var letter = $('<img>');
+                        letter.attr('class', 'letter');
+                        letter.attr('id', letters[i].letters[j].id);
+                        letter.attr('src', letters[i].letters[j].src);
+                        letter.data('size', letters[i].letters[j].size);
+                        letter.data('manuscript', letters[i].letters[j].manuscript);
+                        letter.data('manuscript_id', letters[i].letters[j].manuscript_id);
+                        letter.data('title', letters[i].letters[j].title);
+                        console.log(letter)
+                        $.fn.letters.addLetter(letter);
+                    }
                 }
             },
 
@@ -2044,17 +2283,32 @@ $(document).ready(function () {
 
             },
             
-            update_mini_map: function(){
-                $.each($.fn.select_group.imagesSelected, function(){
-                    var image = {
-                        'top': parseInt(this.css('top')) / $(window).height() * 22,
-                        'left': parseInt(this.css('left')) / $(window).width() * 40
-                    };
-                    $("#mini_" + this.attr('id')).animate({
-                        'left': image['left'],
-                        'top': image['top']
-                    }, 0);
-                });
+            update_mini_map: function(ui){
+                if(typeof ui != "undefined"){
+                    if(ui.helper.hasClass('selected')){
+                        $.each($('.selected'), function(){
+                            var image = {
+                                'top': parseInt($(this).css('top')) / $(window).height() * 22,
+                                'left': parseInt($(this).css('left')) / $(window).width() * 40
+                            };
+                            $("#mini_" + $(this).attr('id')).animate({
+                                'left': image['left'],
+                                'top': image['top']
+                            }, 0);
+                        });
+                    } else {
+                        element = ui.helper;
+                        var image = {
+                            'top': parseInt(element.css('top')) / $(window).height() * 22,
+                            'left': parseInt(element.css('left')) / $(window).width() * 40
+                        };
+                        $("#mini_" + element.attr('id')).animate({
+                            'left': image['left'],
+                            'top': image['top']
+                        }, 0);
+                    }
+                }
+                
             },
 
             clean_minimap: function(){
@@ -2079,8 +2333,8 @@ $(document).ready(function () {
                 var button_position = $('#save').position();
                 $('#save').hide();
                 $('#export').css({
-                    "top": "98%",
-                    'left': $('#buttons').position().left + button_position.left + 30
+                    "top": $('#buttons').position().top + button_position.top,
+                    'left': "2%"
                 }).show();
                 $('#export').animate({
                     "top": "20%",
@@ -2105,8 +2359,8 @@ $(document).ready(function () {
                 $('#save').show();
                 var button_position = $('#save').position();
                 $('#export').animate({
-                    "top": "98%",
-                    'left': $('#buttons').position().left + $('#save').position().left + 30,
+                    "top": $('#buttons').position().top + $('#save').position().top, 
+                    'left': "2%",
                     'width': "0%",
                     'height': "0%",
                     'opacity': 0
@@ -2202,28 +2456,29 @@ $(document).ready(function () {
             },
 
             export_letters: function(){
-                var letters_cropped = $('.letter');
-                var letters = [];
-                if(letters_cropped.length > 0){
-                    for(i = 0; i < letters_cropped.length; i++){
-
-                        var letter = {
-                            'letter': $(letters_cropped[i]).attr('id'),
-                            'src': $(letters_cropped[i]).attr('src'),
-                            'size': $(letters_cropped[i]).data('size')
-                        };
-
-                        letters.push(letter);
+                var letters = $.fn.letters.regions;
+                if(letters.length > 0){
+                    var manuscripts_extracted = [];
+                    var letters_extracted = [];
+                    for(i = 0; i < letters.length; i++){
+                        var region = {'manuscript': letters[i].title, 'id': letters[i].id, 'letters': []}
+                        for(j = 0; j < letters[i].letters.length; j++){
+                            var letter = {
+                                'src': letters[i].letters[j].attr('src'),
+                                'size': letters[i].letters[j].data('size'),
+                                'id': letters[i].letters[j].attr('id'),
+                                'manuscript':  letters[i].letters[j].data('manuscript'),
+                                'manuscript_id': letters[i].letters[j].data('manuscript_id'),
+                                'title':  letters[i].letters[j].data('title')
+                            }
+                            region.letters.push(letter);
+                        }
+                        manuscripts_extracted.push(region); 
                     }
-
+                    return manuscripts_extracted;
                 } else {
-
-                    var letters = false;
-                
+                    return false;
                 }
-
-                return letters;
-
             },
 
             export_session_properties: function(){
@@ -2325,7 +2580,7 @@ $(document).ready(function () {
             },
 
             show: function(){
-                $('#nav').animate({'bottom':'14%'}, 300);
+                $('#nav').animate({'left':'-10%'}, 300);
                 $('#menu').data('status', 'shown');
                 $('#icon-up').css({
                     'background-position': '-60px 0'
@@ -2333,7 +2588,7 @@ $(document).ready(function () {
             },
 
             hide: function(){
-                $('#nav').animate({'bottom':'0%'}, 300);
+                $('#nav').animate({'left':'0%'}, 300);
                 $('#menu').data('status', 'hidden');
                 $('#icon-up').css({
                     'background-position': '-45px -15px'
@@ -2353,7 +2608,7 @@ $(document).ready(function () {
         };
 
         function main(){
-            
+
             $.fn.toolbar.init();
             $.fn.menu.init();
             Array.prototype.clean = function(deleteValue) {
@@ -2407,7 +2662,6 @@ $(document).ready(function () {
                             }
                         }
                         
-
                     } else {
                         image.children().css('boxShadow', '0px 0px 30px rgba(255, 246, 9, 1)');
                         image.addClass('selected');
@@ -2422,25 +2676,44 @@ $(document).ready(function () {
                         });
                         $.fn.select_group.imagesSelected.push(image);
                     }
-                    if (!$.fn.toolbar.exists()) {
+
+                    if(!$.fn.toolbar.exists()) {
                         $.fn.toolbar.create();
                         $.fn.toolbar.refresh();
                     } else {
                         $.fn.toolbar.refresh();
                     }
-                    if($.fn.select_group.imagesSelected.length > 0){
-                        $.fn.toolbar.enable();
-                    } else{
-                        $.fn.toolbar.disable();
-                    }
 
-                    if($.fn.select_group.imagesSelected.length == 1){
+                    if(this.imagesSelected.length == 1){
                         $('.crop_button').removeClass('disabled');
+                        $('#createComment').removeClass('disabled');
+                        var image = this.imagesSelected[0];
+                        var notes = $.fn.comments.notes;
+                        for(i = 0; i < notes.length; i++){
+                            if(notes[i].image == image.attr('id')){
+                                var button = $("<button class = 'btn btn-sm btn-warning' id='open_notes'>Open notes</button>");
+                                $('#createComment').after(button.hide().fadeIn());
+                                $('#open_notes').click(function(){
+                                    $.fn.comments.open_notes(image);
+                                });
+                                break;
+                            }
+                        }
+                        $('#createComment').click(function(){
+                            var id = $.fn.select_group.imagesSelected[0].attr('id');
+                            console.log(id)
+                            $.fn.comments.init(false, id, false, false, false, false, false, false);
+                        });
+
                     } else {
                         $('.crop_button').addClass('disabled');
+                        $('#createComment').addClass('disabled');
+                        $('#open_notes').fadeOut().remove();
                     }
                 }
             };
+
+            
 
             var images_on_minimap = [];
 
@@ -2460,7 +2733,7 @@ $(document).ready(function () {
             };
 
             $('img').tooltip({
-                placement: 'top',
+                placement: 'right',
                 trigger: 'hover'
             });
             
@@ -2509,6 +2782,9 @@ $(document).ready(function () {
                     $('html, body').css('width','6050px');
                 });
             }
+            // method to stop all active ajax requests
+
+
 
             $('#workspace').click(function(){
                 $(this).animate({'background-color': '#444'}, 50, function(){
@@ -2517,6 +2793,7 @@ $(document).ready(function () {
                             'background-color': '#666',
                             '-moz-transform':'scale(0.22)',
                             'margin':'0.65%',
+                            'margin-top': '3.5%',
                             'zoom': '22%'
                         }).addClass('toggle');
                         windows_flag = 1;

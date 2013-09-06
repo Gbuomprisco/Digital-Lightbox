@@ -52,7 +52,7 @@ $(document).ready(function(){
 						complete: function(){
 							this.first_requestRunning = false;
 							$('.image').click(function(){
-                    			$.fn.imagesBox.select_image($(this));
+                    			$.imagesBox.select_image($(this));
                 			});
                 			$('#load_more').attr('disabled', false).click(load_scroll);
 
@@ -98,7 +98,7 @@ $(document).ready(function(){
 										$('#ajax-loader').fadeOut();
 										$('.image').unbind('click');
 										$('.image').click(function(){
-				                    		$.fn.imagesBox.select_image($(this));
+				                    		$.imagesBox.select_image($(this));
 				                		});
 									}
 					           

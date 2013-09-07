@@ -49,6 +49,28 @@ html, body{
 		position: relative;
 		right:15%;
 	}
+
+#window_link{
+	text-align: center;
+	position: fixed;
+	padding-top: 1%;
+	font-weight: bold;
+	min-height: 15%;
+	left: 35%;
+	top: 30%;
+	display: none;
+	overflow: hidden;
+	width: 25%;
+	height: 20%;
+	z-index: 400;
+	border: 10px solid rgba(82, 82, 82, 0.7);
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+	color: #525252;
+	background: #fff;
+}
+
 .note{
 	width: 30%;
 	height: 40%;
@@ -306,7 +328,9 @@ html, body{
 		text-decoration: underline;
 	}
 }
-
+#selected_letters_number{
+	margin-right: 2%;
+}
 .images_selected{
 	color: #5e5e5e;
 	font-size: 12px;
@@ -326,21 +350,28 @@ html, body{
 #nav{
 	z-index: 120;
 	position: fixed;
-			top:0;
-		left:0;
+	top:0;
+	left:0;
 	#buttons {
 		position: fixed;
-		width: 6%;
+		border-top-right-radius:5px;
+		width: 7%;
 		padding:1%;
 		padding-top: 5%;
 		height:100%;
 		background: #222;
 		box-shadow: -1px -1px 2px 0px rgba(0,0,0,0.1),1px -1px 2px 0px rgba(0,0,0,0.1);
+		.tooltip{
+			margin-left:20px;
+			width:100%;
+		}
 		> img {
 			float:left;
+			
 			clear:both;
 			cursor: pointer;
 			margin-bottom:100%;
+			padding-left:15%;
 			.transition(all, 0.15s linear);
 			&:hover{
 				-webkit-transform: scale(1.25);
@@ -348,7 +379,6 @@ html, body{
 			      -ms-transform: scale(1.25);  
 			       -o-transform: scale(1.25);  
 			          transform: scale(1.25);
-			          margin-left:10px;
 			}
 		}
 
@@ -468,7 +498,11 @@ html, body{
 			text-shadow: 0px 0px 4px #fff;
 		}
 	}
-
+	#removeImage{
+		position:absolute;
+		bottom:5px;
+		right:5px;
+	}
 	#tools{
 		
 	}
@@ -514,6 +548,13 @@ html, body{
 	#crop_image{
 		display: none;
 	}
+}
+.comment_content h3{
+	font-size:18px;
+	font-weight: bold;
+	padding-bottom: 3px;
+	border-bottom:1px dotted #eee;
+	margin-top:2px;
 }
 #search_button{
 	padding-left: 16px;

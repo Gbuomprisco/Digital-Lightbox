@@ -50,6 +50,7 @@ $(document).ready(function(){
 							}
 						},
 						complete: function(){
+							$.imagesBox.imagesSelected = [];
 							this.first_requestRunning = false;
 							$('.image').click(function(){
                     			$.imagesBox.select_image($(this));
@@ -94,6 +95,7 @@ $(document).ready(function(){
 					                	}
 					                },
 					                complete: function(data){
+										$.imagesBox.imagesSelected = [];
 										$(this).data('requestRunning', false);
 										$('#ajax-loader').fadeOut();
 										$('.image').unbind('click');

@@ -82,3 +82,15 @@ def get_image_manuscript(request):
 		image = [manuscript.thumbnail(), manuscript.pk, manuscript.display_label, manuscript.item_part.current_item.repository.name, manuscript.item_part.current_item.repository.place.name]
 		return HttpResponse(simplejson.dumps(image), mimetype='application/json')
 
+def save_xml(request):
+	import os
+	if request.is_ajax():
+		xml = request.POST.get('xml', '')
+		os.chdir("/static/")
+		f = open("letters.xml", 'w')
+		if f.write(xml):
+			return HttpResponse(True)
+		else:
+			return HttpResponse(False)
+
+

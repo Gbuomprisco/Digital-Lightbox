@@ -209,9 +209,7 @@ $(document).ready(function () {
                         } else {
                             calc_height = height;
                             calc_width = width;
-                        }
-
-                            
+                        }  
                             this.children().css({
                                 'width': calc_width,
                                 'height': calc_height
@@ -1226,7 +1224,7 @@ $(document).ready(function () {
                     });
                     if(notes.length == 0){
                         $('#notes_alert').fadeIn().html("No notes created");
-                        $.comments.back_to_notes();
+                        $.comments.es();
                     } else {
                         $('#notes_alert').hide().html('');
                     }
@@ -1505,6 +1503,19 @@ $(document).ready(function () {
 
             buttons: function(){
                 $('.crop_button').click(function(){
+                    $(document).on('keydown', function(e) {
+                                var code = (e.keyCode ? e.keyCode : e.which);
+
+                                if (e.altKey) {
+
+                                    if (code == 67) {  
+                                        $.crop.get_image();
+                                        return false;
+                                    }
+                                } else {
+                                    return false;
+                                }
+                            });
                     if(!$(this).hasClass('active')){
                         $(this).addClass('active');
                         $.crop.crop($('.selected'));
@@ -1512,6 +1523,7 @@ $(document).ready(function () {
                         return false;
                     }
                 });
+
                 return false;
             },
 
@@ -1519,7 +1531,7 @@ $(document).ready(function () {
             get_image: function(){
 
                 $.each($.select_group.imagesSelected, function(){
-                    var image = $(this).children().children('img');
+                    var image = $.select_group.imagesSelected[0].children().children('img');
 
                     var is_letter = function(){
                         if($(this).data('is_letter')){
@@ -1739,7 +1751,7 @@ $(document).ready(function () {
                     } else {
                         return false;
                     }
-                }
+                };
                 var manuscripts = {'title': manuscript_title, 'id': manuscript_id, 'letters': []};
                 manuscripts.letters.push($(data))
                 this.regions.push(manuscripts);
@@ -2062,19 +2074,19 @@ $(document).ready(function () {
                 var xml = "<?xml version='1.0' encoding='UTF-8'?>\n";
                 xml += '<regions>';
                 for(var i = 0; i < letters.length; i++){
-                    xml += "\t<manuscript>";
-                    xml += "\t\t<id>" + letters[i].id + "</id>";
-                    xml += "\t\t<title>" + letters[i].title + "</title>";
+                    xml += "\t<manuscript>\n";
+                    xml += "\t\t<id>" + letters[i].id + "</id>\n";
+                    xml += "\t\t<title>" + letters[i].title + "</title>\n";
                     for(var j = 0; j < letters[i].letters.length; j++){
                         var letter = $(letters[i].letters[j]);
-                        xml += "\t\t\t<letter>";
-                        xml += "\t\t\t\t<size>" + letter.data('size') + "</size>";
-                        xml += "\t\t\t\t<id>" + letter.attr('id') + "</id>";
-                        xml += "\t\t\t\t<src>" + letter.attr('src') + "</src>";
-                        xml += "\t\t\t\t<title>" + letter.data('title') + "</title>";
-                        xml += "</letter>";
+                        xml += "\t\t\t<letter>\n";
+                        xml += "\t\t\t\t<size>" + letter.data('size') + "</size>\n";
+                        xml += "\t\t\t\t<id>" + letter.attr('id') + "</id>\n";
+                        xml += "\t\t\t\t<src>" + letter.attr('src') + "</src>\n";
+                        xml += "\t\t\t\t<title>" + letter.data('title') + "</title>\n";
+                        xml += "</letter>\n";
                     }
-                    xml += "\t</manuscript>";
+                    xml += "\t</manuscript>\n";
                 }
                 xml += "</regions>";
                 window.URL = window.webkitURL || window.URL;
@@ -2107,6 +2119,7 @@ $(document).ready(function () {
             import_image: function(e){
                 var files = e.target.files;
                 var file = files[0];
+                
                 var reader = new FileReader();
                 reader.onload = function(ev){
                     var src = ev.target.result;
@@ -2114,6 +2127,7 @@ $(document).ready(function () {
                     var wrap_image = $('<div>');
                     wrap_image.data('from_pc', true);
                     wrap_image.attr('id', uniqueid());
+                    wrap_image.data('size', this.width + ',' + this.height);
                     image.attr('src', src);
                     wrap_image.data('title', file.name);
                     wrap_image.append(image);
@@ -2130,6 +2144,7 @@ $(document).ready(function () {
             import_xml: function(e){
                 var files = e.target.files;
                 var file = files[0];
+                
                 var reader = new FileReader();
                 reader.onload = function(ev){
                     var letters = ev.target.result;

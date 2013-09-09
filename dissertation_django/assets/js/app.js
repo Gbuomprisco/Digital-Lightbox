@@ -789,14 +789,23 @@ $(document).ready(function () {
                     var page_position = $('#overview').offset();
                     for(var i = 0; i < images.length; i++){
                         n += 185;
+
                         var new_images = $(images[i]).unbind().removeClass('image').addClass('image_active').css({
                             'position': 'absolute',
                             'top': page_position.top - $(window).height() + 100,
                             'left': $(window).scrollLeft() + n
                         });
-
                         var workspace = $.workspaceImages.workspace;
+                        var original_id = new_images.attr('id');
                         new_images.data('workspace', workspace);
+                        new_images.data('original_id', id);
+                        var id = new_images.attr('id');
+                        
+                        if($('#' + id).length > 0){
+                            var new_id = uniqueid();
+                            new_images.attr('id', new_id);
+                        }
+
                         $('#' + workspace).append(new_images);
 
                         $(images[i]).dblclick(function () {
@@ -1035,7 +1044,6 @@ $(document).ready(function () {
                 if($.select_group.imagesSelected.length == 1){
                     var image = $.select_group.imagesSelected[0];
                     var notes = $.comments.notes;
-                    console.log('Apro le note per ' +  image)
                     if($('#open_notes').length == 0){
                         for(var i = 0; i < notes.length; i++){
                             if(notes[i].image == image.attr('id')){
@@ -1519,7 +1527,7 @@ $(document).ready(function () {
                         } else {
                             return false;
                         }
-                    }
+                    };
                     
                     var width = image.width();
                     var height = image.height();
@@ -1643,10 +1651,8 @@ $(document).ready(function () {
                             return false;
                         });
 
-                        document.getElementById('load_xml').addEventListener('change', function() {
-                            var file = document.getElementById('load_xml').files[0];
-                            var reader = new FileReader();
-                            reader.readAsText(file);
+                        $('#load_image').on('change', function(e){
+                            $.letters.import_image(e);
                         });
 
                         $('#load_xml').on('change', function(e){
@@ -2098,10 +2104,32 @@ $(document).ready(function () {
                 }
             },
 
+            import_image: function(e){
+                var files = e.target.files;
+                var file = files[0];
+                var reader = new FileReader();
+                reader.onload = function(ev){
+                    var src = ev.target.result;
+                    var image = $('<img>');
+                    var wrap_image = $('<div>');
+                    wrap_image.data('from_pc', true);
+                    wrap_image.attr('id', uniqueid());
+                    image.attr('src', src);
+                    wrap_image.data('title', file.name);
+                    wrap_image.append(image);
+                    $.imagesBox.imagesSelected.push(wrap_image);
+                    console.log(wrap_image)
+                    $.imagesBox.to_workspace();
+                    $.imagesBox.imagesSelected = [];
+                }
+                reader.readAsDataURL(file);
+
+            },
+
+
             import_xml: function(e){
                 var files = e.target.files;
                 var file = files[0];
-                console.log(files);
                 var reader = new FileReader();
                 reader.onload = function(ev){
                     var letters = ev.target.result;

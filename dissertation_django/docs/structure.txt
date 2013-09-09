@@ -1,8 +1,0 @@
-- Django
-	- CSS
-		- Bootstrap
-		- LESS
-	- Javascript
-		- jQuery (DOM, AJAX, Events)
-	- Other Libraries
-		- ...

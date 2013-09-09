@@ -50,7 +50,6 @@ $(document).ready(function(){
 							}
 						},
 						complete: function(){
-							$.imagesBox.imagesSelected = [];
 							this.first_requestRunning = false;
 							$('.image').click(function(){
                     			$.imagesBox.select_image($(this));

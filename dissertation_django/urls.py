@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from view import search, read_image, get_image_manuscript, save_xml
+from view import search, read_image, get_image_manuscript
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
@@ -11,7 +11,6 @@ urlpatterns = patterns('django.views.generic.simple',
     (r'^search/$', search),
     (r'^read-image/$', read_image),
     (r'^get-image-manuscript/$', get_image_manuscript),
-    (r'^save_xml/$', save_xml),
 
     # url(r'^dissertation_django/', include('dissertation_django.foo.urls')),
 

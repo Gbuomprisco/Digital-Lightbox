@@ -5,15 +5,14 @@
 		{% compress css %}
 		<link rel="stylesheet" type="text/css" media="all" href="/static/css/bootstrap.css">
 		<link rel="stylesheet" type="text/css" media="all" href="/static/css/bootstrap-responsive.css">
-		<link rel="stylesheet" type="text/less" media="all" href="/static/css/bootstrap-glyphicons.css">		
-		<link rel="stylesheet" type="text/less" media="all" href="/static/css/style.less">
+		<link rel="stylesheet" type="text/css" media="all" href="/static/css/bootstrap-glyphicons.css">		
 		<link rel="stylesheet" type="text/css" href="/static/css/css/ui-lightness/jquery-ui-1.8.20.custom.css">
 		<link rel="stylesheet" type="text/less" media="all" href="/static/css/app.less">
-		<link rel="stylesheet" type="text/less" media="all" href="/static/css/notifications.css">
-		<link rel="stylesheet" type="text/less" media="all" href="/static/css/jcrop.min.css">		
+		<link rel="stylesheet" type="text/css" media="all" href="/static/css/notifications.css">
+		<link rel="stylesheet" type="text/css" media="all" href="/static/css/jcrop.min.css">		
 		{% endcompress %}
 		{% compress js %}
-		<script type="text/javascript" src="/static/js/jquery-1.9.1.js"></script>
+		<script type="text/javascript" src="/static/js/jquery-2.0.3.min.js"></script>
 		<script type="text/javascript" src="/static/js/jquery-ui-1.10.2.custom.min.js"></script>
 		<script type="text/javascript" src="/static/js/app.js"></script>
 		<script type="text/javascript" src="/static/js/css3-mediaqueries.js"></script>
@@ -24,6 +23,8 @@
 		<script type="text/javascript" src="/static/js/jcrop.min.js"></script>
 		<script type="text/javascript" src="/static/js/resemble.js"></script>
 		<script type="text/javascript" src="/static/js/multidraggable.js"></script>
+		<script type="text/javascript" src="/static/js/xml2json.js"></script>
+
 		<script>  
 			var polyfilter_scriptpath = '/static/js/lib/';
 			var development = true;
@@ -40,6 +41,17 @@
                    }
                 }
             }
+            function handleFiles(files) {
+                var file = files[0];
+                var reader = new FileReader();
+                reader.onload = onFileReadComplete;
+                reader.readAsText(file);
+            }
+              
+            function onFileReadComplete(event) { 
+              console.log(event.target.result);
+            }
+       
 		</script>
 		<script src="/static/js/lib/cssParser.js"></script>
 		<script src="/static/js/lib/css-filters-polyfill.js"></script>

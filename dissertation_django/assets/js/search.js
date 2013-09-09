@@ -95,7 +95,6 @@ $(document).ready(function(){
 					                	}
 					                },
 					                complete: function(data){
-										$.imagesBox.imagesSelected = [];
 										$(this).data('requestRunning', false);
 										$('#ajax-loader').fadeOut();
 										$('.image').unbind('click');

@@ -1,3 +1,12 @@
+
+/*
+
+Digital Lightbox | Giancarlo Buomprisco, 2013.
+https://github.com/Gbuomprisco/Digital-Lightbox/tree/development
+giancarlobuomprisco.com
+
+*/
+
 $(document).ready(function () {
 
     (function () {

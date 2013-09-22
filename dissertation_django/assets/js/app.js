@@ -559,9 +559,6 @@ $(document).ready(function () {
                                         }, 500);
                                     });
 
-                                    function highlight(){
-                                        
-                                    }
 
                                     function hide(){
                                         var id = $(this).data('image');
@@ -573,7 +570,6 @@ $(document).ready(function () {
                                         $(this).addClass('show-image');
                                         $(this).unbind();
                                         $(this).on('click', show);
-                                        console.log($(this));
                                     }
 
                                     function show(){
@@ -586,7 +582,6 @@ $(document).ready(function () {
                                         $(this).addClass('hide-image');
                                         $(this).unbind()
                                         $(this).on('click', hide);
-                                        console.log($(this));
                                     }
 
                                     $('.hide-image').on('click', hide);
@@ -1784,7 +1779,11 @@ $(document).ready(function () {
                 var wrap = $("<div id='image_" + letter.attr('id') + "' class='image_active'><img src='" + letter.attr('src') + "' /></div>");
                 wrap.data('is_letter', true);
                 $('#barRight').append(wrap);
-                wrap.data("title", letter.data('title'));
+                if(typeof letter.data('title') == "undefined"){
+                    wrap.data("title", "Region");
+                } else {
+                    wrap.data("title", letter.data('title'));
+                }
                 wrap.data('size', letter.data('size'));
                 var page_position = $('#overview').offset();
                 wrap.children().resizable({
@@ -1966,7 +1965,7 @@ $(document).ready(function () {
             show_comparison: function(data){
                 var box_comparison = "<div class='modal box_containers' id='comparison_box'><div id='top_comparison_box' class='top_box row-fluid'><span>" +
                 "Images compared</span><span title='Close Window' id='close_comparison_box' class='pull-right'><span class='glyphicon glyphicon-remove close_box'></span></div>";
-                box_comparison += "<span style='width:100%;background:#efefef;padding:1.5%;' class='pull-left'><button class='btn btn-sm btn-primary' id='image_compared_to_workspace'>Add to workspace</button></span><div class='box_container' id='images_compared_div'><div><img data-is_generated='true' id='image_result_compared' src='" + data.getImageDataUrl() + "' /></div></div></div>";
+                box_comparison += "<span style='width:100%;background:#efefef;padding:1.5%;' class='pull-left'><button class='btn btn-sm btn-primary' id='image_compared_to_workspace'>Add to workspace</button></span><div class='box_container' id='images_compared_div'><div><img data-is_generated='true' data-title='Region' id='image_result_compared' src='" + data.getImageDataUrl() + "' /></div></div></div>";
 
                 $('body').append(box_comparison);
                 $('#comparison_box').show().animate({
@@ -1987,7 +1986,6 @@ $(document).ready(function () {
                                 zIndex:0,
                                 scroll: true,
                                 containment: "#images_compared_div"
-
                             });
                         }
                 }).draggable({

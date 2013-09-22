@@ -5,6 +5,5 @@ Digital Lightbox is a virtual lightbox which allows the manipulation and the com
 
 ##Requirements
   - Django 1.4
-  - Django compressor https://github.com/jezdez/django_compressor
   - PIL
 

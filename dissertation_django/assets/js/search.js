@@ -25,6 +25,7 @@ $(document).ready(function() {
 				var input = $(default_options.input);
 				var button = $('#search_button');
 				var n = 5;
+				var ajax_loader = $('#ajax-loader');
 
 				function load_data() {
 					var data = {
@@ -36,7 +37,7 @@ $(document).ready(function() {
 						url: '/search/',
 						data: data,
 						beforeSend: function() {
-							$('#ajax-loader').fadeIn();
+							ajax_loader.fadeIn();
 						},
 						success: function(data) {
 							if (data != "False") {
@@ -110,10 +111,13 @@ $(document).ready(function() {
 									},
 									complete: function(data) {
 										$(this).data('requestRunning', false);
-										$('#ajax-loader').fadeOut();
+
 										$('.image').unbind('click');
 										$('.image').click(function() {
 											$.imagesBox.select_image($(this));
+										});
+										$('.image img').on('load', function() {
+											ajax_loader.fadeOut();
 										});
 									}
 
@@ -129,10 +133,13 @@ $(document).ready(function() {
 							$('#images_container').scroll(function() {
 								if (isScrollBottom(div)) {
 									load_scroll();
+									ajax_loader.fadeOut();
 								}
 							});
 							$(this).data('requestRunning', true);
-							$('#ajax-loader').fadeOut();
+							$('.image img').on('load', function() {
+								ajax_loader.fadeOut();
+							});
 						},
 
 						error: function() {

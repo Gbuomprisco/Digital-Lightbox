@@ -17,9 +17,8 @@ $(document).ready(function() {
 			init: function(options) {
 
 				this.default_options = {
-					'id': 'toolbar',
-					'container': 'body',
-					class: ''
+					'id_toolbar': 'toolbar',
+					'container': 'body'
 				};
 
 				$.extend(this.default_options, options);
@@ -29,7 +28,7 @@ $(document).ready(function() {
 			// Check if the toolbar has been initialized
 			exists: function() {
 				try {
-					if (($('#' + this.default_options['id']).length !== 0)) {
+					if (($('#' + this.default_options['id_toolbar']).length !== 0)) {
 						return true;
 					} else {
 						return false;
@@ -46,7 +45,7 @@ $(document).ready(function() {
 					var structure = '<div id=' + this.default_options['id'] + '>';
 					structure += "<div id='topToolbar'><span id='name_image'>Tools</span> <span title='Close toolbar' class='pull-right glyphicon glyphicon-remove' id='closeToolbar'></span></div>";
 					$(this.default_options['container']).append(structure);
-					this.toolbox = $('#' + this.default_options['id']);
+					this.toolbox = $('#' + this.default_options['id_toolbar']);
 					this.stylize();
 					var tools = this.makeTools();
 					this.toolbox.append(tools);
@@ -1658,11 +1657,13 @@ $(document).ready(function() {
 					complete: function() {
 						$('#close_letters').click(function() {
 							$.letters.hide_letters();
+							return false;
 						});
 
 						$('#compare_letters').click(function() {
 							var comparison = $.letters.compare();
 							$.letters.show_comparison(comparison);
+							return false
 						});
 
 						$('#delete_letter').click(function() {
@@ -1672,10 +1673,12 @@ $(document).ready(function() {
 
 						$('#load_image').on('change', function(e) {
 							$.letters.import_image(e);
+							return false;
 						});
 
 						$('#load_xml').on('change', function(e) {
 							$.letters.import_xml(e);
+							return false;
 						});
 
 						$('#export_xml').click(function() {
@@ -2067,7 +2070,7 @@ $(document).ready(function() {
 				}
 				$.letters.lettersSelected = [];
 				var selected_letters_number = $('#selected_letters_number');
-				selected_letters_number.html(this.lettersSelected.length + " selected")
+				selected_letters_number.html(this.lettersSelected.length + " selected");
 			},
 
 			to_workspace: function() {
@@ -2193,23 +2196,35 @@ $(document).ready(function() {
 			},
 
 			importLetters: function(array_letters) {
+				a = array_letters;
 				var letters = array_letters;
-				for (var i = 0; i < letters.length; i++) {
-					if (typeof letters[i] == "undefined") {
-						break;
-					} else {
-						for (var j = 0; j < letters[i].letter.length; j++) {
-							var letter = $('<img>');
-							letter.attr('class', 'letter');
-							letter.attr('id', letters[i].letter[j].id);
-							letter.attr('src', letters[i].letter[j].src);
-							letter.data('size', letters[i].letter[j].size);
-							letter.data('manuscript', letters[i].title);
-							letter.data('manuscript_id', letters[i].id);
-							letter.data('title', letters[i].letter[j].title);
-							this.addLetter(letter);
+				var letter;
+				if (letters.hasOwnProperty(length)) {
+					$.each(letters, function(index, value) {
+						letter = $('<img>');
+						letter.attr('class', 'letter');
+						letter.data('manuscript', value.title);
+						letter.data('manuscript_id', value.id);
+						for (var i = 0; i < value.letter_asArray.length; i++) {
+							letter.attr('id', value.letter_asArray[i].id);
+							letter.attr('src', value.letter_asArray[i].src);
+							letter.data('size', value.letter_asArray[i].size);
+							letter.data('title', value.letter_asArray[i].title);
 						}
+						$.letters.addLetter(letter);
+					});
+				} else {
+					letter = $('<img>');
+					letter.attr('class', 'letter');
+					letter.data('manuscript', letters.title);
+					letter.data('manuscript_id', letters.id);
+					for (var i = 0; i < letters.letter_asArray.length; i++) {
+						letter.attr('id', letters.letter_asArray[i].id);
+						letter.attr('src', letters.letter_asArray[i].src);
+						letter.data('size', letters.letter_asArray[i].size);
+						letter.data('title', letters.letter_asArray[i].title);
 					}
+					$.letters.addLetter(letter);
 				}
 			}
 		};

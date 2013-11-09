@@ -83,4 +83,17 @@ def get_image_manuscript(request):
 		return HttpResponse(simplejson.dumps(image), mimetype='application/json')
 
 
+def external_image_request(request):
+	if request.GET:
 
+		if 'images' in request.GET and request.GET.get('images', ''):
+			images = []
+			images_list = simplejson.loads(request.GET.get('images', ''))
+			print images_list
+			for image_id in images_list:
+				manuscript = Image.objects.get(id=image_id)
+				image = [manuscript.thumbnail(), manuscript.pk, manuscript.display_label, manuscript.item_part.current_item.repository.name, manuscript.item_part.current_item.repository.place.name]
+				images.append(image)
+			return HttpResponse(simplejson.dumps(images), mimetype='application/json')
+		else:
+			return HttpResponse('no data')

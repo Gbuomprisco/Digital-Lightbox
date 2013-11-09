@@ -8,13 +8,25 @@ html, body{
 	display: none;
 }
 #name_image{
-	width:12em; 
-	overflow:hidden; 
+	width:12em;
+	overflow:hidden;
 	text-overflow: ellipsis;
-	white-space:nowrap; 
+	white-space:nowrap;
 
 }
-#barLeft .image {
+
+img {
+	display: block;
+	height: auto;
+	max-width: 100%;
+  }
+
+img {
+  &:extend(.img-responsive);
+}
+
+
+#barLeft .image{
 	padding-top:2.5%;
 	padding-bottom: 2.5%;
 	padding-left: 1.5%;
@@ -186,12 +198,12 @@ html, body{
 #barLeft {
 	position:fixed;
 	height: 90%;
-	display: block;
+	display: none;
 	opacity: 1;
-	left: 25%;
+	left: 20%;
 	top: 2%;
 	overflow: hidden;
-	width: 50%;
+	width: 60%;
 	z-index: 400;
 	border: 10px solid rgba(82, 82, 82, .9);
 	.rounded(8px);
@@ -259,6 +271,9 @@ html, body{
 		margin:2%;
 		max-width: 180px;
 		max-height: 90px;
+		img{
+			min-height: 90px;
+		}
 		&:after{
 			position: relative;
 			margin-left:0.5%;
@@ -280,6 +295,10 @@ html, body{
 		margin: 2%;
 		max-width: 180px;
 		max-height: 90px;
+		min-height: 90px;
+		img{
+			min-height: 90px;
+		}
 	}
 }
 
@@ -356,11 +375,14 @@ html, body{
 		position: fixed;
 		border-top-right-radius:5px;
 		border-bottom-right-radius:5px;
-		width: 113px;
+		width: 8%;
 		padding:1%;
+		text-align: center;
 		margin-top: 4%;
 		padding-top: 2%;
-		height:90%;
+		padding-left: 2%;
+		padding-right: 1%;
+		max-height:90%;
 		background: #222;
 		box-shadow: 0px 0px 12px 4px rgba(0, 0,0, 0.5);
 		.tooltip{
@@ -369,17 +391,15 @@ html, body{
 		}
 		> img {
 			float:left;
-			
 			clear:both;
 			cursor: pointer;
 			margin-bottom:68%;
-			padding-left:20%;
 			.transition(all, 0.15s linear);
 			&:hover{
 				-webkit-transform: scale(1.25);
-			     -moz-transform: scale(1.25); 
-			      -ms-transform: scale(1.25);  
-			       -o-transform: scale(1.25);  
+			     -moz-transform: scale(1.25);
+			      -ms-transform: scale(1.25);
+			       -o-transform: scale(1.25);
 			          transform: scale(1.25);
 			}
 		}
@@ -400,8 +420,8 @@ html, body{
 	white-space: nowrap;
 	overflow: hidden;
 	cursor: pointer;
-	height: 32px;
-	width: 113px;
+	height: 5%;
+	width: 8%;
 	position: fixed;
 	top: 0;
 	left:0;
@@ -409,7 +429,7 @@ html, body{
 	background-color: #222;
 	color: #fff;
 	padding: 0;
-	font-size: 14px;
+	font-size: 2vmin;
 	border: 1px solid #000;
 	line-height: 2.5;
 	box-shadow: 0px -2px 4px rgba(0,0,0,0.3);
@@ -452,7 +472,7 @@ html, body{
 	height: 15px;
 	cursor: pointer;
 	left: 83%;
-	top: 25%	
+	top: 25%
 }
 
 .box{
@@ -460,7 +480,7 @@ html, body{
 	top: 10%;
 	left: 70%;
 	.rounded(5px);
-	.box-shadow(0px, 0px, 10px, #999); 
+	.box-shadow(0px, 0px, 10px, #999);
 	height: 395px;
 	z-index:1500;
 	font-size:13px;
@@ -508,7 +528,7 @@ html, body{
 		right:5px;
 	}
 	#tools{
-		
+
 	}
 	.tool_label{
 		font-weight: bold;
@@ -578,8 +598,8 @@ html, body{
 }
 #marker {
     background:#fff;
-    width:48px;
-    height:22.5px;
+    width:30%;
+    height:30%;
     .rounded(2px);
     z-index: 11;
     opacity:0.7;
@@ -758,7 +778,7 @@ li.no-before, li.no-before:before{
 }
 .top_comment{
 	box-shadow:0px 0px 12px #999;
-    padding:10px; 
+    padding:10px;
     margin:0;
     height:45px;
     max-height:45px;
@@ -873,7 +893,7 @@ li.no-before, li.no-before:before{
 	-webkit-border-radius: 12px;
 	.box-shadow(0px, 0px, 12px, #444);
 	&:hover{
-		background-color: rgba(0,0,0,1);	
+		background-color: rgba(0,0,0,1);
 	}
 }
 	::-webkit-scrollbar-track-piece  {
@@ -908,7 +928,7 @@ li.no-before, li.no-before:before{
 
 .manuscript_pack{
 	margin: 3%;
-	margin-left:6%; 
+	margin-left:6%;
 	float:left;
 	cursor: pointer;
 	opacity: 0.8;
@@ -932,4 +952,14 @@ img {
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+}
+
+h1 {
+  font-size: 5.9vw;
+}
+h2 {
+  font-size: 3.0vh;
+}
+p {
+  font-size: 2vmin;
 }

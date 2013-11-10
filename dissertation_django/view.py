@@ -25,8 +25,9 @@ def search(request):
 			Q(item_part__current_item__repository__name__icontains=pattern)).count()
 			list_manuscripts = []
 			for image in manuscripts:
-				result = [image.thumbnail(), image.pk, image.display_label, image.item_part.current_item.repository.name
+				result = [image.thumbnail(), image.id, image.display_label, image.item_part.current_item.repository.name
 , image.item_part.current_item.repository.place.name, image.dimensions()]
+				print result
 				list_manuscripts.append(result)
 			return HttpResponse(simplejson.dumps({'manuscripts': list_manuscripts, 'count': count}), mimetype='application/json')
 		else:
@@ -76,10 +77,11 @@ def read_image(request):
 
 
 def get_image_manuscript(request):
+	print request.POST
 	if request.is_ajax():
 		image_id = request.POST.get('image', '')
 		manuscript = Image.objects.get(id=image_id)
-		image = [manuscript.thumbnail(), manuscript.pk, manuscript.display_label, manuscript.item_part.current_item.repository.name, manuscript.item_part.current_item.repository.place.name]
+		image = [manuscript.thumbnail(), manuscript.id, manuscript.display_label, manuscript.item_part.current_item.repository.name, manuscript.item_part.current_item.repository.place.name]
 		return HttpResponse(simplejson.dumps(image), mimetype='application/json')
 
 
@@ -92,7 +94,7 @@ def external_image_request(request):
 			print images_list
 			for image_id in images_list:
 				manuscript = Image.objects.get(id=image_id)
-				image = [manuscript.thumbnail(), manuscript.pk, manuscript.display_label, manuscript.item_part.current_item.repository.name, manuscript.item_part.current_item.repository.place.name]
+				image = [manuscript.thumbnail(), manuscript.id, manuscript.display_label, manuscript.item_part.current_item.repository.name, manuscript.item_part.current_item.repository.place.name]
 				images.append(image)
 			return HttpResponse(simplejson.dumps(images), mimetype='application/json')
 		else:

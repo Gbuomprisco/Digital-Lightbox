@@ -939,11 +939,15 @@ li.no-before, li.no-before:before{
 	-moz-filter: contrast(200%);
 	-ms-filter: contrast(200%);
 	-o-filter: contrast(200%);
-	filter: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id="contrast"><feComponentTransfer><feFuncR type="linear" slope="[amount]" intercept="-(0.5 * [amount]) + 0.5"/><feFuncG type="linear" slope="[amount]" intercept="-(0.5 * [amount]) + 0.5"/><feFuncB type="linear" slope="[amount]" intercept="-(0.5 * [amount]) + 0.5"/></feComponentTransfer></filter></svg>');
+	filter: url('data:image/svg+xml;utf8,<svg height="0" xmlns="http://www.w3.org/2000/svg"><filter id="contrast"><feComponentTransfer><feFuncR type="linear" slope="[amount]" intercept="-(0.5 * [amount]) + 0.5"/><feFuncG type="linear" slope="[amount]" intercept="-(0.5 * [amount]) + 0.5"/><feFuncB type="linear" slope="[amount]" intercept="-(0.5 * [amount]) + 0.5"/></feComponentTransfer></filter></svg>');
 }
 
 .invert{
--ms-filter:invert(1);-webkit-filter:invert(1);-moz-filter:invert(1);-o-filter:invert(1);filter: url('data:image/svg+xml;utf8,<svg width="0" height="0" style="position:absolute"><filter id="invert1"><feComponentTransfer><feFuncR type="table" tableValues="1 0"></feFuncR><feFuncG type="table" tableValues="1 0"></feFuncG><feFuncB type="table" tableValues="1 0"></feFuncB></feComponentTransfer></filter></svg>#invert1')
+	-ms-filter:invert(1);
+	-webkit-filter:invert(1);
+	-moz-filter:invert(1);
+	-o-filter:invert(1);
+	filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'invert\'><feColorMatrix in='SourceGraphic' type='matrix' values='-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0'/></filter></svg>#invert");
 }
 
 .manuscript_pack{

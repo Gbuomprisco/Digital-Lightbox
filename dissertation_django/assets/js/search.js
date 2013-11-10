@@ -24,7 +24,7 @@ $(document).ready(function() {
 				}
 				var input = $(default_options.input);
 				var button = $('#search_button');
-				var n = 5;
+				var n = 6;
 				var ajax_loader = $('#ajax-loader');
 
 				function load_data() {
@@ -47,7 +47,6 @@ $(document).ready(function() {
 								for (i = 0; i < data_manuscripts.length; i++) {
 									var title = data_manuscripts[i][2] + ', ' + data_manuscripts[i][4];
 									images += '<div data-toggle="tooltip" title="' + title + '"  data-size = "' + data_manuscripts[i][5] + '" data-title = "' + data_manuscripts[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data_manuscripts[i][1] + '">' + data_manuscripts[i][0] + '</div>';
-
 								}
 								$('#images_container').html(images);
 								$('#results_counter').hide().fadeIn().html("<span class='label label-default'>Results: " + count + "</span>");
@@ -81,7 +80,7 @@ $(document).ready(function() {
 								}
 
 								data.x = data.n;
-								data.n += 5;
+								data.n += 6;
 								$.ajax({
 									type: 'POST',
 									url: '/search/',

@@ -62,6 +62,7 @@ $.toolbar = {
 		$('#slider').slider('option', 'disabled', true);
 		$('#grayscale').attr('disabled', 'disabled');
 		$('#invert').attr('disabled', 'disabled');
+		$('#contrast').attr('disabled', 'disabled');
 		$('#toolbar button').addClass('disabled').attr('disabled', true);
 		$('#name_image').html("No images selected");
 		$('#crop_image').fadeOut();
@@ -75,6 +76,7 @@ $.toolbar = {
 		$('#slider').slider('option', 'disabled', false);
 		$('#grayscale').attr('disabled', false);
 		$('#invert').attr('disabled', false);
+		$('#contrast').attr('disabled', false);
 		$('#toolbar button').removeClass('disabled').attr('disabled', false);
 
 	},
@@ -90,20 +92,15 @@ $.toolbar = {
 		var brightness = "<div class='tool'><span class='tool_label'>Brightness</span>";
 		brightness += "<div id='slider_brightness' class='slider'></div></div>";
 		tools += brightness;
-
-		/*
-                if(document.body.style.webkitFilter !== undefined){
-                    var contrast = "<div class='tool'><span class='tool_label'>Contrast</span>";
-                    contrast += "<div id='slider_contrast' class='slider'></div></div>";
-                    tools += contrast;
-                }
-                */
 		var rotate = "<div class='tool'><span class='tool_label'>Rotate</span>";
 		rotate += "<div id='slider_rotate' class='slider'></div></div>";
 		tools += rotate;
 		tools += '<div class="tool">' +
-			'<input type="button" name="grayscale" id="grayscale" class="btn btn-xs btn-inverse" value="Grayscale" /> <input type="button" name="invert" id="invert" class="btn-inverse btn btn-xs" value="Invert" />' +
-			'</div>';
+			'<input type="button" name="grayscale" id="grayscale" class="btn btn-xs btn-default" value="Grayscale" /> <input type="button" name="invert" id="invert" class="btn-default btn btn-xs" value="Invert" />';
+		if (document.body.style.webkitFilter !== undefined) {
+			tools += ' <input type="button" name="contrast" id="contrast" class="btn-default btn btn-xs" value="Contrast" />';
+		}
+		tools += '</div>';
 		tools += line;
 		var size = "<div class='tool'><span class='tool_label' style='padding-top: 5px;'>Size</span>";
 		size += "<input class='small-input' type='text' id='set_width' /><span class='label_size'>Width</span><input class='small-input' type='text' id='set_height' /><span class='label_size'>Height</span><button id='set_size' class='btn btn-primary btn-sm disabled' disabled>Set</button></div>";
@@ -167,42 +164,23 @@ $.toolbar = {
 
 	},
 
-	grayscale: function(button) {
-		$.each($.select_group.imagesSelected, function() {
-			if (!button.hasClass('active')) {
-				this.children().children('img').addClass('grayscale');
+	apply_filter: function(button, filter) {
+		if (!button.hasClass('active')) {
+			$.each($.select_group.imagesSelected, function() {
+
+				if (!(this.children().children('img').hasClass(filter))) {
+					this.children().children('img').addClass(filter);
+				}
 				button.addClass('active');
-			} else {
-				this.children().children('img').removeClass('grayscale');
+			});
+		} else {
+			$.each($.select_group.imagesSelected, function() {
+				if ((this.children().children('img').hasClass(filter))) {
+					this.children().children('img').removeClass(filter);
+				}
 				button.removeClass('active');
-			}
-		});
-
-	},
-
-	invert: function(button) {
-		$.each($.select_group.imagesSelected, function() {
-			if (!button.hasClass('active')) {
-				this.children().children('img').addClass('invert');
-				button.addClass('active');
-			} else {
-				this.children().children('img').removeClass('invert');
-				button.removeClass('active');
-			}
-		});
-
-	},
-	contrast: function() {
-
-		$("#slider_contrast").slider({
-			min: 0,
-			max: 200,
-			value: 100,
-			slide: function(event, ui) {
-				$selectedImage.css('-webkit-filter', 'contrast(' + ui.value + '%) brightness(' + $("#slider_brightness").slider("option", "value") / 2 + '%)');
-			}
-		});
-
+			});
+		}
 	},
 
 	size: function() {
@@ -453,12 +431,18 @@ $.toolbar = {
 		});
 
 		$('#grayscale').click(function() {
-			$.toolbar.grayscale($(this));
+			$.toolbar.apply_filter($(this), 'grayscale');
 		});
 
 		$('#invert').click(function() {
-			$.toolbar.invert($(this));
+			$.toolbar.apply_filter($(this), 'invert');
 		});
+
+		if (document.body.style.webkitFilter !== undefined) {
+			$('#contrast').click(function() {
+				$.toolbar.apply_filter($(this), 'contrast');
+			});
+		}
 
 		$('#align').click(function() {
 			$.align.align();
@@ -497,7 +481,6 @@ $.toolbar = {
 		this.opacity();
 		this.brightness();
 		this.rotate();
-		this.contrast();
 
 	},
 
@@ -821,10 +804,12 @@ $.imagesBox = {
 				new_images.data('original_id', id);
 				var id = new_images.attr('id');
 
+				/*
 				if ($('#' + id).length) {
 					var new_id = uniqueid();
 					new_images.attr('id', new_id);
 				}
+				*/
 
 				$('#' + workspace).append(new_images);
 
@@ -2509,8 +2494,10 @@ $.import = {
 	reloadImages: function(images, images_properties) {
 		var images_loaded = [];
 		var letters = [];
+		console.log(images)
 		for (var i = 0; i < images.length; i++) {
 			if ((!images_properties[i]['properties']['is_letter'])) {
+				console.log(images[i])
 				$.ajax({
 					type: 'POST',
 					url: 'get-image-manuscript/',
@@ -2776,10 +2763,10 @@ $.minimap = {
 
 $.export = {
 	open: false,
+
 	init: function() {
 
 		this.buttons();
-
 	},
 
 	show: function() {
@@ -2861,7 +2848,6 @@ $.export = {
 
 			var original_size = function() {
 				var size = $(images[i]).data('size');
-				console.log(size)
 				return size;
 			};
 

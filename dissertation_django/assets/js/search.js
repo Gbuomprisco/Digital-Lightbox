@@ -45,12 +45,15 @@ $(document).ready(function() {
 								var count = data['count'];
 								var data_manuscripts = data['manuscripts'];
 								for (i = 0; i < data_manuscripts.length; i++) {
-									images += '<div data-size = "' + data_manuscripts[i][5] + '" data-title = "' + data_manuscripts[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data_manuscripts[i][1] + '">' + data_manuscripts[i][0] +
-										"<div class='col-lg-8 col-md-8 col-xs-8 offset1 image_desc'><table class='table'><tr><th>Manuscript</th><th>Repository</th><th>Place</th></tr><tr><td>" + data_manuscripts[i][2] + "</td><td>" + data_manuscripts[i][3] +
-										"</td><td>" + data_manuscripts[i][4] + "</td></tr></table></div></div>";
+									var title = data_manuscripts[i][2] + ', ' + data_manuscripts[i][4];
+									images += '<div data-toggle="tooltip" title="' + title + '"  data-size = "' + data_manuscripts[i][5] + '" data-title = "' + data_manuscripts[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data_manuscripts[i][1] + '">' + data_manuscripts[i][0] + '</div>';
+
 								}
 								$('#images_container').html(images);
 								$('#results_counter').hide().fadeIn().html("<span class='label label-default'>Results: " + count + "</span>");
+								$(".image[data-toggle='tooltip']").tooltip({
+									"placement": "bottom"
+								});
 							} else {
 								$('body').append("<div id='notification_search' class='notify notify-error'>You should insert at least one search term</div>");
 								$('#notification_search').notify({
@@ -90,9 +93,9 @@ $(document).ready(function() {
 										if (data != "False") {
 											var data = data['manuscripts'];
 											for (i = 0; i < data.length; i++) {
-												image = '<div data-size = "' + data[i][5] + '" data-title = "' + data[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data[i][1] + '">' + data[i][0] +
-													"<div class='col-lg-8 col-md-8 col-xs-8 offset1 image_desc'><table class='table'><tr><th>Manuscript</th><th>Repository</th><th>Place</th></tr><tr><td>" + data[i][2] + "</td><td>" + data[i][3] +
-													"</td><td>" + data[i][4] + "</td></tr></table></div></div>";
+												var title = data[i][2] + ', ' + data[i][4];
+												image = '<div data-toggle="tooltip" title="' + title + '" data-size = "' + data[i][5] + '" data-title = "' + data[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data[i][1] + '">' + data[i][0] + '</div>';
+
 												$('#images_container').append(image);
 
 											}
@@ -111,13 +114,16 @@ $(document).ready(function() {
 									},
 									complete: function(data) {
 										$(this).data('requestRunning', false);
-
-										$('.image').unbind('click');
-										$('.image').click(function() {
+										var image_elements = $('.image');
+										image_elements.unbind('click');
+										image_elements.click(function() {
 											$.imagesBox.select_image($(this));
 										});
-										$('.image img').on('load', function() {
+										image_elements.find('img').on('load', function() {
 											ajax_loader.fadeOut();
+											$(".image[data-toggle='tooltip']").tooltip({
+												"placement": "bottom"
+											});
 										});
 									}
 
@@ -151,6 +157,7 @@ $(document).ready(function() {
 									'left': '80%'
 								}
 							});
+							ajax_loader.fadeOut();
 						}
 					});
 					this.first_requestRunning = true;
@@ -158,7 +165,7 @@ $(document).ready(function() {
 				}
 				button.click(load_data);
 			}
-		}
+		};
 		search.init(default_options);
 	})();
 

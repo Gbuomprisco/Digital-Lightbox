@@ -29,21 +29,23 @@ img {
 #barLeft .image{
 	padding-top:2.5%;
 	padding-bottom: 2.5%;
-	padding-left: 1.5%;
-	padding-right: 1.5%;
+	padding-left: 2%;
+	padding-right: 2%;
 	z-index: 100;
+	border:1px solid #efefef;
 	float: left;
-	clear: both;
+	height: 200px;
 	cursor: pointer;
-	width: 100%;
-	border-bottom: 1px dashed #eee;
 	&:last-child{
 		margin-bottom:10%;
+	}
+	&:hover{
+		background: #f5f5f5;
 	}
 
 	> img {
 		max-width: 180px;
-		float:left;
+		margin:auto;
 		max-height: 140px;
 		.box-shadow(1px, 0px, 5px, #444);
 		&:hover{
@@ -52,6 +54,7 @@ img {
 	}
 	.image_desc{
 		font-size: 13px;
+		display:none;
 		word-wrap: break-word;
 		position: relative;
 		left: 3%;
@@ -140,7 +143,7 @@ img {
 		font-weight: bold;
 		border-bottom: 1px solid #ccc;
 		padding: 2%;
-		padding-bottom: 0;
+		padding-bottom: 1%;
 		padding-top: 1.5%;
 		font-size: 20px;
 		border-top-left-radius: 4px;
@@ -213,15 +216,14 @@ img {
 		font-weight: bold;
 		border-bottom: 1px solid #ccc;
 		padding-top: 1.9%;
-		padding-bottom: 1.5%;
+		padding-bottom: 1%;
 		border-top-left-radius: 4px;
 		border-top-right-radius: 4px;
 		background: #fff;
 	}
 	#images_container{
 		background: #fff;
-		padding: 0.5%;
-		overflow-y: auto;
+		overflow-y: scroll;
 		overflow-x: hidden;
 		height:75%;
 	}
@@ -243,12 +245,15 @@ img {
 		}
 		padding: 8px;
 		list-style: none;
+		height: 9%;
+		border-bottom:1px solid #ccc;
 		background-color: rgb(245, 245, 245);
 	}
 	#results_counter{
 		font-weight: bold;
 		position: relative;
-		left: 1%;
+		left: 2%;
+		margin-top: 1.5%;
 	}
 	#ajax-loader{
 		margin-right: 5%;
@@ -314,6 +319,7 @@ img {
 	padding: 8px 15px;
 	background-color: rgb(245, 245, 245);
 	margin:0;
+	border-bottom:1px solid #ccc;
 }
 
 #notes{
@@ -387,6 +393,7 @@ margin-top: 0.5%;
 		max-height:90%;
 		background: #222;
 		box-shadow: 0px 0px 12px 4px rgba(0, 0,0, 0.5);
+		left:0;
 		.tooltip{
 			margin-left:20px;
 			width:100%;
@@ -933,6 +940,10 @@ li.no-before, li.no-before:before{
 	-ms-filter: contrast(200%);
 	-o-filter: contrast(200%);
 	filter: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id="contrast"><feComponentTransfer><feFuncR type="linear" slope="[amount]" intercept="-(0.5 * [amount]) + 0.5"/><feFuncG type="linear" slope="[amount]" intercept="-(0.5 * [amount]) + 0.5"/><feFuncB type="linear" slope="[amount]" intercept="-(0.5 * [amount]) + 0.5"/></feComponentTransfer></filter></svg>');
+}
+
+.invert{
+-ms-filter:invert(1);-webkit-filter:invert(1);-moz-filter:invert(1);-o-filter:invert(1);filter: url('data:image/svg+xml;utf8,<svg width="0" height="0" style="position:absolute"><filter id="invert1"><feComponentTransfer><feFuncR type="table" tableValues="1 0"></feFuncR><feFuncG type="table" tableValues="1 0"></feFuncG><feFuncB type="table" tableValues="1 0"></feFuncB></feComponentTransfer></filter></svg>#invert1')
 }
 
 .manuscript_pack{

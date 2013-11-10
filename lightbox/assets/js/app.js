@@ -63,6 +63,7 @@ $.toolbar = {
 		$('#grayscale').attr('disabled', 'disabled');
 		$('#invert').attr('disabled', 'disabled');
 		$('#contrast').attr('disabled', 'disabled');
+		$('#createComment').attr('disabled', 'disabled');
 		$('#toolbar button').addClass('disabled').attr('disabled', true);
 		$('#name_image').html("No images selected");
 		$('#crop_image').fadeOut();
@@ -77,6 +78,7 @@ $.toolbar = {
 		$('#grayscale').attr('disabled', false);
 		$('#invert').attr('disabled', false);
 		$('#contrast').attr('disabled', false);
+		$('#createComment').attr('disabled', false);
 		$('#toolbar button').removeClass('disabled').attr('disabled', false);
 
 	},
@@ -1108,7 +1110,7 @@ $.comments = {
 
 
 		// Updating notes into the window
-		if (flag || this.notes.length == 0) {
+		if (flag || this.notes.length === 0) {
 
 			var image = {
 				'image': note.image,
@@ -1118,7 +1120,7 @@ $.comments = {
 
 			this.notes.push(image);
 		} else {
-			var flag = false;
+			flag = false;
 			outerloop: for (var i = 0; i < this.notes.length; i++) {
 				innerloop: for (var j = 0; j < this.notes[i].notes.length; j++) {
 					if (this.notes[i].notes[j].id == note_id) {
@@ -1147,22 +1149,24 @@ $.comments = {
 
 		}
 
-
+		var notes_button_position;
 		if (!this.open) {
-			var notes_button_position = {
+			notes_button_position = {
 				'top': $('#notes_button').position().top,
 				'left': "2%"
 			};
 		} else {
 			if ($('#notes .note:last-child').length) {
-				var notes_button_position = {
-					'top': $('#notes .note:last-child').position().top + 50,
+
+				notes_button_position = {
+					'top': $('#notes .note:last-child').position().top,
 					'left': $('#notes .note:last-child').position().left + 50
 				};
 
 			} else {
-				var notes_button_position = {
-					'top': $('#notes').position().top + 50,
+
+				notes_button_position = {
+					'top': $('#notes').position().top,
 					'left': $('#notes').position().left + 50
 				};
 
@@ -1180,7 +1184,6 @@ $.comments = {
 		}
 
 		note_this.animate({
-			position: 'absolute',
 			top: notes_button_position['top'],
 			left: notes_button_position['left'],
 			width: 0,
@@ -1293,7 +1296,7 @@ $.comments = {
 	},
 
 	show_comment: function(note_button) {
-		if ($('.comment').length == 0) {
+		if ($('.comment').length === 0) {
 			var notes = this.notes;
 			var note = note_button.parent().parent('.note');
 			for (var i = 0; i < notes.length; i++) {
@@ -1306,14 +1309,13 @@ $.comments = {
 						var position = notes[i].notes[j].position;
 						var size = notes[i].notes[j].size;
 						$(note).animate({
-							'position': "fixed",
 							'top': position.top,
 							'left': position.left,
 							'width': size.width,
 							'height': size.height,
 							'opacity': 1
 						}, {
-							duration: 300,
+							duration: 400,
 							complete: function() {
 								$(this).hide();
 								$.comments.init(true, image, content, title, id, size, position);

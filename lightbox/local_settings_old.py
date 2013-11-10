@@ -12,13 +12,13 @@ ADMINS = (
 MANAGERS = ADMINS
 # Additional locations of static files
 STATICFILES_DIRS = (
-	"/home/giancarlo/Dropbox/dissertation_django2-development/dissertation_django/assets/",
+	"/home/giancarlo/Dropbox/dissertation_django2-development/lightbox/assets/",
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 )
 
 TEMPLATE_DIRS = (
-	"/home/giancarlo/Dropbox/dissertation_django2-development/dissertation_django/templates/",
+	"/home/giancarlo/Dropbox/dissertation_django2-development/lightbox/templates/",
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.

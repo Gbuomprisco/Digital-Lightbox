@@ -26,6 +26,7 @@ $(document).ready(function() {
 				var button = $('#search_button');
 				var n = 6;
 				var ajax_loader = $('#ajax-loader');
+				var images_container = $('#images_container');
 
 				function load_data() {
 					var data = {
@@ -48,11 +49,14 @@ $(document).ready(function() {
 									var title = data_manuscripts[i][2] + ', ' + data_manuscripts[i][4];
 									images += '<div data-toggle="tooltip" title="' + title + '"  data-size = "' + data_manuscripts[i][5] + '" data-title = "' + data_manuscripts[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data_manuscripts[i][1] + '">' + data_manuscripts[i][0] + '</div>';
 								}
-								$('#images_container').html(images);
+								images_container.html(images);
+
 								$('#results_counter').hide().fadeIn().html("<span class='label label-default'>Results: " + count + "</span>");
+
 								$(".image[data-toggle='tooltip']").tooltip({
 									"placement": "bottom"
 								});
+
 							} else {
 								$('body').append("<div id='notification_search' class='notify notify-error'>You should insert at least one search term</div>");
 								$('#notification_search').notify({
@@ -66,13 +70,15 @@ $(document).ready(function() {
 						},
 						complete: function() {
 							this.first_requestRunning = false;
-							$('.image').click(function() {
+							var images_element = $('.image');
+
+							images_element.click(function() {
 								$.imagesBox.select_image($(this));
 							});
+
 							$('#load_more').attr('disabled', false).click(load_scroll);
 
-
-							$('#images_container').data('requestRunning', false);
+							images_container.data('requestRunning', false);
 
 							function load_scroll() {
 								if ($(this).data('requestRunning')) { // don't do anything if an AJAX request is pending
@@ -81,27 +87,28 @@ $(document).ready(function() {
 
 								data.x = data.n;
 								data.n += 6;
+
 								$.ajax({
 									type: 'POST',
 									url: '/search/',
 									data: data,
 									beforeSend: function() {
-										$('#ajax-loader').fadeIn();
+										ajax_loader.fadeIn();
 									},
 									success: function(data) {
+										var images = '';
 										if (data != "False") {
 											var data = data['manuscripts'];
 											for (i = 0; i < data.length; i++) {
 												var title = data[i][2] + ', ' + data[i][4];
-												image = '<div data-toggle="tooltip" title="' + title + '" data-size = "' + data[i][5] + '" data-title = "' + data[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data[i][1] + '">' + data[i][0] + '</div>';
-
-												$('#images_container').append(image);
-
+												images += '<div data-toggle="tooltip" title="' + title + '" data-size = "' + data[i][5] + '" data-title = "' + data[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data[i][1] + '">' + data[i][0] + '</div>';
 											}
 
+											images_container.append(images);
 
 										} else {
 											$('body').append("<div id='notification_search' class='notify notify-error'>You should insert at least one search term</div>");
+
 											$('#notification_search').notify({
 												"close-button": false,
 												"position": {
@@ -114,15 +121,21 @@ $(document).ready(function() {
 									complete: function(data) {
 										$(this).data('requestRunning', false);
 										var image_elements = $('.image');
+
 										image_elements.unbind('click');
+
 										image_elements.click(function() {
 											$.imagesBox.select_image($(this));
 										});
+
 										image_elements.find('img').on('load', function() {
-											ajax_loader.fadeOut();
+
 											$(".image[data-toggle='tooltip']").tooltip({
 												"placement": "bottom"
 											});
+
+											ajax_loader.fadeOut();
+
 										});
 									}
 
@@ -135,16 +148,20 @@ $(document).ready(function() {
 								}
 							}
 							var div = document.getElementById('images_container');
-							$('#images_container').scroll(function() {
+
+							images_container.scroll(function() {
 								if (isScrollBottom(div)) {
 									load_scroll();
 									ajax_loader.fadeOut();
 								}
 							});
+
 							$(this).data('requestRunning', true);
-							$('.image img').on('load', function() {
+
+							$('.image').find('img').on('load', function() {
 								ajax_loader.fadeOut();
 							});
+
 						},
 
 						error: function() {

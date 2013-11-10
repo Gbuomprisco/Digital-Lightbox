@@ -15,6 +15,7 @@ Currently, the Digital lightbox is tighlty dependent on the Digipal App. Yet, in
 	- Javascript package only
 	- Node.js version
 	- Cross-Browser compatibility
+	- Performance boost
 	- Users platform
 		- Database hosting for users' images
 

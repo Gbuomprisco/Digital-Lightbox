@@ -1640,18 +1640,21 @@ $.letters = {
 
 	letters: $('.letter'),
 
+	letters_div: $('#letters'),
+
 	init: function(data) {
+
 		this.buttons(data);
 	},
 
 	open_lettersbox: function() {
 		var button_position = $('#letters_button').position();
-		$('#letters').css({
+		this.letters_div.css({
 			'top': $('#buttons').position().top + button_position.top + 30,
 			'left': "2%"
 		});
 		$('#letters_button').hide();
-		$('#letters').show().animate({
+		this.letters_div.show().animate({
 			"top": "5%",
 			'left': "20%",
 			'width': "60%",
@@ -1710,8 +1713,8 @@ $.letters = {
 
 	hide_letters: function() {
 		var button_position = $('#letters_button').position();
-		$('#letters').animate({
-			"top": $('#buttons').position().top + button_position['top'] + 30,
+		this.letters_div.animate({
+			"top": button_position['top'],
 			'left': "2%",
 			'width': "0%",
 			'height': "0%",
@@ -3465,6 +3468,7 @@ function main() {
 				'margin': '0',
 				'zoom': 1
 			}, 300).removeClass('toggle').unbind();
+			$('#barRight').style = null;
 			windows_flag = 0;
 			$('html, body').css('width', '6050px');
 		});
@@ -3488,14 +3492,15 @@ function main() {
 			$(this).animate({
 				'background-color': '#444'
 			}, 50, function() {
-				if (windows_flag == 0) {
+				if (windows_flag === 0) {
 					$('#barRight, #barRight2').css({
 						'background-color': '#666',
 						'-moz-transform': 'scale(0.22)',
-						'margin': '0.65%',
+						'margin': '1%',
 						'margin-top': '3.5%',
-						'zoom': '22%'
+						'zoom': '21%'
 					}).addClass('toggle');
+					$('#barRight').css('margin-left', '5%');
 					windows_flag = 1;
 					$('#set_size').attr('disabled', true).addClass('disabled');
 

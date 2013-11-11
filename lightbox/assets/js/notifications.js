@@ -1,96 +1,143 @@
-(function( $ ){
+(function($) {
+	var requestRunning = false;
 
-  $.fn.notify = function(options) {
+	$.fn.notify = function(options) {
 
-    var default_options = {
-        'position': {'top': '5%', 'left': '75%'},
-        'type': 'default',
-        'duration': 5000,
-        'close-button': false
-    }
+		var default_options = {
+			'position': {
+				'top': '5%',
+				'left': '75%'
+			},
+			'type': 'default',
+			'duration': 5000,
+			'text': '',
+			'animate': true,
+			'close_button': false
+		};
 
-    element = this;
+		var settings = $.extend(default_options, options);
 
-    var types = ['error', 'default', 'success'];
-    
+		if (!requestRunning) {
+			requestRunning = true;
 
-    var methods = {
-        
-        getType: function(){
-            if(options === undefined){
-                null;
-            } else {
-                if((options['type'] != undefined) && ($.inArray(options['type'], types) < 0)){
-                    throw "Choice a type among 'success', 'default' or 'error', or leave blank the variable"
-                }
-            }
-        },
+			var element = $('<div>');
+			$('body').append(element);
 
-        closeButton: function(){
-            if(options['close-button'] == true){
-                element.append('<span class="close-button">x</span>');
-                $('.close-button').click(function(){
-                    element.css({'visibility': 'hidden', 'top': '0%', 'opacity': '0'});
-                });
-            }
-        },
+			var types = ['error', 'default', 'success'];
 
-        init : function() {
+			var methods = {
 
-            this.getType();
-            this.closeButton();
+				getType: function() {
+					if (options !== undefined) {
+						if ((options.type !== undefined) && ($.inArray(options.type, types) < 0)) {
+							throw "Choice a type among 'success', 'default' or 'error', or leave blank the variable";
+						}
+					}
+				},
 
-            try {
-                if(options['type']){
-                    element.removeClass().addClass('notify notify-' + options['type']);
-                } else {
-                    element.addClass('notify-' + default_options['type']);
-                }
-            } catch(e){
-                null;
-            }
+				closeButton: function() {
+					if (settings.close_button) {
+						element.append('<span class="close-button">x</span>');
+						$('.close-button').click(function() {
+							element.fadeOut().remove();
+							requestRunning = false;
+						});
+					} else {
+						return false;
+					}
+				},
 
-            var settings = $.extend(default_options, options);
+				init: function() {
 
-            element.css({
-                'left': default_options['position']['left']
-            });
+					try {
+						if (options.type) {
+							element.removeClass().addClass('notify notify-' + options.type);
+						} else {
+							element.addClass('notify-' + default_options.type);
+						}
 
-            element.css('visibility', 'visible');
-            element.animate({
-                top: "0%",
-                opacity: 0.4
-            }, { duration: 100 }
-            ).animate({
-                opacity: 0.6,
-                top: default_options['position']['top']
-            }, { duration: 100 }
-            ).animate({
-                opacity: 0.9
-            }, { duration: 100 }
-            ).animate({
-                opacity: 1
-            }, { duration: default_options['duration'] }
-            ).animate({
-                opacity: 0.8
-            }, { duration: 150 }
-            ).animate({
-                opacity: 0.4
-            }, { duration: 100 }
-            ).animate({
-                opacity: 0.2
-            }, { duration: 50 }
-            ).animate({
-                opacity: 0,
-            }, { duration: 100, complete: function() {
-                element.css({'visibility':'hidden', 'top':'0%'});
-            }
-            });
-            
+						if (options['text']) {
+							element.html(options.text);
+						}
 
-         }
-    }
+					} catch (e) {
+						return null;
+					}
 
-    return methods.init();
-  };
-})( jQuery );
+
+					element.css({
+						'left': settings.position.left + '%',
+						'display': 'block'
+					});
+
+					this.getType();
+					this.closeButton();
+
+					if (settings.animate) {
+
+						element.animate({
+							top: "0%",
+							opacity: 0.13
+						}, {
+							duration: 150
+						}).animate({
+							opacity: 0.88,
+							top: parseInt(settings.position.top) + 2 + "%",
+						}, {
+							duration: 150
+						}).animate({
+							top: parseInt(settings.position.top) - 3 + "%",
+						}, {
+							duration: 650
+						}).animate({
+							opacity: 1,
+							top: parseInt(settings.position.top) + 1 + "%",
+						}, {
+							duration: 550
+						}).animate({
+							opacity: 1,
+						}, {
+							duration: settings.duration
+						}).animate({
+							opacity: 0.99
+						}, {
+							duration: 150
+						}).animate({
+							opacity: 0.66
+						}, {
+							duration: 100
+						}).animate({
+							opacity: 0.33
+						}, {
+							duration: 50
+						}).animate({
+							opacity: 0,
+						}, {
+							duration: 100,
+							complete: function() {
+								element.css({
+									'display': 'none',
+									'top': '0%'
+								}).remove();
+								requestRunning = false;
+							}
+						});
+					} else {
+
+						element.css({
+							'opacity': 1,
+							'top': settings.position.top
+						});
+
+						setTimeout(function() {
+							element.remove();
+							requestRunning = false;
+						}, settings.duration);
+
+					}
+				}
+			};
+			methods.init();
+		}
+	};
+})(jQuery);

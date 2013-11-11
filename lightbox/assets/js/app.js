@@ -363,9 +363,12 @@ $.toolbar = {
 			}, 10);
 
 			$('#grayscale').prop('checked', false);
-			$.toolbar.grayscale($('#grayscale'));
+
 			$.toolbar.refresh();
 		});
+		$.toolbar.apply_filter($('#grayscale'), 'grayscale');
+		$.toolbar.apply_filter($('#invert'), 'invert');
+		$.toolbar.apply_filter($('#contrast'), 'contrast');
 
 	},
 
@@ -630,8 +633,8 @@ $.toolbar = {
 
 						});
 					} else {
-						if (name_image.length > 30) {
-							image['name'] = name_image.substr(0, 30) + '...';
+						if (name_image.length > 28) {
+							image['name'] = name_image.substr(0, 28) + '...';
 						} else {
 							image['name'] = name_image;
 						}
@@ -827,13 +830,12 @@ $.imagesBox = {
 			}
 			$.imagesBox.imagesSelected = []; //restore the selected elements after dragged on workspace
 		} else {
-			$('body').append("<div id='notification' class='notify notify-error'>You should insert at least one image.</div>");
-			$('#notification').notify({
-				"close-button": false,
+			$.fn.notify({
 				"position": {
 					'top': "8%",
 					'left': '80%'
-				}
+				},
+				'text': 'You should insert at least one image.'
 			});
 		}
 		return false;
@@ -964,12 +966,21 @@ $.comments = {
 				}
 			}
 			note.fadeOut().remove();
-			if ($.comments.notes.length == 0) {
+			if ($.comments.notes.length === 0) {
 				$('#notes_alert').show().html("No notes created");
 			} else {
 				$('#notes_alert').hide().html('');
 			}
 			$.comments.update_notes();
+			$.fn.notify({
+				'text': 'Note succesfully removed',
+				'type': 'success',
+				'close_button': true,
+				"position": {
+					'top': '8%',
+					'left': '79%'
+				}
+			});
 
 		});
 
@@ -1325,13 +1336,15 @@ $.comments = {
 				}
 			}
 		} else {
-			$('body').append("<div id='notification_comment' class='notify notify-error'>A note window is already open on the workspace.</div>");
-			$('#notification_comment').notify({
-				"close-button": false,
+
+			$.fn.notify({
+				'type': 'error',
+				"close-button": true,
 				"position": {
 					'top': "8%",
 					'left': '80%'
-				}
+				},
+				'text': 'A note window is already open on the workspace.'
 			});
 		}
 	},
@@ -1974,9 +1987,10 @@ $.letters = {
 			img2.remove();
 			return result;
 		} else {
-			$('body').append("<div id='notification_letter_min' class='notify notify-error'>Choice two images to compare.</div>");
-			$("#notification_letter_min").notify({
-				"close-button": false
+			$.fn.notify({
+				'type': 'error',
+				"close-button": true,
+				'text': 'Choice two images to compare.'
 			});
 		}
 
@@ -2985,7 +2999,7 @@ $.export = {
 		var data_session = $.export.create();
 		var item = $('#name_export').val();
 		if (item != '') {
-			if (localStorage.getItem(item) == null) {
+			if (localStorage.getItem(item) === null) {
 				localStorage.setItem(item, JSON.stringify(data_session));
 				var element = localStorage.getItem(item);
 				$.import.files.push([item, element]);
@@ -2994,16 +3008,35 @@ $.export = {
 				}
 				$('#export').fadeOut();
 				$('#save').fadeIn();
+				$.fn.notify({
+					'type': 'success',
+					'text': 'Session succesfully saved',
+					'close-button': true,
+					"position": {
+						'top': "8%",
+						'left': '79%'
+					}
+				});
 			} else {
-				$('body').append("<div id='notification_save' class='notify notify-error'>The name chosen already exists. Please try again.</div>");
-				$('#notification_save').notify({
-					'close-button': false
+				$.fn.notify({
+					'type': 'error',
+					'text': 'The name chosen already exists. Please try again',
+					'close-button': true,
+					"position": {
+						'top': "8%",
+						'left': '79%'
+					}
 				});
 			}
-		} else {
-			$('body').append("<div id='notification_save' class='notify notify-error'>Insert a valid name to save this session</div>");
-			$('#notification_save').notify({
-				'close-button': false
+		} else {;
+			$.fn.notify({
+				'type': 'error',
+				'text': 'Insert a valid name to save this session',
+				'close-button': true,
+				"position": {
+					'top': "8%",
+					'left': '79%'
+				}
 			});
 		}
 
@@ -3533,13 +3566,41 @@ function main() {
 				}
 
 			});
-
 		});
+
 	} else {
 		workspace_button.remove();
 	}
 
+	polyfilter_scriptpath = '/static/js/lib/';
+	polyfilter_skip_stylesheets = true;
+	var development = true;
+
+	if (!development) {
+		document.onmousedown = disableclick;
+	}
+
+	function disableclick(event) {
+		$(document).on('contextmenu', function() {
+			return false;
+		});
+
+		if (event.button == 2) {
+			return false;
+		}
+	}
+
+	function handleFiles(files) {
+		var file = files[0];
+		var reader = new FileReader();
+		reader.onload = onFileReadComplete;
+		reader.readAsText(file);
+	}
+
 	$.loadExternalImages.init();
+
+	$.getScript('/static/js/lib/cssParser.js');
+	$.getScript('/static/js/lib/css-filters-polyfill.js');
 
 }
 

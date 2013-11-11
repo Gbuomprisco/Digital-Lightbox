@@ -58,14 +58,17 @@ $(document).ready(function() {
 								});
 
 							} else {
-								$('body').append("<div id='notification_search' class='notify notify-error'>You should insert at least one search term</div>");
-								$('#notification_search').notify({
-									"close-button": false,
+
+								$.fn.notify({
+									"close-button": true,
+									"type": "error",
+									'text': 'You should insert at least one search term',
 									"position": {
 										'top': "8%",
-										'left': '80%'
+										'left': '79%'
 									}
 								});
+								ajax_loader.fadeOut();
 							}
 						},
 						complete: function() {
@@ -107,15 +110,17 @@ $(document).ready(function() {
 											images_container.append(images);
 
 										} else {
-											$('body').append("<div id='notification_search' class='notify notify-error'>You should insert at least one search term</div>");
 
-											$('#notification_search').notify({
-												"close-button": false,
+											$.fn.notify({
+												"close-button": true,
+												"type": "error",
+												'text': 'You should insert at least one search term',
 												"position": {
 													'top': "8%",
-													'left': '80%'
+													'left': '79%'
 												}
 											});
+											ajax_loader.fadeOut();
 										}
 									},
 									complete: function(data) {
@@ -165,9 +170,10 @@ $(document).ready(function() {
 						},
 
 						error: function() {
-							$('body').append("<div id='notification_search' class='notify notify-error'>Something went wrong. Try again.</div>");
-							$('#notification_search').notify({
-								"close-button": false,
+
+							$.fn.notify({
+								"close-button": true,
+								'text': 'Something went wrong. Try again.',
 								"position": {
 									'top': "8%",
 									'left': '80%'

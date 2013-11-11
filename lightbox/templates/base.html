@@ -22,34 +22,6 @@
 		<meta name="author" content="Giancarlo Buomprisco" />
 		<title>Digital Lightbox</title>
 
-        <script>
-            var polyfilter_scriptpath = '/static/js/lib/';
-            var polyfilter_skip_stylesheets = true;
-            var development = true;
-            if(!development){
-                document.onmousedown = disableclick;
-                function disableclick(event){
-                    $(document).on('contextmenu', function() {
-                        return false;
-                    });
-
-                  if(event.button==2)
-                   {
-                     return false;
-                   }
-                }
-            }
-            function handleFiles(files) {
-                var file = files[0];
-                var reader = new FileReader();
-                reader.onload = onFileReadComplete;
-                reader.readAsText(file);
-            }
-
-        </script>
-        <script src="/static/js/lib/cssParser.js"></script>
-        <script src="/static/js/lib/css-filters-polyfill.js"></script>
-
 		{% block extra_head %}{% endblock %}
 
 	</head>
@@ -59,20 +31,18 @@
 		{% endblock %}
 
         {% block js %}
+        <script type="text/javascript" src="/static/js/less-1.5.0.min.js"></script>
         <script type="text/javascript" src="/static/js/jquery-2.0.3.min.js"></script>
         <script type="text/javascript" src="/static/js/jquery-ui-1.10.2.custom.min.js"></script>
         <script type="text/javascript" src="/static/js/app.js"></script>
-        <script type="text/javascript" src="/static/js/css3-mediaqueries.js"></script>
         <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="/static/js/less-1.5.0.min.js"></script>
         <script type="text/javascript" src="/static/js/search.js"></script>
         <script type="text/javascript" src="/static/js/notifications.js"></script>
         <script type="text/javascript" src="/static/js/jcrop.min.js"></script>
         <script type="text/javascript" src="/static/js/resemble.js"></script>
         <script type="text/javascript" src="/static/js/multidraggable.js"></script>
         <script type="text/javascript" src="/static/js/xml2json.js"></script>
-
-
+        <script type="text/javascript" src="/static/js/css3-mediaqueries.js"></script>
         <!--[if lt IE 9]>
             <script src="Javascript/html5shiv.js"></script>
         <![endif]-->

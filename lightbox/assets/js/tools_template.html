@@ -1,0 +1,55 @@
+<div id='topToolbar'>
+    <span id='name_image'>Tools</span>
+    <span title='Close toolbar' class='pull-right glyphicon glyphicon-remove' id='closeToolbar'></span>
+</div>
+<div id="tools">
+    <div class='tool'><span class='tool_label'>Opacity</span>
+        <div id='slider' class='slider'></div>
+    </div>
+    <div class='line'></div>
+    <div class='tool'>
+        <span class='tool_label'>Brightness</span>
+        <div id='slider_brightness' class='slider'></div>
+    </div>
+     <div class='line'></div>
+    <div class='tool'>
+        <span class='tool_label'>Rotate</span>
+        <div id='slider_rotate' class='slider'></div>
+    </div>
+    <div class='line'></div>
+    <div class="tool">
+        <input type="button" name="grayscale" id="grayscale" class="btn btn-xs btn-default" value="Grayscale" />
+        <input type="button" name="invert" id="invert" class="btn-default btn btn-xs" value="Invert" />
+        <input type="button" name="contrast" id="contrast" class="btn-default btn btn-xs" value="Contrast" />
+    </div>
+    <div class='line'></div>
+    <div class='tool'>
+        <span class='tool_label' style='padding-top: 5px;'>Size</span>
+        <input class='small-input' type='text' id='set_width' />
+        <span class='label_size'>Width</span><input class='small-input' type='text' id='set_height' />
+        <span class='label_size'>Height</span>
+        <button id='set_size' class='btn btn-primary btn-sm disabled' disabled>Set</button>
+    </div>
+    <div class='line' style='padding-top:5%'></div>
+    <div class='tool'>
+        <span class='tool_label'>Notes</span>
+        <button id='createComment' class='btn btn-primary btn-sm disabled' disabled>
+        <span class='glyphicon glyphicon-book'></span> Add Note</button>
+    </div>
+    <div class='line'></div>
+    <div class='tool'>
+        <span class='tool_label'>Crop</span>
+        <button class='btn btn-primary btn-sm crop_button disabled' disabled>
+        <i class='icon-resize-small'></i> Activate Crop</button>
+        <button id='crop_image' class='btn btn-sm btn-warning'>Crop Image</button>
+    </div>
+    <div class='line'></div>
+    <div class='tool'>
+        <button class='btn btn-sm btn-primary' id='select_all'>Select</button>
+        <button class='disabled btn btn-sm btn-primary' id='deselect_all' disabled>Deselect</button>
+        <button class='disabled btn btn-sm btn-warning' id='reset_image' disabled>Reset</button>
+        <button class='btn btn-sm btn-primary disabled' id='align'>Align</button>
+        <button disabled class='disabled btn btn-sm btn-danger' id='removeImage'>
+        <span class='glyphicon glyphicon-remove'></span> Remove</button>
+    </div>
+</div>

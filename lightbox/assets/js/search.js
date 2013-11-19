@@ -76,7 +76,7 @@ $(document).ready(function() {
 							var images_element = $('.image');
 
 							images_element.click(function() {
-								$.imagesBox.select_image($(this));
+								$lightbox.imagesBox.select_image($(this));
 							});
 
 							$('#load_more').attr('disabled', false).click(load_scroll);
@@ -102,7 +102,7 @@ $(document).ready(function() {
 										var images = '';
 										if (data != "False") {
 											var data = data['manuscripts'];
-											for (i = 0; i < data.length; i++) {
+											for (var i = 0; i < data.length; i++) {
 												var title = data[i][2] + ', ' + data[i][4];
 												images += '<div data-toggle="tooltip" title="' + title + '" data-size = "' + data[i][5] + '" data-title = "' + data[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data[i][1] + '">' + data[i][0] + '</div>';
 											}
@@ -130,7 +130,7 @@ $(document).ready(function() {
 										image_elements.unbind('click');
 
 										image_elements.click(function() {
-											$.imagesBox.select_image($(this));
+											$lightbox.imagesBox.select_image($(this));
 										});
 
 										image_elements.find('img').on('load', function() {

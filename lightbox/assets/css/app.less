@@ -36,6 +36,7 @@ img {
 	float: left;
 	height: 200px;
 	cursor: pointer;
+
 	&:last-child{
 		margin-bottom:10%;
 	}
@@ -45,9 +46,14 @@ img {
 
 	> img {
 		max-width: 180px;
+		display:none;
 		margin:auto;
 		max-height: 140px;
-		.box-shadow(1px, 0px, 5px, #444);
+		box-shadow: 0px 0px 6px #666;
+		-webkit-box-shadow: 0px 0px 6px #666;
+		-moz-box-shadow: 0px 0px 6px #666;
+		-o-box-shadow: 0px 0px 6px #666;
+		-ms-box-shadow: 0px 0px 6px #666;
 		&:hover{
 			opacity: 0.75;
 		}
@@ -136,14 +142,13 @@ img {
 	z-index: 0;
 	border: 10px solid rgba(82, 82, 82, .7);
 	.rounded(8px);
-	z-index: 400;
+	z-index: 400 !important;
 	color: rgba(82, 82, 82, 1);
 	.box-shadow(0px, 0px, 6px, rgba(0,0,0,0.7));
 	.top_box{
 		font-weight: bold;
 		border-bottom: 1px solid #ccc;
 		padding: 2%;
-		padding-bottom: 1%;
 		font-size: 20px;
 		border-top-left-radius: 4px;
 		border-top-right-radius: 4px;
@@ -192,6 +197,7 @@ img {
 #top_load_box{
 	display: none;
 	margin:0;
+	border-bottom: 1px solid #ccc;
 }
 .table{
 	margin:0;
@@ -200,7 +206,7 @@ img {
 #barLeft {
 	position:fixed;
 	height: 90%;
-	display: none;
+	display: block;
 	opacity: 1;
 	left: 20%;
 	top: 2%;
@@ -244,7 +250,7 @@ img {
 		}
 		padding: 8px;
 		list-style: none;
-		height: 9%;
+		height: 52px;
 		border-bottom:1px solid #ccc;
 		background-color: rgb(245, 245, 245);
 	}
@@ -262,8 +268,6 @@ img {
 
 #barRight{
 	z-index:2;
-	width:3000px;
-	height:2700px;
 	background: #888;
 	margin-right: 10px;
 	padding:0;
@@ -272,36 +276,34 @@ img {
 	.rounded(2px);
 	.image_active{
 		float:left;
-		margin:2%;
-		max-width: 180px;
-		max-height: 90px;
-		img{
-			min-height: 90px;
+		width: 180px;
+		height: auto !important;
+		img, .ui-wrapper{
+			height: auto !important;
+			box-shadow: 0px 0px 15px 5px #444;
+			width: 180px;
 		}
 		&:after{
 			position: relative;
-			margin-left:0.5%;
 		}
 	}
 }
 #barRight2{
 	z-index:2;
-	width:3000px;
-	height:2700px;
 	background: #888;
 	margin: 0;
 	float: left;
+	height: auto;
 	padding:0;
 	overflow: hidden;
 	.rounded(2px);
 	.image_active{
 		float:left;
-		margin: 2%;
-		max-width: 180px;
-		max-height: 90px;
-		min-height: 90px;
-		img{
-			min-height: 90px;
+		width: 180px;
+		img, .ui-wrapper{
+			box-shadow: 0px 0px 15px 5px #444;
+			width: 180px;
+			height: auto !important;
 		}
 	}
 }
@@ -385,7 +387,7 @@ margin-top: 0.5%;
 		width: 8%;
 		padding:1%;
 		text-align: center;
-		margin-top: 4%;
+		top: 8%;
 		padding-top: 2%;
 		padding-left: 2%;
 		padding-right: 1%;
@@ -463,12 +465,13 @@ margin-top: 0.5%;
 	color: black;
 	cursor: pointer;
 	left: 83%;
-	top: 25%;
+	top: 30%;
 	-webkit-transform: rotate(270deg);
 	-moz-transform: rotate(270deg);
 	-ms-transform: rotate(270deg);
 	-o-transform: rotate(270deg);
 	transform: rotate(270deg);
+
 }
 
 #icon-down{
@@ -480,7 +483,8 @@ margin-top: 0.5%;
 	height: 15px;
 	cursor: pointer;
 	left: 83%;
-	top: 25%
+	top: 30%;
+
 }
 
 .box{
@@ -489,7 +493,7 @@ margin-top: 0.5%;
 	left: 70%;
 	.rounded(5px);
 	.box-shadow(0px, 0px, 10px, #999);
-	height: 395px;
+	height: 420px;
 	z-index:1500;
 	font-size:13px;
 	width: 270px;
@@ -598,8 +602,6 @@ margin-top: 0.5%;
     position:fixed;
     top: 86.5%;
 	left: 87.5%;
-	width: 12%;
-	height: 12.5%;
     .box-shadow(0px, 0px, 6px, rgba(0,0,0,0.7));
     z-index:500;
     overflow: hidden;
@@ -613,8 +615,8 @@ margin-top: 0.5%;
 }
 #marker {
     background:#fff;
-    width:30%;
-    height:30%;
+    width:25%;
+    height:25%;
     .rounded(2px);
     z-index: 11;
     opacity:0.7;
@@ -626,12 +628,11 @@ margin-top: 0.5%;
 	opacity:0.8;
 	position: absolute;
 	z-index: 100;
-	background: red;
 	.rounded(2px);
 	margin:0;
 	&:hover{
 		cursor: pointer;
-		background: yellow;
+		.box-shadow(0px, 0px, 8px, red);
 	}
 }
 
@@ -878,7 +879,21 @@ li.no-before, li.no-before:before{
 /* Letters */
 
 .letter{
+	margin:1%;
 	margin-left:3%;
+	float:left;
+	cursor: pointer;
+	box-shadow: 0px 0px 6px #666;
+	-webkit-box-shadow: 0px 0px 6px #666;
+	-moz-box-shadow: 0px 0px 6px #666;
+	-o-box-shadow: 0px 0px 6px #666;
+	-ms-box-shadow: 0px 0px 6px #666;
+	max-width: 130px;
+	height: auto;
+	max-height: 120px;
+	&:hover{
+		opacity: 0.8;
+	}
 }
 
 
@@ -957,18 +972,20 @@ li.no-before, li.no-before:before{
 }
 
 .manuscript_pack{
-	margin: 3%;
-	margin-left:6%;
+	margin: 2%;
+	margin-left:4%;
+	margin-right:4%;
 	float:left;
 	cursor: pointer;
 	opacity: 0.8;
-	width: 16%;
 	.folder_title{
 		font-weight: bold;
-		margin-top: 7%;
+		font-size: 12px;
+		font-weight: bold;
+		margin-top: 3%;
 		word-wrap: break-word;
-		font-size: 10px;
-		margin-left: -16%;
+		position: relative;
+		right: 18%;
 	}
 	&:hover{
 		opacity: 1;

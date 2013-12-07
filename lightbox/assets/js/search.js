@@ -35,7 +35,7 @@ $(document).ready(function() {
 					};
 					$.ajax({
 						type: 'POST',
-						url: '/search/',
+						url: 'search/',
 						data: data,
 						beforeSend: function() {
 							ajax_loader.fadeIn();
@@ -93,7 +93,7 @@ $(document).ready(function() {
 
 								$.ajax({
 									type: 'POST',
-									url: '/search/',
+									url: 'search/',
 									data: data,
 									beforeSend: function() {
 										ajax_loader.fadeIn();
@@ -101,7 +101,7 @@ $(document).ready(function() {
 									success: function(data) {
 										var images = '';
 										if (data != "False") {
-											var data = data['manuscripts'];
+											data = data['manuscripts'];
 											for (var i = 0; i < data.length; i++) {
 												var title = data[i][2] + ', ' + data[i][4];
 												images += '<div data-toggle="tooltip" title="' + title + '" data-size = "' + data[i][5] + '" data-title = "' + data[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data[i][1] + '">' + data[i][0] + '</div>';
@@ -120,7 +120,9 @@ $(document).ready(function() {
 													'left': '79%'
 												}
 											});
+
 											ajax_loader.fadeOut();
+
 										}
 									},
 									complete: function(data) {
@@ -140,6 +142,8 @@ $(document).ready(function() {
 											});
 
 											ajax_loader.fadeOut();
+
+											image_elements.find('img').fadeIn();
 
 										});
 									}
@@ -165,6 +169,7 @@ $(document).ready(function() {
 
 							$('.image').find('img').on('load', function() {
 								ajax_loader.fadeOut();
+								$(this).fadeIn();
 							});
 
 						},
@@ -176,7 +181,7 @@ $(document).ready(function() {
 								'text': 'Something went wrong. Try again.',
 								"position": {
 									'top': "8%",
-									'left': '80%'
+									'left': '79%'
 								}
 							});
 							ajax_loader.fadeOut();
@@ -186,6 +191,12 @@ $(document).ready(function() {
 					return false;
 				}
 				button.click(load_data);
+				$(document).on('keydown', function(e) {
+					var code = (e.keyCode ? e.keyCode : e.which);
+					if (code == 13 && $('#search').is(':focus')) {
+						load_data();
+					}
+				});
 			}
 		};
 		search.init(default_options);

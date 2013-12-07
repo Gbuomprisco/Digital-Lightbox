@@ -24,8 +24,9 @@ $(document).ready(function() {
 				}
 				var input = $(default_options.input);
 				var button = $('#search_button');
-				var n = 5;
+				var n = 6;
 				var ajax_loader = $('#ajax-loader');
+				var images_container = $('#images_container');
 
 				function load_data() {
 					var data = {
@@ -45,32 +46,42 @@ $(document).ready(function() {
 								var count = data['count'];
 								var data_manuscripts = data['manuscripts'];
 								for (i = 0; i < data_manuscripts.length; i++) {
-									images += '<div data-size = "' + data_manuscripts[i][5] + '" data-title = "' + data_manuscripts[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data_manuscripts[i][1] + '">' + data_manuscripts[i][0] +
-										"<div class='col-lg-8 col-md-8 col-xs-8 offset1 image_desc'><table class='table'><tr><th>Manuscript</th><th>Repository</th><th>Place</th></tr><tr><td>" + data_manuscripts[i][2] + "</td><td>" + data_manuscripts[i][3] +
-										"</td><td>" + data_manuscripts[i][4] + "</td></tr></table></div></div>";
+									var title = data_manuscripts[i][2] + ', ' + data_manuscripts[i][4];
+									images += '<div data-toggle="tooltip" title="' + title + '"  data-size = "' + data_manuscripts[i][5] + '" data-title = "' + data_manuscripts[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data_manuscripts[i][1] + '">' + data_manuscripts[i][0] + '</div>';
 								}
-								$('#images_container').html(images);
+								images_container.html(images);
+
 								$('#results_counter').hide().fadeIn().html("<span class='label label-default'>Results: " + count + "</span>");
+
+								$(".image[data-toggle='tooltip']").tooltip({
+									"placement": "bottom"
+								});
+
 							} else {
-								$('body').append("<div id='notification_search' class='notify notify-error'>You should insert at least one search term</div>");
-								$('#notification_search').notify({
-									"close-button": false,
+
+								$.fn.notify({
+									"close-button": true,
+									"type": "error",
+									'text': 'You should insert at least one search term',
 									"position": {
 										'top': "8%",
-										'left': '80%'
+										'left': '79%'
 									}
 								});
+								ajax_loader.fadeOut();
 							}
 						},
 						complete: function() {
 							this.first_requestRunning = false;
-							$('.image').click(function() {
-								$.imagesBox.select_image($(this));
+							var images_element = $('.image');
+
+							images_element.click(function() {
+								$lightbox.imagesBox.select_image($(this));
 							});
+
 							$('#load_more').attr('disabled', false).click(load_scroll);
 
-
-							$('#images_container').data('requestRunning', false);
+							images_container.data('requestRunning', false);
 
 							function load_scroll() {
 								if ($(this).data('requestRunning')) { // don't do anything if an AJAX request is pending
@@ -78,46 +89,58 @@ $(document).ready(function() {
 								}
 
 								data.x = data.n;
-								data.n += 5;
+								data.n += 6;
+
 								$.ajax({
 									type: 'POST',
 									url: '/search/',
 									data: data,
 									beforeSend: function() {
-										$('#ajax-loader').fadeIn();
+										ajax_loader.fadeIn();
 									},
 									success: function(data) {
+										var images = '';
 										if (data != "False") {
 											var data = data['manuscripts'];
-											for (i = 0; i < data.length; i++) {
-												image = '<div data-size = "' + data[i][5] + '" data-title = "' + data[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data[i][1] + '">' + data[i][0] +
-													"<div class='col-lg-8 col-md-8 col-xs-8 offset1 image_desc'><table class='table'><tr><th>Manuscript</th><th>Repository</th><th>Place</th></tr><tr><td>" + data[i][2] + "</td><td>" + data[i][3] +
-													"</td><td>" + data[i][4] + "</td></tr></table></div></div>";
-												$('#images_container').append(image);
-
+											for (var i = 0; i < data.length; i++) {
+												var title = data[i][2] + ', ' + data[i][4];
+												images += '<div data-toggle="tooltip" title="' + title + '" data-size = "' + data[i][5] + '" data-title = "' + data[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data[i][1] + '">' + data[i][0] + '</div>';
 											}
 
+											images_container.append(images);
 
 										} else {
-											$('body').append("<div id='notification_search' class='notify notify-error'>You should insert at least one search term</div>");
-											$('#notification_search').notify({
-												"close-button": false,
+
+											$.fn.notify({
+												"close-button": true,
+												"type": "error",
+												'text': 'You should insert at least one search term',
 												"position": {
 													'top': "8%",
-													'left': '80%'
+													'left': '79%'
 												}
 											});
+											ajax_loader.fadeOut();
 										}
 									},
 									complete: function(data) {
 										$(this).data('requestRunning', false);
+										var image_elements = $('.image');
 
-										$('.image').unbind('click');
-										$('.image').click(function() {
-											$.imagesBox.select_image($(this));
+										image_elements.unbind('click');
+
+										image_elements.click(function() {
+											$lightbox.imagesBox.select_image($(this));
 										});
-										$('.image img').on('load', function() {
+
+										image_elements.find('img').on('load', function() {
+
+											$(".image[data-toggle='tooltip']").tooltip({
+												"placement": "bottom"
+											});
+
 											ajax_loader.fadeOut();
+
 										});
 									}
 
@@ -130,27 +153,33 @@ $(document).ready(function() {
 								}
 							}
 							var div = document.getElementById('images_container');
-							$('#images_container').scroll(function() {
+
+							images_container.scroll(function() {
 								if (isScrollBottom(div)) {
 									load_scroll();
 									ajax_loader.fadeOut();
 								}
 							});
+
 							$(this).data('requestRunning', true);
-							$('.image img').on('load', function() {
+
+							$('.image').find('img').on('load', function() {
 								ajax_loader.fadeOut();
 							});
+
 						},
 
 						error: function() {
-							$('body').append("<div id='notification_search' class='notify notify-error'>Something went wrong. Try again.</div>");
-							$('#notification_search').notify({
-								"close-button": false,
+
+							$.fn.notify({
+								"close-button": true,
+								'text': 'Something went wrong. Try again.',
 								"position": {
 									'top': "8%",
 									'left': '80%'
 								}
 							});
+							ajax_loader.fadeOut();
 						}
 					});
 					this.first_requestRunning = true;
@@ -158,7 +187,7 @@ $(document).ready(function() {
 				}
 				button.click(load_data);
 			}
-		}
+		};
 		search.init(default_options);
 	})();
 

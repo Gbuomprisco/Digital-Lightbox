@@ -6,7 +6,9 @@ from django.utils import simplejson
 from digipal.models import Image, Annotation
 import urllib, cStringIO
 import uuid
+import lxml.etree as ET
 import Image as Img
+from digipal.templatetags.html_escape import iip_img
 from django.conf import settings
 
 def search(request):
@@ -26,7 +28,8 @@ def search(request):
 			Q(item_part__current_item__repository__name__icontains=pattern)).count()
 			list_manuscripts = []
 			for image in manuscripts:
-				result = [image.thumbnail(), image.id, image.display_label, image.item_part.current_item.repository.name
+				image_tag = "<img src = '%s' />" % (image.full())
+				result = [image_tag, image.id, image.display_label, image.item_part.current_item.repository.name
 , image.item_part.current_item.repository.place.name, image.dimensions()]
 				list_manuscripts.append(result)
 			return HttpResponse(simplejson.dumps({'manuscripts': list_manuscripts, 'count': count}), mimetype='application/json')
@@ -79,9 +82,18 @@ def read_image(request):
 
 def get_image_manuscript(request):
 	if request.is_ajax():
-		image_id = request.POST.get('image', '')
-		manuscript = Image.objects.get(id=image_id)
-		image = [manuscript.thumbnail(), manuscript.id, manuscript.display_label, manuscript.item_part.current_item.repository.name, manuscript.item_part.current_item.repository.place.name]
+		try:
+			image_id = request.POST.get('image', '')
+			manuscript = Image.objects.get(id=image_id)
+			image_tag = "<img src = '%s' />" % (manuscript.full())
+			image = [image_tag, manuscript.id, manuscript.display_label, manuscript.item_part.current_item.repository.name, manuscript.item_part.current_item.repository.place.name]
+		except Exception:
+			graph = request.POST.get('image', '')
+			a = Annotation.objects.get(graph=graph)
+			cts = a.get_coordinates()
+			coordinates = (cts[1][0] - cts[0][0], cts[1][1] - cts[0][1])
+			image = [a.thumbnail(), a.id, a.graph.display_label, a.image.item_part.current_item.repository.name, str(coordinates[0]) + ',' + str(coordinates[1])]
+			#image.append(annotation)
 		return HttpResponse(simplejson.dumps(image), mimetype='application/json')
 
 
@@ -93,7 +105,8 @@ def external_image_request(request):
 			for image_id in images_list:
 				manuscript = Image.objects.get(id=image_id)
 				size = manuscript.dimensions()
-				image = [manuscript.thumbnail(), manuscript.id, manuscript.display_label, manuscript.item_part.current_item.repository.name, manuscript.item_part.current_item.repository.place.name, str(size[0]) + ',' + str(size[1])]
+				image_tag = "<img src = '%s' />" % (manuscript.full())
+				image = [image_tag, manuscript.id, manuscript.display_label, manuscript.item_part.current_item.repository.name, manuscript.item_part.current_item.repository.place.name, str(size[0]) + ',' + str(size[1])]
 				images.append(image)
 			return HttpResponse(simplejson.dumps(images), mimetype='application/json')
 		elif 'annotations' in request.GET and request.GET.get('annotations', ''):
@@ -111,12 +124,29 @@ def external_image_request(request):
 
 
 def transform_xml(request):
-	import lxml.etree as ET
 	xml = request.POST.get('xml', '')
 	xsl_filename = request.POST.get('xsl_filename', '')
 	dom = ET.fromstring(xml)
 	xslt = ET.parse(settings.STATIC_ROOT + '/' + xsl_filename)
-	transform = ET.XSLT(xslt)
+	transform = ET.XSLT(xslt, encoding='utf-8')
 	newdom = transform(dom)
-	return HttpResponse(ET.tostring(newdom, pretty_print=True))
+	return HttpResponse(ET.tostring(newdom, pretty_print=True, encoding=unicode, xml_declaration=False))
 	#return HttpResponse(settings.STATIC_ROOT + '/' + xsl_filename)
+
+def return_base64(request):
+	if request.is_ajax():
+		if 'images' in request.POST and request.POST.get('images', ''):
+			images = simplejson.loads(request.POST.get('images', ''))
+			images_returned = []
+			for image in images:
+				file = cStringIO.StringIO(urllib.urlopen(image).read())
+				img = Img.open(file)
+				tmp = cStringIO.StringIO()
+				img.save(tmp, 'JPEG')
+				region = tmp.getvalue().encode('base64')
+				tmp.close()
+				images_returned.append(region)
+				print region
+			return HttpResponse(simplejson.dumps(['data:image/png;base64,' + images_returned[0], 'data:image/png;base64,' + images_returned[1]]), mimetype='application/json')
+
+

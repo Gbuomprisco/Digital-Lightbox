@@ -9,3 +9,5 @@ iipimage/
 django-iipimage/
 digipal/
 lightbox/static
+iipimage
+.gitignore

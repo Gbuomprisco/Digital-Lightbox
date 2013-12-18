@@ -35,7 +35,7 @@ $(document).ready(function() {
 					};
 					$.ajax({
 						type: 'POST',
-						url: 'search/',
+						url: '/search/',
 						data: data,
 						beforeSend: function() {
 							ajax_loader.fadeIn();
@@ -93,7 +93,7 @@ $(document).ready(function() {
 
 								$.ajax({
 									type: 'POST',
-									url: 'search/',
+									url: '/search/',
 									data: data,
 									beforeSend: function() {
 										ajax_loader.fadeIn();

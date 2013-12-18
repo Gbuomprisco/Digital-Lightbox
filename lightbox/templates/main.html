@@ -1,0 +1,99 @@
+{% load init %}
+<div id='topbar' class='span3'>
+   <span title = 'Zoom workspace In' id = 'zoom_in' class = 'col-lg-2 col-md-2 col-xs-2 glyphicon glyphicon-zoom-in'></span>
+   <span title = 'Zoom workspace out' id = 'zoom_out' class = 'col-lg-2 col-md-2 col-xs-2 glyphicon glyphicon-zoom-out'></span>
+
+   <span title = 'Move left' id = 'move_left' class = 'col-lg-2 col-md-2 col-xs-2 glyphicon glyphicon-arrow-left'></span>
+   <span title = 'Move right' id = 'move_right' class = 'col-lg-2 col-md-2 col-xs-2 glyphicon glyphicon-arrow-right'></span>
+
+   <span title = 'Change workspace' id = 'workspace' class = 'col-lg-2 col-md-2 col-xs-2'></span>
+   <span id='counter_zoom' class='col-lg-2 col-md-2 col-xs-2'></span>
+</div>
+<div class='row' id='container'>
+
+    {% comment %}
+        Menu
+    {% endcomment %}
+
+    {% include "sections/menu.html" %}
+
+
+    {% comment %}
+        Browse images div
+    {% endcomment %}
+
+    {% include "sections/search.html" %}
+
+    {% comment %}
+        Workspace 1
+    {% endcomment %}
+
+    <div class='row' id='workspace1'></div>
+
+    {% comment %}
+        Workspace2
+    {% endcomment %}
+
+    <div class='row' id='workspace2'></div>
+
+</div>
+
+{% comment %}
+    Minimap
+{% endcomment %}
+
+<div id='overview'>
+    <div id='overview_line'></div>
+    <div id='marker'></div>
+</div>
+
+{% comment %}
+    Notes
+{% endcomment %}
+
+{% include "sections/notes.html" %}
+
+
+{% comment %}
+    Regions
+{% endcomment %}
+
+
+{% include "sections/regions.html" %}
+
+{% comment %}
+    Export
+{% endcomment %}
+
+{% include "sections/export.html" %}
+
+
+
+{% comment %}
+    Import
+{% endcomment %}
+
+{% include "sections/import.html" %}
+
+
+
+{% comment %}
+    hidden div as temporary location for for external images
+{% endcomment %}
+<div id="hidden_div" style='display:none'></div>
+
+<input type="hidden" id="csrfmiddlewaretoken" value="{{csrf_token}}">
+
+
+
+{% comment %}
+    Load autocomplete
+{% endcomment %}
+
+{% block extra_js %}
+
+<script>
+    array_pages = {% pages %}
+
+</script>
+{% endblock %}

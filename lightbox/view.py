@@ -5,11 +5,13 @@ from django.db.models import Q
 from django.utils import simplejson
 from digipal.models import Image, Annotation
 import urllib, cStringIO
+from StringIO import StringIO
 import uuid
 import lxml.etree as ET
 import Image as Img
 from digipal.templatetags.html_escape import iip_img
 from django.conf import settings
+import os
 
 def search(request):
 
@@ -103,32 +105,40 @@ def external_image_request(request):
 			images = []
 			images_list = simplejson.loads(request.GET.get('images', ''))
 			for image_id in images_list:
-				manuscript = Image.objects.get(id=image_id)
-				size = manuscript.dimensions()
-				image_tag = "<img src = '%s' />" % (manuscript.full())
-				image = [image_tag, manuscript.id, manuscript.display_label, manuscript.item_part.current_item.repository.name, manuscript.item_part.current_item.repository.place.name, str(size[0]) + ',' + str(size[1])]
-				images.append(image)
+				try:
+					manuscript = Image.objects.get(id=image_id)
+					size = manuscript.dimensions()
+					image_tag = "<img src = '%s' />" % (manuscript.full())
+					image = [image_tag, manuscript.id, manuscript.display_label, manuscript.item_part.current_item.repository.name, manuscript.item_part.current_item.repository.place.name, str(size[0]) + ',' + str(size[1])]
+					images.append(image)
+				except:
+					pass
 			return HttpResponse(simplejson.dumps(images), mimetype='application/json')
 		elif 'annotations' in request.GET and request.GET.get('annotations', ''):
 			annotations = []
 			graphs_list = simplejson.loads(request.GET.get('annotations', ''))
 			for graph in graphs_list:
-				a = Annotation.objects.get(graph=graph)
-				cts = a.get_coordinates()
-				coordinates = (cts[1][0] - cts[0][0], cts[1][1] - cts[0][1])
-				annotation = [a.thumbnail(), a.id, a.graph.display_label, a.image.item_part.current_item.repository.name, str(coordinates[0]) + ',' + str(coordinates[1])]
-				annotations.append(annotation)
+				try:
+					a = Annotation.objects.get(graph=graph)
+					cts = a.get_coordinates()
+					coordinates = (cts[1][0] - cts[0][0], cts[1][1] - cts[0][1])
+					annotation = [a.thumbnail(), a.id, a.graph.display_label, a.image.item_part.current_item.repository.name, str(coordinates[0]) + ',' + str(coordinates[1])]
+					annotations.append(annotation)
+				except Exception as e:
+					print e
+					pass
 			return HttpResponse(simplejson.dumps(annotations), mimetype='application/json')
 		else:
 			return HttpResponse(False)
 
 
 def transform_xml(request):
-	xml = request.POST.get('xml', '')
+	xml = request.POST.get('xml', '').encode('utf-8')
 	xsl_filename = request.POST.get('xsl_filename', '')
 	dom = ET.fromstring(xml)
-	xslt = ET.parse(settings.STATIC_ROOT + '/' + xsl_filename)
-	transform = ET.XSLT(xslt, encoding='utf-8')
+	STATIC_ROOT = os.path.dirname(os.path.abspath(__file__)) + '/static'
+	xslt = ET.parse(STATIC_ROOT + '/' + xsl_filename)
+	transform = ET.XSLT(xslt)
 	newdom = transform(dom)
 	return HttpResponse(ET.tostring(newdom, pretty_print=True, encoding=unicode, xml_declaration=False))
 	#return HttpResponse(settings.STATIC_ROOT + '/' + xsl_filename)

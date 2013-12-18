@@ -10,15 +10,12 @@ Currently, the Digital lightbox is tighlty dependent on the Digipal App. Yet, in
   - PIL
 
 ## TODO
-	- Standalone App
 	- Django App ready
 	- Javascript package only
 	- Node.js version
 	- Cross-Browser compatibility
 	- Performance boost
-	- Users platform
-		- Database hosting for users' images
-
+	- Porting JS structure to Sandbox pattern
 
 
 ##Libraries used:

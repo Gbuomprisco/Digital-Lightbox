@@ -8,5 +8,5 @@ setup(name='Digital Lightbox',
       author='Giancarlo Buomprisco',
       author_email='giancarlopsk@pgmail.com',
       url='https://github.com/Gbuomprisco/Digital-Lightbox',
-      packages=['distutils', 'distutils.command'],
+      packages=[],
      )

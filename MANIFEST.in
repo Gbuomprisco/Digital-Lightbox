@@ -1,7 +1,4 @@
 include README.md
 recursive-include docs *
-recursive-include lightbox *
-recursive-include lightbox/static/js *
-recursive-include lightbox/static/css *
-recursive-include lightbox/static/fonts *
-recursive-include lightbox/static/img *
+global-include lightbox *
+

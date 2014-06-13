@@ -1,4 +1,3 @@
 include README.md
 recursive-include docs *
-recursive-include lightbox/static/*
-recursive-include lightbox/templates/*
+

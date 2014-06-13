@@ -1,5 +1,0 @@
-Requirements:
-
-	- Django 1.4
-	- Digipal DB
-	- PIL

@@ -10,4 +10,5 @@ setup(name='Digital Lightbox',
       author_email='giancarlopsk@gmail.com',
       url='https://github.com/Gbuomprisco/Digital-Lightbox',
       packages=find_packages(),
+      include_package_data=True,
 )

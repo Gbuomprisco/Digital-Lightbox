@@ -8,7 +8,6 @@ manage.py
 iipimage/
 django-iipimage/
 digipal/
-lightbox/static
 iipimage
 .gitignore
 assets/

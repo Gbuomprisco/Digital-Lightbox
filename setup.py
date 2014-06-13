@@ -10,7 +10,7 @@ setup(name='Digital Lightbox',
       author_email='giancarlopsk@gmail.com',
       url='https://github.com/Gbuomprisco/Digital-Lightbox',
       include_package_data=True,
-      packages=['lightbox'],
+      packages=find_packages(),
       package_dir={'lightbox': 'lightbox'},
       package_data={'lightbox': ['static/*', 'templates/*']},
 )

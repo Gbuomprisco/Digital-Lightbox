@@ -11,5 +11,5 @@ setup(name='Digital Lightbox',
       url='https://github.com/Gbuomprisco/Digital-Lightbox',
       packages=find_packages(),
       include_package_data=True,
-      data_files = ['static/', 'templates/'],
+      data_files = ['lightbox/static/*', 'lightboc/templates/*'],
 )

@@ -30,7 +30,7 @@ def search(request):
 			Q(item_part__current_item__repository__name__icontains=pattern)).count()
 			list_manuscripts = []
 			for image in manuscripts:
-				image_tag = iip_img(image, 180)
+				image_tag = image.thumbnail(image.dimensions()[0], image.dimensions()[1])
 				result = [image_tag, image.id, image.display_label, image.item_part.current_item.repository.name
 , image.item_part.current_item.repository.place.name, image.dimensions()]
 				list_manuscripts.append(result)
@@ -122,7 +122,7 @@ def external_image_request(request):
 					a = Annotation.objects.get(graph=graph)
 					cts = a.get_coordinates()
 					coordinates = (cts[1][0] - cts[0][0], cts[1][1] - cts[0][1])
-					annotation = [a.thumbnail(), a.id, a.graph.display_label, a.image.item_part.current_item.repository.name, str(coordinates[0]) + ',' + str(coordinates[1])]
+					annotation = [a.full(), a.id, a.graph.display_label, a.image.item_part.current_item.repository.name, str(coordinates[0]) + ',' + str(coordinates[1])]
 					annotations.append(annotation)
 				except Exception as e:
 					pass

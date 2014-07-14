@@ -1115,7 +1115,7 @@ function Lightbox(options) {
 			var images = _self.imagesBox.imagesSelected;
 			if (_self.imagesBox.is_selected(image)) {
 				image.data('selected', false);
-				image.children('img').removeClass('selected_image');
+				image.find('img').removeClass('selected_image');
 				if (images.length) {
 					for (var i = 0; i < images.length; i++) {
 						if (image.attr('id') == $(images[i]).attr('id')) {
@@ -1129,7 +1129,7 @@ function Lightbox(options) {
 				if (typeof image != "undefined") {
 					_self.imagesBox.imagesSelected.push(image);
 					image.data('selected', true);
-					image.children('img').addClass('selected_image');
+					image.find('img').addClass('selected_image');
 				}
 
 			}
@@ -1149,7 +1149,7 @@ function Lightbox(options) {
 						left = $(window).scrollLeft();
 					}
 
-					var new_images = $(images[i]).unbind().removeClass('image').addClass('image_active').css({
+					var new_images = $(images[i]).unbind().removeClass('image selected_image').addClass('image_active').css({
 						'top': top,
 						'left': left
 					});
@@ -4563,6 +4563,11 @@ function Lightbox(options) {
 
 		$('#search').typeahead({
 			source: array_pages
+		});
+
+		$('#back_to_digipal').on('click', function() {
+			var url = _self.utils.getParameter('from');
+			location.href = url;
 		});
 
 		_self.toolbar.init();

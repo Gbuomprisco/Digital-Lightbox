@@ -546,7 +546,7 @@ function Lightbox(options) {
 
 			$.each(images, function() {
 
-				$(this).children().css('box-shadow', '0px 0px 10px 2px #444');
+				$(this).find('.ui-wrapper').css('box-shadow', '0px 0px 10px 2px #444');
 				$(this).removeClass('selected');
 				$(this).data('selected', false);
 
@@ -1169,6 +1169,8 @@ function Lightbox(options) {
 							width: size[0] / 2
 						});
 
+					} else {
+						new_images.find('img').after('<label>' + new_images.data('title') + '</label>');
 					}
 					var workspace = _self.workspaceImages.workspace;
 					var original_id = new_images.attr('id');
@@ -1177,11 +1179,11 @@ function Lightbox(options) {
 					var id = new_images.attr('id');
 
 					/*
-				if ($('#' + id).length) {
-					var new_id = uniqueid();
-					new_images.attr('id', new_id);
-				}
-				*/
+					if ($('#' + id).length) {
+						var new_id = uniqueid();
+						new_images.attr('id', new_id);
+					}
+					*/
 
 					$(workspace).append(new_images);
 					$(images[i]).dblclick(function(event) {
@@ -1225,9 +1227,7 @@ function Lightbox(options) {
 
 			drag: function(event, ui) {
 				position = $(this).offset();
-
 				_self.minimap.update_mini_map(ui);
-
 			},
 			stop: function(event, ui) {
 				$(event.toElement).one('click', function(e) {
@@ -3273,7 +3273,7 @@ function Lightbox(options) {
 		printImages: function(images, images_properties) {
 			for (var i = 0; i < images.length; i++) {
 				if (images_properties) {
-					var image = '<div data-external+"true" data-size = "' + images_properties[i]['original_size'] + '" data-title = "' + images[i][2] + '" class="image_active" id = "' + parseInt(images[i][1]) + '">' + images[i][0] + "<div class='image_desc col-lg-8 col-md-8 col-xs-8 offset1 image_desc'> <p><b>Manuscript</b>: " + images[i][2] + "</p> " + "<p><b>Repository</b>: " + images[i][3] + "<p><b>Place</b>: " + images[i][4] + "</p></div><br clear='all' /></div>";
+					var image = '<div data-external="true" data-size = "' + images_properties[i]['original_size'] + '" data-title = "' + images[i][2] + '" class="image_active" id = "' + parseInt(images[i][1]) + '">' + images[i][0] + "<label>" + images[i][2] + "</label> <div class='image_desc col-lg-8 col-md-8 col-xs-8 offset1 image_desc'> <p><b>Manuscript</b>: " + images[i][2] + "</p> " + "<p><b>Repository</b>: " + images[i][3] + "<p><b>Place</b>: " + images[i][4] + "</p></div><br clear='all' /></div>";
 
 					$(image).css({
 						'left': $(window).scrollLeft() + 150,
@@ -3329,7 +3329,7 @@ function Lightbox(options) {
 					}
 
 				} else {
-					var image = '<div data-external="true" data-size = "' + images[i][4] + '" data-title = "' + images[i][2] + '" class="image" id = "' + parseInt(images[i][1]) + '">' + images[i][0] + "<div class='col-lg-8 col-md-8 col-xs-8 offset1 image_desc'> <p><b>Manuscript</b>: " + images[i][2] + "</p> " + "<p><b>Repository</b>: " + images[i][3] + "<p><b>Place</b>: " + images[i][4] + "</p></div><br clear='all' /></div>";
+					var image = '<div data-external="true" data-size = "' + images[i][4] + '" data-title = "' + images[i][2] + '" class="image" id = "' + parseInt(images[i][1]) + '">' + images[i][0] + " <label>" + images[i][2] + "</label><div class='col-lg-8 col-md-8 col-xs-8 offset1 image_desc'> <p><b>Manuscript</b>: " + images[i][2] + "</p> " + "<p><b>Repository</b>: " + images[i][3] + "<p><b>Place</b>: " + images[i][4] + "</p></div><br clear='all' /></div>";
 					$("#hidden_div").append(image);
 					_self.imagesBox.imagesSelected.push($(image));
 				}
@@ -3926,6 +3926,25 @@ function Lightbox(options) {
 
 
 	this.utils = {
+
+		fixZoom: function(evt, ui) {
+
+			var zoom = $('#workspace1').css('zoom');
+			var canvasHeight = $('#workspace1').height();
+			var canvasWidth = $('#workspace1').width();
+			ui.position.top = Math.round(ui.position.top / zoom);
+			ui.position.left = Math.round(ui.position.left / zoom);
+
+			// don't let draggable to get outside of the canvas
+			if (ui.position.left < 0)
+				ui.position.left = 0;
+			if (ui.position.left + $(this).width() > canvasWidth)
+				ui.position.left = canvasWidth - $(this).width();
+			if (ui.position.top < 0)
+				ui.position.top = 0;
+			if (ui.position.top + $(this).height() > canvasHeight)
+				ui.position.top = canvasHeight - $(this).height();
+		},
 
 		stringToXML: function(text) {
 			try {

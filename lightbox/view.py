@@ -123,7 +123,7 @@ def external_image_request(request):
 					cts = a.get_coordinates()
 					coordinates = (cts[1][0] - cts[0][0], cts[1][1] - cts[0][1])
 					thumbnail = u'<img alt="%s" src="%s" />' % (a.graph, a.get_cutout_url(True, True))
-					annotation = [thumbnail, a.id, a.graph.display_label, a.image.item_part.current_item.repository.name, str(coordinates[0]) + ',' + str(coordinates[1])]
+					annotation = [thumbnail, a.id, a.graph.get_short_label(), a.image.item_part.current_item.repository.name, str(coordinates[0]) + ',' + str(coordinates[1])]
 					annotations.append(annotation)
 				except Exception as e:
 					pass

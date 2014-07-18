@@ -195,7 +195,8 @@ function Lightbox(options) {
 					deselectAll: $('#deselect_all'),
 					align: $('#align'),
 					reset: $('#reset_image'),
-					remove: $('#removeImage')
+					remove: $('#removeImage'),
+					clone: $('#clone')
 				},
 				title: $('#name_image')
 			};
@@ -454,7 +455,7 @@ function Lightbox(options) {
 			var workspace = _self.workspaceImages.workspace;
 			for (var i = 0; i < images.length; i++) {
 				var image = $(images[i]);
-				var new_image = image.clone(false).attr('id', id);
+				var new_image = image.clone().attr('id', id);
 				new_image.data('is_clone', true);
 				new_image.data('title', image.data('title') + " (clone)");
 				new_image.data('original', image.attr('id'));
@@ -465,10 +466,11 @@ function Lightbox(options) {
 					'left': image.position().left + image.find('img').css('width') + 10,
 					'top': image.css('top')
 				});
-				_self.select_group.select(new_image);
-				new_image.draggable(_self.workspaceImages.draggableOptions);
-				$('#' + workspace).append(new_image);
+				new_image.find('.ui-wrapper').css('box-shadow', '0px 0px 10px 3px #444');
+				//new_image.draggable(_self.workspaceImages.draggableOptions);
+				_self.imagesBox.imagesSelected.push(new_image);
 			}
+			_self.imagesBox.to_workspace();
 		},
 
 		/**
@@ -766,11 +768,10 @@ function Lightbox(options) {
 				_self.toolbar.selectAll();
 			});
 
-			/*
+
 			$('#clone').click(function() {
 				_self.toolbar.clone();
 			});
-			*/
 
 			this.selectors.buttons.deselectAll.click(function() {
 				_self.toolbar.deselectAll();
@@ -1594,7 +1595,7 @@ function Lightbox(options) {
 			var comment = "<div class='comment' id='" + image + "' data-image = '" + id_image + "'>";
 			comment += "<div class='top_comment'>";
 			comment += "<button class='btn btn-sm btn-danger removeComment' title='Delete Note'><span class='glyphicon glyphicon-remove'></span> Delete</button>";
-			comment += "<span class='pull-right minimizeNote' title='Save note'><span style='font-weight:bold;color:white;font-size:15px;cursor:pointer;margin:0.5%;' class='glyphicon glyphicon-ok'></span></span></div>";
+			comment += "<div class='pull-right minimizeNote' title='Save note'><button class='btn btn-success btn-sm'><span style='font-weight:bold;color:white;cursor:pointer;' class='glyphicon glyphicon-ok'></span> Save</button></div></div>";
 			comment += "<div class='comment_wrapper'>";
 			comment += "<input class='commentTitle' class='hidden' placeholder='Title ...' />";
 			comment += "<div class='comment_content' contenteditable></div>";
@@ -2836,6 +2837,7 @@ function Lightbox(options) {
 				var wrap_image = $('<div>');
 				var title;
 				wrap_image.data('from_pc', true);
+				wrap_image.data('is_letter', true);
 				wrap_image.attr('id', uniqueid());
 				wrap_image.data('size', this.width + ',' + this.height);
 				image.attr('src', src);
@@ -3633,7 +3635,7 @@ function Lightbox(options) {
 
 			for (var i = 0; i < images.length; i++) {
 
-
+				console.log(images);
 				var propriety = {
 					'opacity': $(images[i]).find('img').css('opacity'),
 					'brightness': get_brightness(),
@@ -4133,11 +4135,9 @@ function Lightbox(options) {
 
 				});
 				_self.select_group.imagesSelected.push(image);
+				image.find('.ui-wrapper').css('boxShadow', '0px 0px 30px rgba(255, 246, 9, 1)');
 				_self.toolbar.show();
 			}
-
-			image.find('.ui-wrapper').css('boxShadow', '0px 0px 30px rgba(255, 246, 9, 1)');
-
 			if (this.imagesSelected.length == 1) {
 				_self.toolbar.selectors.buttons.cropButton.removeClass('disabled').attr("disabled", false);
 				_self.toolbar.selectors.buttons.createComment.removeClass('disabled').attr("disabled", false);
@@ -4157,6 +4157,7 @@ function Lightbox(options) {
 			}
 
 			_self.toolbar.refresh();
+
 
 		}
 	};
@@ -4598,6 +4599,10 @@ function Lightbox(options) {
 
 		$('#back_to_digipal').on('click', function() {
 			var url = _self.utils.getParameter('from');
+			if (!url) {
+				url = "/"
+				e;
+			}
 			location.href = url;
 		});
 

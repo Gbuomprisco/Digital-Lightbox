@@ -656,7 +656,9 @@ function Lightbox(options) {
 
 			var button_toolbar = $('#button_toolbar');
 			button_toolbar.tooltip('hide').fadeOut().remove();
-
+			if (!this.last_style) {
+				this.last_style = this.toolbox.css(['top', 'left', 'width', 'height', 'opacity']);
+			}
 			this.toolbox.show().animate({
 				"top": this.last_style['top'],
 				'left': this.last_style['left'],
@@ -1141,18 +1143,9 @@ function Lightbox(options) {
 			var images_on_workspace = $('.image');
 			if (images.length) {
 				var page_position = $('#overview').offset();
-				for (var i = 0; i < images.length; i++) {
+				for (var i = 0; i < images.length; i++) {;
 
-					var top = $(window).scrollTop() + 50;
-					var left = $(window).scrollLeft() + 200;
-					if (_self.workspaceImages.workspace == _self.defaults.workspace2) {
-						left = $(window).scrollLeft();
-					}
-
-					var new_images = $(images[i]).unbind().removeClass('image selected_image').addClass('image_active').css({
-						'top': top,
-						'left': left
-					});
+					var new_images = $(images[i]).unbind().removeClass('image selected_image').addClass('image_active');
 
 					if (new_images.data('external')) {
 						var size = new_images.data('size').split(',');
@@ -1186,6 +1179,20 @@ function Lightbox(options) {
 					*/
 
 					$(workspace).append(new_images);
+					var n = $(window).scrollLeft();
+					if ($(images[i]).prev().length) {
+						n += $(images[i]).prev().offset().left + 5;
+					}
+					var top = $(window).scrollTop() + 50;
+					var left = n + 100;
+					if (_self.workspaceImages.workspace == _self.defaults.workspace2) {
+						left = $(window).scrollLeft();
+					}
+					$(images[i]).css({
+						'top': top,
+						'left': left,
+						'position': "absolute"
+					});
 					$(images[i]).dblclick(function(event) {
 						_self.select_group.select($(this));
 						event.stopPropagation();
@@ -1199,6 +1206,10 @@ function Lightbox(options) {
 					_self.workspaceImages.init(); // Making images draggable
 				}
 				_self.imagesBox.imagesSelected = []; //restore the selected elements after dragged on workspace
+				$('html, body').animate({
+					scrollTop: new_images.position().top - 100,
+					scrollLeft: (new_images.position().left - 450) + "px"
+				}, 500);
 			} else {
 				$.fn.notify({
 					"type": "error",
@@ -1604,7 +1615,7 @@ function Lightbox(options) {
 		events_on_notes: function() {
 			var notes = this.notes;
 			$('.note .remove_comment_from_box').click(function() {
-				var note = $(this).parent().parent('.note');
+				var note = $(this).closest('.note');
 				for (var i = 0; i < notes.length; i++) {
 					for (var j = 0; j < notes[i].notes.length; j++) {
 						if (notes[i].notes[j].id == note.data('id')) {
@@ -1636,11 +1647,11 @@ function Lightbox(options) {
 				_self.comments.update_notes();
 			});
 
-			$('.edit_comment_from_box').click(function() {
+			$('.edit_comment_from_box').unbind().click(function() {
 				_self.comments.show_comment($(this));
 			});
 
-			$('.read_note').click(function() {
+			$('.read_note').unbind().click(function() {
 				_self.comments.read_note($(this));
 			});
 		},
@@ -1677,7 +1688,7 @@ function Lightbox(options) {
 
 		create_note: function(title, id, content) {
 			var notes_html = "<div class = 'note' data-id = '" + id + "'><p style='padding:0' class='note_box_title col-lg-9 col-lm-9 col-xs-9'>" + title + "</p>";
-			notes_html += "<p class='pull-right'><span title='read Note' class='glyphicon glyphicon-file read_note'></span> ";
+			//notes_html += "<p class='pull-right'><span title='read Note' class='glyphicon glyphicon-file read_note'></span> ";
 			notes_html += "<span title='Edit Note' class='glyphicon glyphicon-pencil edit_comment_from_box'></span>";
 			notes_html += " <span title='Delete Note' class='glyphicon glyphicon-remove remove_comment_from_box'></span></p><div class='note_box_content'>" + content + "</div></div>";
 			return notes_html;
@@ -1735,7 +1746,7 @@ function Lightbox(options) {
 		show_comment: function(note_button) {
 			if (!$('.comment').length) {
 				var notes = this.notes;
-				var note = note_button.parent().parent('.note');
+				var note = note_button.closest('.note');
 				for (var i = 0; i < notes.length; i++) {
 					for (var j = 0; j < notes[i].notes.length; j++) {
 						if (notes[i].notes[j].id == note.data('id')) {
@@ -1790,14 +1801,12 @@ function Lightbox(options) {
 			}).css({
 				'border-bottom': '1px solid #ddd'
 			});
-
-
 			if (!breadcrumb_notes.length) {
 				$('#breadcrumb_notes_container').append(breadcrumb);
 				var li = "<li><a class='link' id='to_notes'>Notes</a></li>";
 				li += "<li class='active'>" + image_note.data('image_title') + "</li>";
 				li += "<li class='pull-right no-before'><span style='cursor:pointer;' id='to_notes_icon' class='glyphicon glyphicon-arrow-left'></span></li>";
-				breadcrumb_notes.html(li);
+				breadcrumb.html(li).show();
 			}
 
 			$('#to_notes').click(function() {
@@ -1830,7 +1839,7 @@ function Lightbox(options) {
 		},
 
 		back_to_notes: function() {
-			$('#breadcrumb_notes, .note').hide().remove();
+			$('#breadcrumb_notes').add('.note').hide().remove();
 			this.openFolder = false;
 			this.currentFolder = null;
 			$('#notes_container').html('');
@@ -2179,16 +2188,20 @@ function Lightbox(options) {
 		},
 
 		updateLetters: function(data) {
-
 			if (this.regions.length) {
 				var manuscript_id = $(data).data('manuscript_id');
+				if (!$(data).data('manuscript_id')) {
+					manuscript_id = $(data).data('manuscript').id || $(data).data('manuscript').manuscript_id;
+				}
 				var flag = false;
 				var letters = $(".letter");
 				letters.unbind('click');
 				var letters_container = $('#letters_container');
 				for (var i = 0; i < this.regions.length; i++) {
 					if (this.regions[i].id == manuscript_id) {
-						this.regions[i].letters.push($(data));
+						if ($(data).hasClass("letter")) {
+							this.regions[i].letters.push($(data));
+						}
 						if (this.folderOpen.status && this.folderOpen.manuscript ==
 							this.regions[i].id) {
 							var j = 0;
@@ -2199,8 +2212,6 @@ function Lightbox(options) {
 							}
 						}
 						flag = true;
-					} else {
-						continue;
 					}
 				}
 				if (!flag) {
@@ -2250,7 +2261,6 @@ function Lightbox(options) {
 				'id': manuscript_id,
 				'letters': []
 			};
-			manuscripts.letters.push($(data));
 			this.regions.push(manuscripts);
 			manuscript.data('manuscript', manuscripts);
 			this.check_regions_length();
@@ -2258,8 +2268,14 @@ function Lightbox(options) {
 		},
 
 		addLetter: function(data) {
-
-			if (this.updateLetters(data)) {
+			var manuscript_id = $(data).data('manuscript_id');
+			var found = false;
+			for (var j = 0; j < this.regions.length; j++) {
+				if (this.regions[j].id == manuscript_id) {
+					found = true;
+				}
+			}
+			if (this.updateLetters(data) && found) {
 				return false;
 			} else {
 				var manuscript = this.updateFolders(data);
@@ -2268,6 +2284,7 @@ function Lightbox(options) {
 					letters_container.append(manuscript);
 				}
 				this.init($(manuscript));
+				this.updateLetters(data);
 			}
 		},
 
@@ -2304,14 +2321,14 @@ function Lightbox(options) {
 				manuscript.data('manuscript', manuscript_data);
 				if (!$('#manuscript_' + manuscript_id).length) {
 					letters_container.append(manuscript);
-					_self.letters.update_regions_folders(false);
 				}
 
 			}
 
 			if (update_window) {
-				$('.manuscript_pack').click(function() {
+				$('.manuscript_pack').unbind().click(function() {
 					_self.letters.openFolder($(this));
+					$(this).fadeOut();
 				});
 			}
 
@@ -2403,7 +2420,6 @@ function Lightbox(options) {
 
 		buttons: function(data) {
 			data.click(function() {
-				_self.letters.update_regions_folders(false);
 				_self.letters.openFolder(data);
 			});
 		},
@@ -2415,8 +2431,6 @@ function Lightbox(options) {
 				manuscript: data.data('manuscript').id
 			};
 
-
-			this.updateLetters(data);
 			var breadcrumb = $('<div>');
 
 			breadcrumb.attr({
@@ -2425,14 +2439,14 @@ function Lightbox(options) {
 				'id': 'breadcrumb_letters'
 			});
 
-			$('.manuscript_pack').fadeOut(100);
+			$('.manuscript_pack').fadeOut();
 			$('#letters_container').append(breadcrumb.fadeIn(300));
 			var li = "<li><a class='link' id='to_regions'>Regions</a></li>";
 			li += "<li class='active'>" + data.data('manuscript').title + "</li>";
 			li += "<li class='pull-right no-before'><span id='to_regions_icon' class='glyphicon glyphicon-arrow-left' style='cursor:pointer;'></span></li>";
 			$('#breadcrumb_letters').html(li);
 			var n = 0;
-
+			this.updateLetters(data);
 
 			var lettersSelected = _self.letters.lettersSelected;
 			/*
@@ -2483,9 +2497,11 @@ function Lightbox(options) {
 				i++;
 			}
 
+
 			$('#to_regions').click(function() {
 				_self.letters.to_regions();
 			});
+
 			$('#to_regions_icon').click(function() {
 				_self.letters.to_regions();
 			});
@@ -3664,8 +3680,8 @@ function Lightbox(options) {
 							'size': letters[i].letters[j].data('size'),
 							'id': letters[i].letters[j].attr('id'),
 							'manuscript': letters[i].letters[j].data('manuscript'),
-							'manuscript_id': letters[i].letters[j].data('manuscript_id'),
-							'title': letters[i].letters[j].data('title')
+							'manuscript_id': letters[i].letters[j].data('manuscript').manuscript_id,
+							'title': letters[i].letters[j].data('manuscript').title
 						};
 						region.letters.push(letter);
 					}
@@ -4087,9 +4103,7 @@ function Lightbox(options) {
 				}
 
 			} else {
-				if (!_self.toolbar.exists()) {
-					_self.toolbar.create(null, true);
-				}
+				_self.toolbar.create(null, true);
 				image.addClass('selected');
 				image.data('selected', true);
 				image.draggable({
@@ -4119,11 +4133,10 @@ function Lightbox(options) {
 
 				});
 				_self.select_group.imagesSelected.push(image);
+				_self.toolbar.show();
 			}
 
 			image.find('.ui-wrapper').css('boxShadow', '0px 0px 30px rgba(255, 246, 9, 1)');
-
-
 
 			if (this.imagesSelected.length == 1) {
 				_self.toolbar.selectors.buttons.cropButton.removeClass('disabled').attr("disabled", false);
@@ -4144,7 +4157,6 @@ function Lightbox(options) {
 			}
 
 			_self.toolbar.refresh();
-
 
 		}
 	};

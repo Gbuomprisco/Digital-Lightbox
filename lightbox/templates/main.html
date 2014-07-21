@@ -7,9 +7,9 @@
    <span data-toggle='tooltip' data-placement='bottom' data-container='body' title = 'Move right' id = 'move_right' class = 'col-md-2 col-xs-2 glyphicon glyphicon-arrow-right'></span>
 
    <span data-toggle='tooltip' data-placement='bottom' data-container='body' title = 'Change workspace' id = 'workspace' class = 'col-md-2 col-xs-2 glyphicon glyphicon-th-large'></span>
-   <span id='counter_zoom' class='col-md-2 col-xs-2'>100%</span>
+   <span id='counter_zoom' class='col-md-2 col-xs-2' data-toggle='tooltip' data-placement='bottom' data-container='body' title='Zoom level'>100%</span>
 </div>
-<div data-toggle='tooltip' data-placement='bottom' data-container='body' title='Zoom level' class='row' id='container'>
+<div class='row' id='container'>
 
     {% comment %}
         Menu
@@ -24,18 +24,10 @@
 
     {% include "sections/search.html" %}
 
-    {% comment %}
-        Workspace 1
-    {% endcomment %}
-
-    <div class='row' id='workspace1'></div>
-
-    {% comment %}
-        Workspace2
-    {% endcomment %}
-
-    <div class='row' id='workspace2'></div>
-
+    <div class='workspace' id='workspace1'></div>
+    <div class='workspace' id='workspace2'></div>
+    <div class='workspace' id='workspace3'></div>
+    <div class='workspace' id='workspace4'></div>
 </div>
 
 {% comment %}
@@ -43,10 +35,14 @@
 {% endcomment %}
 
 <div id='overview'>
-    <div id='overview_line'></div>
     <div id='marker'></div>
 </div>
-
+<div id="switchers">
+    <div data-toggle='tooltip' title="Go to workspace 1" class="workspace-switcher active" data-id='#workspace1'></div>
+    <div data-toggle='tooltip' title="Go to workspace 2" class="workspace-switcher" data-id='#workspace2'></div>
+    <div data-toggle='tooltip' title="Go to workspace 3" class="workspace-switcher" data-id='#workspace3'></div>
+    <div data-toggle='tooltip' title="Go to workspace 4" class="workspace-switcher" data-id='#workspace4'></div>
+</div>
 {% comment %}
     Notes
 {% endcomment %}

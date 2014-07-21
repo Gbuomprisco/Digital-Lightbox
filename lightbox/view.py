@@ -94,7 +94,8 @@ def get_image_manuscript(request):
 			a = Annotation.objects.get(graph=graph)
 			cts = a.get_coordinates()
 			coordinates = (cts[1][0] - cts[0][0], cts[1][1] - cts[0][1])
-			image = [a.thumbnail(), a.id, a.graph.display_label, a.image.item_part.current_item.repository.name, str(coordinates[0]) + ',' + str(coordinates[1])]
+			thumbnail = u'<img alt="%s" src="%s" />' % (a.graph, a.get_cutout_url(True, True))
+			image = [thumbnail, a.id, a.graph.display_label, a.image.item_part.current_item.repository.name, str(coordinates[0]) + ',' + str(coordinates[1])]
 			#image.append(annotation)
 		return HttpResponse(simplejson.dumps(image), mimetype='application/json')
 

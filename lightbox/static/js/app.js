@@ -4407,7 +4407,7 @@ function Lightbox(options) {
 			_self.menu.show();
 		}
 
-		var uniqueid = function() {
+		uniqueid = function() {
 			var text = "";
 			var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
@@ -4514,7 +4514,7 @@ function Lightbox(options) {
 		var overview = $('#overview');
 
 		overview.css({
-			'height': (window_height / 8),
+			'height': (window_height / 7.5),
 			'width': (window_width / 190)
 		});
 

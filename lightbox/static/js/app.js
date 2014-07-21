@@ -2348,7 +2348,7 @@ function Lightbox(options) {
 		make_workable: function(letter) {
 			var wrap = $("<div id='image_" + letter.attr('id') + "' class='image_active'><img src='" + letter.attr('src') + "' /></div>");
 			wrap.data('is_letter', true);
-			_self.selectors.workspace1.append(wrap);
+			$(_self.workspaceImages.workspace).append(wrap);
 			if (typeof letter.data('title') == "undefined") {
 				wrap.data("title", "Region");
 			} else {

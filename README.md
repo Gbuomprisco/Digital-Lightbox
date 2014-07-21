@@ -3,11 +3,10 @@ Digital Lightbox
 
 Digital Lightbox is a virtual lightbox which allows the manipulation and the comparison of manuscript images.
 
-Currently, the Digital lightbox is tighlty dependent on the Digipal App.
+**Currently, the Digital lightbox is tighlty dependent on the Digipal App.**
 
 ## Requirements
-  - Django 1.4
-  - PIL
+  - [Digipal](https://github.com/kcl-ddh/digipal)
 
 ## TODO
 	- Javascript package only

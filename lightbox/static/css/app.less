@@ -692,7 +692,7 @@ li.no-before, li.no-before:before{
 	margin: 2%;
 	padding: 0.8%;
 	float: left;
-	width: 100px;
+	width: 70px;
 	cursor: pointer;
 	&:hover{
 		opacity:0.7;
@@ -704,7 +704,6 @@ li.no-before, li.no-before:before{
 		word-wrap: break-word;
 		text-align: center;
 		position: relative;
-		right: 15%;
 	}
 }
 
@@ -788,11 +787,13 @@ li.no-before, li.no-before:before{
 #counter_zoom{
 	z-index: 3000;
 	text-align: center;
-	line-height: 2.7;
 	height: 36px;
 	z-index: 1600;
 	font-weight: bold;
-	font-size: 13px;
+	font-size: 12px;
+	padding-left: 2px;
+	background: #fff;
+	border-radius: 0;
 	&:hover{
 		background-color: rgba(0, 0, 0, 0.5);
 		color: #fff;
@@ -1117,7 +1118,7 @@ html, body, img{
 
 #switchers {
 	position: fixed;
-	left: 82.5%;
+	left: 83%;
 	width: 180px;
 	z-index: 1503;
 	top: 94%;
@@ -1170,4 +1171,26 @@ html, body, img{
 	position: absolute;
 	top: 52%;
 	left: 52%;
+}
+
+.flipped {
+	transform: rotateY(180deg);
+}
+
+#counter-zoom-div {
+	position: static;
+	display: inline;
+
+	button {
+		width: 53px;
+	}
+
+	ul {
+		left: 70%;
+		min-width: 98px;
+		border-radius: 0;
+		a {
+			cursor: pointer;
+		}
+	}
 }

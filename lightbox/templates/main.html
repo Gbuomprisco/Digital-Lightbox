@@ -7,7 +7,16 @@
    <span data-toggle='tooltip' data-placement='bottom' data-container='body' title = 'Move right' id = 'move_right' class = 'col-md-2 col-xs-2 glyphicon glyphicon-arrow-right'></span>
 
    <span data-toggle='tooltip' data-placement='bottom' data-container='body' title = 'Change workspace' id = 'workspace' class = 'col-md-2 col-xs-2 glyphicon glyphicon-th-large'></span>
-   <span id='counter_zoom' class='col-md-2 col-xs-2' data-toggle='tooltip' data-placement='bottom' data-container='body' title='Zoom level'>100%</span>
+   <div class="btn-group" id='counter-zoom-div'>
+      <button type="button" class="btn dropdown-toggle" id='counter_zoom' data-toggle="dropdown">
+        100% <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li><a class='zoom-button' data-zoom='50'>50%</a></li>
+        <li><a class='zoom-button' data-zoom='100'>100%</a></li>
+        <li><a class='zoom-button' data-zoom='250'>250%</a></li>
+      </ul>
+    </div>
 </div>
 <div class='row' id='container'>
 

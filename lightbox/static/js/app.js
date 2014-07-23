@@ -1250,7 +1250,7 @@ function Lightbox(options) {
 					$(images[i]).css({
 						'top': top,
 						'left': left,
-						'position': "absolute"
+						'position': "relative"
 					});
 
 					$(images[i]).dblclick(function(event) {
@@ -1680,6 +1680,9 @@ function Lightbox(options) {
 					for (var j = 0; j < notes[i].notes.length; j++) {
 						if (notes[i].notes[j].id == note.data('id')) {
 							_self.comments.notes[i].notes.splice(j, 1);
+							if ($("#stickable_note_" + note.data('id')).length) {
+								$("#stickable_note_" + note.data('id')).remove();
+							}
 							j--;
 						}
 					}
@@ -1714,8 +1717,74 @@ function Lightbox(options) {
 			$('.read_note').unbind().click(function() {
 				_self.comments.read_note($(this));
 			});
+
+			$('.stick_to_workspace').on('click', function() {
+				_self.comments.stick($(this));
+			});
 		},
 
+		stick: function(note_button) {
+			var notes = this.notes;
+			var note = note_button.closest('.note');
+			for (var i = 0; i < notes.length; i++) {
+				for (var j = 0; j < notes[i].notes.length; j++) {
+					if (notes[i].notes[j].id == note.data('id')) {
+						var id = notes[i].notes[j].id;
+						var image = notes[i].notes[j].image;
+						var title = notes[i].notes[j].title;
+						var content = notes[i].notes[j].content;
+						_self.comments.create_stickable_note(id, image, title, content);
+					}
+				}
+			}
+		},
+
+		create_stickable_note: function(id, image, title, content) {
+			var note = $('<div class="stickable_note" id="stickable_note_' + id + '" contenteditable>');
+			var notes = this.notes;
+			var contents = content;
+			if (!$('#stickable_note_' + id).length) {
+				note.data({
+					'id': id,
+					'image': image,
+					'title': title
+				}).append(content).draggable({
+					alsoDrag: false
+				}).on('click', function(event) {
+					event.stopPropagation();
+				}).on("dblclick", function(event) {
+					if ($(this).hasClass("selected")) {
+						$(this).removeClass("selected");
+						note.draggable({
+							alsoDrag: false
+						});
+					} else {
+						$(this).addClass("selected");
+						note.draggable({
+							alsoDrag: ".selected"
+						});
+					}
+					event.stopPropagation();
+				}).on('contextmenu', function() {
+					return false;
+				}).on("blur", function() {
+					if (contents != $(this).html()) {
+						for (var i = 0; i < notes.length; i++) {
+							for (var j = 0; j < notes[i].notes.length; j++) {
+								if (notes[i].notes[j].id == id) {
+									notes[i].notes[j].content = $(this).html();
+								}
+							}
+						}
+						contents = $(this).html();
+					}
+				}).css({
+					'top': $("#" + image).position().top,
+					'left': $("#" + image).position().left
+				}).resizable();
+				$(_self.workspaceImages.workspace).append(note);
+			}
+		},
 
 		hide_notes: function() {
 			var notes_button = $('#notes_button');
@@ -1748,8 +1817,8 @@ function Lightbox(options) {
 
 		create_note: function(title, id, content) {
 			var notes_html = "<div class = 'note' data-id = '" + id + "'><p style='padding:0' class='note_box_title col-lg-9 col-lm-9 col-xs-9'>" + title + "</p>";
-			//notes_html += "<p class='pull-right'><span title='read Note' class='glyphicon glyphicon-file read_note'></span> ";
-			notes_html += "<span title='Edit Note' class='glyphicon glyphicon-pencil edit_comment_from_box'></span>";
+			notes_html += "<span title='Edit Note' class='glyphicon glyphicon-pencil edit_comment_from_box'></span> ";
+			notes_html += "<span title='Stick to workspace' class='glyphicon glyphicon-send stick_to_workspace'></span>";
 			notes_html += " <span title='Delete Note' class='glyphicon glyphicon-remove remove_comment_from_box'></span></p><div class='note_box_content'>" + content + "</div></div>";
 			return notes_html;
 		},
@@ -3301,7 +3370,7 @@ function Lightbox(options) {
 				var image = "<div data-size = '" + images[i]['original_size'] + "' class='image_active' id='" + images[i]['image'] + "'><img src='" + unescape(src) + "' /></div>";
 				_self.selectors.workspace1.append(image);
 				$("#" + images[i]['image']).css({
-					"position": "absolute",
+					"position": "relative",
 					"top": images[i]['position']['top'],
 					"left": images[i]['position']['left'],
 					"max-width": "none",
@@ -3364,7 +3433,7 @@ function Lightbox(options) {
 
 						var image_src = $('#' + images[i][1]).find('img');
 						$('#' + images[i][1]).css({
-							"position": "absolute",
+							"position": "relative",
 							"top": images_properties[i]['position']['top'],
 							"left": images_properties[i]['position']['left'],
 							"max-width": "none",
@@ -4351,6 +4420,9 @@ function Lightbox(options) {
 
 		$('#notes_button').click(function() {
 			_self.comments.show_notes();
+			if (_self.comments.openFolder) {
+				_self.comments.back_to_notes();
+			}
 		});
 
 		$('#letters_button').click(function() {
@@ -4388,7 +4460,12 @@ function Lightbox(options) {
 			} else {
 
 				workspace.css({
-					"-moz-transform": "scale(" + zoom_value + ")"
+					"-moz-transform": "scale(" + zoom_value + ")",
+					"-moz-transform-origin": "0 0",
+					"-o-transform": "scale(" + zoom_value + ")",
+					"-o-transform-origin": "0 0",
+					"-ms-transform": "scale(" + zoom_value + ")",
+					"-ms-transform-origin": "0 0"
 				});
 
 				var val_sx = _self.selectors.body.position().left;
@@ -4456,14 +4533,17 @@ function Lightbox(options) {
 			//$(this).attr("style", {});
 			//});
 			$('#container').css('background', 'background-color: #444');
-			workspaces.css('background', '#444');
+			workspaces.css('background', '#444').css('display', 'none');
 			$(_self.workspaceImages.workspace).css("display", "block");
 
 			workspaces.animate({
 				'zoom': zoom_value,
 				"background": "#444"
 			}, 150).css({
-				'margin': '0'
+				'margin': '0',
+				'-moz-transform': 'none',
+				'-ms-transform': 'none',
+				'-o-transform': 'none'
 			}).removeClass('toggle');
 
 			$('#container').css({
@@ -4523,20 +4603,21 @@ function Lightbox(options) {
 				var zoom_value = (100 / workspaces.length - 3) * 2;
 				workspaces.css({
 					"display": "block",
+					"width": $(window).width(),
+					"height": $(window).height(),
 					'background-color': '#666',
 					'margin': '0.1%',
 					'margin-top': "0",
-					'zoom': zoom_value + '%',
-					"-moz-transform": "scale(0." + zoom_value + ")",
+					"overflow": "hidden",
+					"-moz-transform": "scale(" + zoom_value / 100 + ")",
 					"-moz-transform-origin": "0 0",
-					"-o-transform": "scale(0." + zoom_value + ")",
+					"-o-transform": "scale(" + zoom_value / 100 + ")",
 					"-o-transform-origin": "0 0",
-					"-ms-transform": "scale(0." + zoom_value + ")",
-					"-ms-transform-origin": "0 0",
-					"width": $(window).width(),
-					"height": $(window).height(),
-					"overflow": "hidden"
-				}).addClass('toggle');
+					"-ms-transform": "scale(" + zoom_value / 100 + ")",
+					"-ms-transform-origin": "0 0"
+				}).animate({
+					'zoom': zoom_value + '%'
+				}, 100).addClass('toggle');
 				windows_flag = 1;
 
 				if (!isWebkit) {
@@ -4558,7 +4639,8 @@ function Lightbox(options) {
 				$("html, body").css('background', '#000');
 				//zoom_in.add(zoom_out).add(move_left).add(move_right).css("color", "#fff");
 				_self.menu.hide();
-				$('.toggle').on('click', function(e) {
+
+				$('.toggle').unbind('click').on('click', function(e) {
 					if (_self.workspaceImages.workspace !== "#" + $(this).attr('id')) {
 						var images = $(_self.workspaceImages.workspace).find('.image_active.selected');
 						images.each(function() {
@@ -4702,6 +4784,7 @@ function Lightbox(options) {
 			if (!_self.crop.active) {
 				_self.toolbar.deselectAll();
 			}
+			$('.stickable_note').removeClass('selected');
 			event.stopPropagation();
 		});
 
@@ -4713,11 +4796,21 @@ function Lightbox(options) {
 
 		$('.zoom-button').on('click', function() {
 			var zoom = $(this).data('zoom');
-			$(_self.workspaceImages.workspace).animate({
-				"zoom": zoom / 100
-			}, 200, function() {
-				$('#counter_zoom').html(zoom + '%' + " <span class='caret'></span>");
-			});
+			if (document.body.style.webkitFilter !== undefined) {
+				$(_self.workspaceImages.workspace).animate({
+					"zoom": zoom / 100
+				}, 200)
+			} else {
+				$(_self.workspaceImages.workspace).css({
+					"-moz-transform": "scale(" + zoom / 100 + ")",
+					"-moz-transform-origin": "0 0",
+					"-o-transform": "scale(" + zoom / 100 + ")",
+					"-o-transform-origin": "0 0",
+					"-ms-transform": "scale(" + zoom / 100 + ")",
+					"-ms-transform-origin": "0 0"
+				});
+			}
+			$('#counter_zoom').html(zoom + '%' + " <span class='caret'></span>");
 		});
 
 
@@ -4747,7 +4840,10 @@ function Lightbox(options) {
 		workspaces.selectable({
 			selected: function(event, ui) {
 				if ($(ui.selected).hasClass('image_active') && !$(ui.selected).hasClass('selected')) {
-					_self.select_group.select_image($(ui.selected));
+					_self.select_group.select($(ui.selected));
+				}
+				if ($(ui.selected).hasClass('stickable_note') && !$(ui.selected).hasClass('selected')) {
+					$(ui.selected).addClass('selected');
 				}
 			},
 			delay: 50

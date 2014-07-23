@@ -195,7 +195,8 @@ function Lightbox(options) {
 					reset: $('#reset_image'),
 					remove: $('#removeImage'),
 					clone: $('#clone'),
-					flip: $('#flip'),
+					flipx: $('#flip-x'),
+					flipy: $('#flip-y'),
 					group: $('#group')
 				},
 				title: $('#name_image')
@@ -295,17 +296,20 @@ function Lightbox(options) {
 			});
 		},
 
-		flip: function(button) {
+		flip: function(button, direction) {
 
 			var isActive = button.hasClass('active');
-
+			var _class = 'flippedY';
+			if (direction == 'x') {
+				_class = 'flippedX';
+			}
 			$.each(_self.select_group.imagesSelected, function() {
 				if (!isActive) {
-					if (!$(this).find('img').hasClass('flipped')) {
-						$(this).find('img').addClass('flipped');
+					if (!$(this).find('img').hasClass(_class)) {
+						$(this).find('img').addClass(_class);
 					}
 				} else {
-					$(this).find('img').removeClass('flipped');
+					$(this).find('img').removeClass(_class);
 				}
 			});
 
@@ -800,8 +804,12 @@ function Lightbox(options) {
 				_self.toolbar.deselectAll();
 			});
 
-			this.selectors.buttons.flip.click(function() {
-				_self.toolbar.flip($(this));
+			this.selectors.buttons.flipx.click(function() {
+				_self.toolbar.flip($(this), 'x');
+			});
+
+			this.selectors.buttons.flipy.click(function() {
+				_self.toolbar.flip($(this), 'y');
 			});
 
 			this.selectors.buttons.group.click(function() {

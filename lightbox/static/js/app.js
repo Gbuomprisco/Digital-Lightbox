@@ -154,12 +154,14 @@ function Lightbox(options) {
 
 		enable: function() {
 
+			var excludes = ["group", "createComment", "compare_toolbar", "crop_button"];
+
 			$.each(this.selectors.sliders, function() {
 				this.slider('option', 'disabled', false);
 			});
 
 			$.each(this.selectors.buttons, function() {
-				if (this.attr('id') !== 'group' && this.attr('id') !== 'compare_toolbar') {
+				if (excludes.indexOf(this.attr('id')) < 0 && !this.hasClass("crop_button")) {
 					this.attr('disabled', false).removeClass('disabled');
 				}
 			});
@@ -1055,8 +1057,8 @@ function Lightbox(options) {
 				_self.comments.check_notes();
 
 			} else {
-				_self.toolbar.selectors.buttons.cropButton.addClass('disabled');
-				_self.toolbar.selectors.buttons.createComment.addClass('disabled');
+				_self.toolbar.selectors.buttons.cropButton.addClass('disabled').attr("disabled", true);
+				_self.toolbar.selectors.buttons.createComment.addClass('disabled').attr("disabled", true);
 				$('#open_notes').fadeOut().remove();
 			}
 
@@ -1555,6 +1557,8 @@ function Lightbox(options) {
 				'size': size
 			};
 
+			$('#stickable_note_' + note_id).html(note_content);
+
 			var flag = false;
 
 			for (var i = 0; i < this.notes.length; i++) {
@@ -1816,8 +1820,8 @@ function Lightbox(options) {
 					});
 
 					/*$('#notes_button').click(function(){
-                            $.comments.show_notes()
-                        });*/
+							$.comments.show_notes()
+						});*/
 				}
 			});
 
@@ -2183,10 +2187,10 @@ function Lightbox(options) {
 						$('#letter_crop_status').hide().fadeIn().html("Cropping region ...");
 					}
 					/*
-                            if($.letters.open){
-                                $('#top_box_letters').append('<img id="loading_letter_ajax" src="/static/img/ajax-loader.gif" />')
-                            }
-                            */
+							if($.letters.open){
+								$('#top_box_letters').append('<img id="loading_letter_ajax" src="/static/img/ajax-loader.gif" />')
+							}
+							*/
 				},
 				success: function(data) {
 					_self.letters.addLetter(data);

@@ -614,6 +614,7 @@ function Lightbox(options) {
 					this.css({
 						'width': "180px",
 						'height': "auto",
+						'-webkit-transform': "rotate(0deg)",
 						'transform': "rotate(0deg)",
 						'-webkit-filter': 'brightness(100%)'
 					});
@@ -623,6 +624,9 @@ function Lightbox(options) {
 					this.css({
 						'width': "180px",
 						'height': "auto",
+						'-moz-transform': "rotate(0deg)",
+						'-o-transform': "rotate(0deg)",
+						'-ms-transform': "rotate(0deg)",
 						'transform': "rotate(0deg)",
 						'polyfilter': 'brightness(100%)'
 					});
@@ -632,11 +636,12 @@ function Lightbox(options) {
 				this.find('img').css({
 					'width': "180px",
 					'height': "auto",
+					'-webkit-transform': "rotateX(0deg) rotateY(0deg)",
+					'-moz-transform': "rotateX(0deg) rotateY(0deg)",
+					'-o-transform': "rotateX(0deg) rotateY(0deg)",
+					'-ms-transform': "rotateX(0deg) rotateY(0deg)",
+					'transform': "rotateX(0deg) rotateY(0deg)",
 					'opacity': 1
-				});
-
-				mini_image.css({
-					'transform': "rotate(0deg)"
 				});
 
 				var position = this.offset();
@@ -1406,6 +1411,10 @@ function Lightbox(options) {
 					}
 				}
 
+				if ($("#stickable_note_" + note.data('id')).length) {
+					$("#stickable_note_" + note.data('id')).remove();
+				}
+
 				note.fadeOut().remove();
 				var notes_alert = $('#notes_alert');
 				if (!_self.comments.notes.length) {
@@ -1753,7 +1762,7 @@ function Lightbox(options) {
 		},
 
 		create_stickable_note: function(id, image, title, content) {
-			var note = $('<div class="stickable_note" id="stickable_note_' + id + '" contenteditable>');
+			var note = $('<span class="stickable_note" id="stickable_note_' + id + '" contenteditable>');
 			var notes = this.notes;
 			var contents = content;
 			if (!$('#stickable_note_' + id).length) {
@@ -1762,20 +1771,25 @@ function Lightbox(options) {
 					'image': image,
 					'title': title
 				}).append(content).draggable({
-					alsoDrag: false
+					alsoDrag: false,
+					delay: 100
 				}).on('click', function(event) {
-					event.stopPropagation();
+					$(this).focus();
 				}).on("dblclick", function(event) {
 					if ($(this).hasClass("selected")) {
 						$(this).removeClass("selected");
 						note.draggable({
+							delay: 100,
 							alsoDrag: false
 						});
+						$(this).blur();
 					} else {
 						$(this).addClass("selected");
 						note.draggable({
-							alsoDrag: ".selected"
+							alsoDrag: ".selected",
+							delay: 100
 						});
+						$(this).focus();
 					}
 					event.stopPropagation();
 				}).on('contextmenu', function() {

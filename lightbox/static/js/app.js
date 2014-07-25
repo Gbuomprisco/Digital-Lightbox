@@ -4002,52 +4002,52 @@ function Lightbox(options) {
 					if (position == 'Top') {
 						img.animate({
 							'top': 0,
-						});
+						}, 100);
 					} else if (position == 'Bottom') {
 						page_position = $(window).height() - img.height();
 						img.animate({
 							'top': page_position,
-						});
+						}, 100);
 					} else if (position == 'Center') {
 						page_position = ($(window).height() - img.height()) / 2;
 						img.animate({
 							'top': page_position,
-						}, 20);
+						}, 100);
 					} else if (position == 'Left') {
 						img.animate({
 							'left': $(window).scrollLeft(),
-						}, 20);
+						}, 100);
 					} else if (position == 'Right') {
 						img.animate({
 							'left': $(window).width() / 2,
-						}, 20);
+						}, 100);
 					}
 				} else {
-					img.animate({
+					img.css({
 						'position': 'relative',
 					});
 					if (position == 'Top') {
 						img.animate({
 							'top': 0,
-						});
+						}, 100);
 					} else if (position == 'Bottom') {
 						page_position = $(window).height() - img.height();
 						img.animate({
 							'top': page_position,
-						});
+						}, 100);
 					} else if (position == 'Center') {
 						page_position = ($(window).height() - img.height()) / 2;
 						img.animate({
 							'top': page_position,
-						});
+						}, 100);
 					} else if (position == 'Left') {
 						img.animate({
 							'left': $(window).scrollLeft(),
-						});
+						}, 100);
 					} else if (position == 'Right') {
 						img.animate({
 							'left': $(window).width() / 2,
-						});
+						}, 100);
 					}
 				}
 			}
@@ -4918,6 +4918,31 @@ function Lightbox(options) {
 						}
 					}
 				});
+			}
+		});
+
+		switchers.droppable({
+			accept: ".selected",
+			activeClass: "ui-state-hover",
+			hoverClass: "ui-state-active",
+			drop: function(event, ui) {
+				for (var i = 0; i < _self.select_group.imagesSelected.length; i++) {
+					$($(this).data('id')).append(_self.select_group.imagesSelected[i]);
+				}
+				_self.toolbar.deselectAll();
+				$(this).removeClass('switcher-drop');
+				var workspace = $(_self.workspaceImages.workspace);
+				if (!workspace.find('.image_active').length) {
+					$(this).trigger('click');
+				}
+			},
+			over: function() {
+				$(this).data('original-title', 'Move images to Workspace' + $(this).data('index'));
+				$(this).addClass('switcher-drop');
+			},
+			out: function() {
+				$(this).data('original-title', 'Go to Workspace ' + $(this).data('index'));
+				$(this).removeClass('switcher-drop');
 			}
 		});
 

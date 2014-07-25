@@ -2536,10 +2536,7 @@ function Lightbox(options) {
 			wrap.children().resizable({
 				aspectRatio: true,
 				resize: function(event, ui) {
-					var element = $("#" + ui.element.parent().attr('id'));
-					$("#" + _self.minimap.namespace + ui.element.parent().attr('id')).animate({
-						'width': parseInt(element.css('width')) / _self.minimap.width + "px"
-					}, 10);
+
 					_self.toolbar.refreshSize();
 					event.stopPropagation();
 					return false;
@@ -2557,7 +2554,7 @@ function Lightbox(options) {
 				aspectRatio: true,
 				drag: function(ui, event) {
 					position = $(this).offset();
-					_self.minimap.update_mini_map();
+					//_self.minimap.update_mini_map();
 				},
 				stop: function(ui, event) {
 					$(ui.helper).css('z-index', 0);
@@ -3442,7 +3439,7 @@ function Lightbox(options) {
 					aspectRatio: true,
 					drag: function(ui, event) {
 						position = $(this).offset();
-						_self.minimap.update_mini_map();
+						//_self.minimap.update_mini_map();
 					},
 					stop: function(ui, event) {
 						$(ui.helper).css('z-index', 0);
@@ -3453,10 +3450,6 @@ function Lightbox(options) {
 				}).resizable({
 					aspectRatio: true,
 					resize: function(event, ui) {
-						var element = $("#" + ui.element.parent().attr('id'));
-						$("#" + _self.minimap.namespace + ui.element.attr('id')).animate({
-							'width': parseInt(element.css('width')) / _self.minimap.width + "px"
-						}, 10);
 						_self.toolbar.refreshSize();
 						event.stopPropagation();
 						return false;
@@ -3505,7 +3498,7 @@ function Lightbox(options) {
 							cursor: "move",
 							drag: function(ui, event) {
 								position = $(this).offset();
-								_self.minimap.update_mini_map();
+								//_self.minimap.update_mini_map();
 							}
 						}).children('img').css({
 							"opacity": images_properties[i]['properties']['opacity'],
@@ -3515,10 +3508,6 @@ function Lightbox(options) {
 						}).resizable({
 							aspectRatio: true,
 							resize: function(event, ui) {
-								var element = $("#" + ui.element.attr('id'));
-								$("#" + _self.minimap.namespace + ui.element.parent().attr('id')).animate({
-									'width': parseInt(element.css('width')) / _self.minimap.width + "px"
-								}, 10);
 								_self.toolbar.refreshSize();
 								event.stopPropagation();
 								return false;
@@ -4337,8 +4326,8 @@ function Lightbox(options) {
 
 			image.find('img').resizable({
 				aspectRatio: true,
-				animate: true,
-				alsoResize: 'image_active.selected, image_active.selected > div, image_active.selected > div > img',
+				animate: false,
+				alsoResize: '.image_active.selected, .image_active.selected > div, .image_active.selected > div > img',
 				resize: function(event, ui) {
 					if (_self.select_group.imagesSelected.length <= 1) {
 						$("#" + _self.minimap.namespace + ui.element.parent().attr('id')).animate({
@@ -4830,8 +4819,8 @@ function Lightbox(options) {
 		var window_width = $(document).width();
 		var window_height = $(document).height();
 		workspaces.css({
-			"width": $(window).width(),
-			"height": $(window).height()
+			"width": $(window).width() * 2,
+			"height": $(window).height() * 2
 		});
 		$(document).on('resize', function() {
 			$(_self.workspaceImages.workspace).css({

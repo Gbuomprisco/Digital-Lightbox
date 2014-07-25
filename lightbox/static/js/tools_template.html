@@ -47,7 +47,18 @@
         <button class='btn btn-xs btn-primary disabled' id='compare_toolbar' disabled>Compare</button>
         <button class='btn btn-xs btn-primary' id='select_all'>Select All</button>
         <button class='disabled btn btn-xs btn-primary' id='deselect_all' disabled>Deselect All</button>
-        <button class='btn btn-xs btn-primary disabled' id='align'>Align</button>
+        <div class="btn-group">
+          <button type="button" class="btn btn-primary btn-xs disabled dropdown-toggle" id='align' data-toggle="dropdown" disabled>
+            Align <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="#" class='align'>Top</a></li>
+            <li><a href="#" class='align'>Left</a></li>
+            <li><a href="#" class='align'>Bottom</a></li>
+            <li><a href="#" class='align'>Right</a></li>
+            <li><a href="#" class='align'>Center</a></li>
+          </ul>
+        </div>
     </div>
     <div class='pull-right' style='margin-top:6%;margin-right:3%;'>
         <button class='btn btn-xs btn-primary disabled' id='group'>Group</button>

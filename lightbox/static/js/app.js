@@ -193,7 +193,8 @@ function Lightbox(options) {
 					cropButton: $('.crop_button'),
 					selectAll: $('#select_all'),
 					deselectAll: $('#deselect_all'),
-					align: $('#align'),
+					alignButton: $('#align'),
+					alignButtons: $('.align'),
 					reset: $('#reset_image'),
 					remove: $('#removeImage'),
 					clone: $('#clone'),
@@ -770,8 +771,8 @@ function Lightbox(options) {
 				});
 			}
 
-			this.selectors.buttons.align.click(function() {
-				_self.align.align();
+			this.selectors.buttons.alignButtons.click(function() {
+				_self.align.align($(this).text());
 			});
 
 			this.selectors.buttons.compare.click(function() {
@@ -3990,29 +3991,66 @@ function Lightbox(options) {
 	this.align = {
 		_self: this,
 
-		align: function() {
+		align: function(position) {
 			var images = $('.selected');
 			var page_position = $(window).scrollTop();
 
 			for (var i = 0; i < images.length; i++) {
 				img = $(images[i]);
+				img.css('position', 'relative').css('margin', '10px');
 				if (!img.index()) {
-					img.animate({
-						'position': 'fixed',
-						'top': page_position,
-						'left': $(window).scrollLeft() + 100,
-						'margin-right': '30px',
-					});
+					if (position == 'Top') {
+						img.animate({
+							'top': 0,
+						});
+					} else if (position == 'Bottom') {
+						page_position = $(window).height() - img.height();
+						img.animate({
+							'top': page_position,
+						});
+					} else if (position == 'Center') {
+						page_position = ($(window).height() - img.height()) / 2;
+						img.animate({
+							'top': page_position,
+						}, 20);
+					} else if (position == 'Left') {
+						img.animate({
+							'left': $(window).scrollLeft(),
+						}, 20);
+					} else if (position == 'Right') {
+						img.animate({
+							'left': $(window).width() / 2,
+						}, 20);
+					}
 				} else {
 					img.animate({
 						'position': 'relative',
-						'top': '0',
-						'left': '10px',
-						'right': '10px'
 					});
+					if (position == 'Top') {
+						img.animate({
+							'top': 0,
+						});
+					} else if (position == 'Bottom') {
+						page_position = $(window).height() - img.height();
+						img.animate({
+							'top': page_position,
+						});
+					} else if (position == 'Center') {
+						page_position = ($(window).height() - img.height()) / 2;
+						img.animate({
+							'top': page_position,
+						});
+					} else if (position == 'Left') {
+						img.animate({
+							'left': $(window).scrollLeft(),
+						});
+					} else if (position == 'Right') {
+						img.animate({
+							'left': $(window).width() / 2,
+						});
+					}
 				}
 			}
-			images.css('position', 'relative');
 		}
 
 	};

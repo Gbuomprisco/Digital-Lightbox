@@ -1804,7 +1804,7 @@ this.init = function() {
 
     $('#back_to_digipal').on('click', function() {
         var url = _self.utils.getParameter('from');
-        if (!url) {
+        if (!url.length) {
             url = "/";
         }
         location.href = url;

@@ -359,17 +359,20 @@ img {
 
 .images_selected{
 	color: #5e5e5e;
-	font-size: 12px;
+	font-size: 11px;
 	cursor: pointer;
 	font-weight: bold;
+	height: 25px;
+	line-height: 2;
 	text-overflow: ellipsis;
-	border-bottom: 1px dashed #efefef;
-	padding-bottom: 4px;
-	opacity: 0.6;
+	padding: 0px;
+	margin: 0;
+	opacity: 0.7;
 	.transition(all, 0.5s);
 	&:hover{
-		border-bottom: 1px dashed #5e5e5e;
 		opacity: 1;
+		color: #333;
+		background: #eee;
 	}
 }
 
@@ -433,8 +436,8 @@ img {
 	color: #444;
 	padding: 0;
 	font-size: 2vmin;
-	border-top-right-radius:3px;
-		border-bottom-right-radius:3px;
+	border-top-right-radius:0px;
+	border-bottom-right-radius:3px;
 	line-height: 2.7;
 	box-shadow: 0px 0px 12px 4px rgba(0, 0,0, 0.2);
 	-webkit-transform: translateZ(0);
@@ -744,6 +747,7 @@ li.no-before, li.no-before:before{
 	cursor: pointer;
 	opacity: 0.6;
 	.transition(opacity, 0.5s);
+	padding-top: 0.4em;
 	&:hover{
 		opacity: 1;
 	}
@@ -793,8 +797,11 @@ li.no-before, li.no-before:before{
 	text-align: center;
 	height: 36px;
 	z-index: 1600;
+	border-color: #fff;
 	font-weight: bold;
 	font-size: 12px;
+	line-height: 2;
+	color: #444;
 	padding-left: 2px;
 	background: #fff;
 	border-radius: 0;
@@ -1253,4 +1260,25 @@ button, input {
 
 .switcher-drop {
 	background: #fdf5ce;
+}
+
+.popover {
+	background: #fff;
+	.popover-content {
+		padding-left: 0;
+		padding-right: 0;
+	}
+}
+
+.tooltip-inner {
+	background: #fff;
+	color: #444;
+}
+
+.tooltip.bottom .tooltip-arrow, .tooltip.bottom-left .tooltip-arrow, .tooltip.bottom-right .tooltip-arrow {
+	border-bottom-color: #fff;
+}
+
+.popover.right .arrow, .popover.right .arrow:after {
+	border-right-color: #fff;
 }

@@ -1,0 +1,60 @@
+/*
+
+Digital Lightbox | Giancarlo Buomprisco, 2013.
+https://github.com/Gbuomprisco/Digital-Lightbox
+giancarlobuomprisco.com
+
+*/
+
+/**
+ * Constructor
+ * @namespace Lightbox
+ * @param options {Object}
+ */
+
+
+function Lightbox(options) {
+
+    /**
+     * Default Options
+     */
+
+    this.defaults = {
+        'development': true,
+
+        selectors: {
+            'workspace1': '#workspace1',
+            'workspace2': '#workspace2'
+        },
+
+        toolbar: {
+            moveRight: 200,
+            moveLeft: 200,
+            zoomIn: 0.30,
+            zoomOut: 0.30
+        }
+    };
+
+    /**
+     * Extending default options with @param options
+     */
+
+    if (options) {
+        $.extend(this.defaults, options);
+    }
+
+    /**
+     * Caching main selectors
+     */
+
+    this.selectors = {
+        body: $('body'),
+        html: $('html'),
+        workspace1: $(this.defaults.selectors.workspace1),
+        workspace2: $(this.defaults.selectors.workspace2)
+    },
+
+    /**
+     * Application Toolbar object
+     * @namespace toolbar
+     */

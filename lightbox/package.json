@@ -1,0 +1,37 @@
+{
+  "name": "lightbox",
+  "version": "0.0.1",
+  "description": "A web-based visualization tool for paleographical images",
+  "main": "Gruntfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Gbuomprisco/Digital-Lightbox"
+  },
+  "keywords": [
+    "Digital",
+    "humanities",
+    "Digital",
+    "Paleography",
+    "Digital",
+    "Lightbox",
+    "images",
+    "processing"
+  ],
+  "author": "Giancarlo Buomprisco",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Gbuomprisco/Digital-Lightbox/issues"
+  },
+  "homepage": "https://github.com/Gbuomprisco/Digital-Lightbox",
+  "devDependencies": {
+    "grunt": "latest",
+    "grunt-contrib-uglify": "latest",
+    "grunt-contrib-watch": "latest",
+    "grunt-contrib-uglify": "latest",
+    "grunt-contrib-cssmin": "latest",
+    "grunt-copy": "latest"
+  }
+}

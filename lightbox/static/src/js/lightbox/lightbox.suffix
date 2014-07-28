@@ -1,0 +1,20 @@
+}
+
+$(document).ready(function() {
+
+    if (document.body.style.webkitFilter === undefined) {
+        polyfilter_scriptpath = '/static/js/libs/lib/';
+        polyfilter_skip_stylesheets = true;
+        $.getScript('/static/js/libs/polyfill/cssParser.js');
+        $.getScript('/static/js/libs/polyfill/css-filters-polyfill.js');
+    }
+
+    var options = {
+        'development': true
+    };
+
+    $lightbox = new Lightbox(options);
+
+    $lightbox.init();
+
+});

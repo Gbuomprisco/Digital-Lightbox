@@ -11,3 +11,4 @@ digipal/
 iipimage
 .gitignore
 assets/
+lightbox/node_modules

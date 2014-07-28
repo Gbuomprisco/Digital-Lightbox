@@ -7,7 +7,7 @@ module.exports = function(grunt) {
                 files: {
                     'static/dist/js/tools_template.html': ['static/src/js/tools_template'],
                     'static/dist/js/lightbox.js': ['static/src/js/lightbox/lightbox.prefix', 'static/src/js/lightbox/*.js', 'static/src/js/lightbox/lightbox.suffix', 'static/src/js/search.js'],
-                    'static/dist/js/lightbox-libs.js': ['static/src/js/libs/jquery-2.0.3.min.js', 'static/src/js/libs/*.js', 'static/src/js/notifications.js'],
+                    'static/dist/js/lightbox-libs.js': ['static/src/js/libs/jquery-2.0.3.min.js', 'static/src/js/libs/jquery-ui-1.10.2.custom.min.js', 'static/src/js/libs/*.js', 'static/src/js/notifications.js'],
                     'static/dist/css/lightbox.css': ['static/src/css/**/*.css', 'static/dist/css/lightbox-src.css']
                 }
             }

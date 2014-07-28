@@ -118,11 +118,11 @@ this.init = function() {
 
             workspace.css({
                 "-moz-transform": "scale(" + zoom_value + ")",
-                "-moz-transform-origin": "0 0",
+                "-moz-transform-origin": "50% 100%",
                 "-o-transform": "scale(" + zoom_value + ")",
-                "-o-transform-origin": "0 0",
+                "-o-transform-origin": "50% 100%",
                 "-ms-transform": "scale(" + zoom_value + ")",
-                "-ms-transform-origin": "0 0"
+                "-ms-transform-origin": "50% 100%"
             });
 
             var val_sx = _self.selectors.body.position().left;
@@ -134,7 +134,7 @@ this.init = function() {
             }, 0);
         }
 
-        counter_zoom.fadeIn().html(Math.floor(zoom_value * 100) + '%');
+        counter_zoom.fadeIn().html(Math.floor(zoom_value * 100) + '%' + " <span class='caret'></span>");
 
     }
 
@@ -274,11 +274,11 @@ this.init = function() {
                 'margin-top': "0",
                 "overflow": "hidden",
                 "-moz-transform": "scale(" + zoom_value / 100 + ")",
-                "-moz-transform-origin": "0 0",
+                "-moz-transform-origin": "50% 100%",
                 "-o-transform": "scale(" + zoom_value / 100 + ")",
-                "-o-transform-origin": "0 0",
+                "-o-transform-origin": "50% 100%",
                 "-ms-transform": "scale(" + zoom_value / 100 + ")",
-                "-ms-transform-origin": "0 0"
+                "-ms-transform-origin": "50% 100%"
             }).animate({
                 'zoom': zoom_value + '%',
                 "width": $(window).width(),
@@ -495,11 +495,11 @@ this.init = function() {
         } else {
             $(_self.workspaceImages.workspace).css({
                 "-moz-transform": "scale(" + zoom / 100 + ")",
-                "-moz-transform-origin": "0 0",
+                "-moz-transform-origin": "50% 100%",
                 "-o-transform": "scale(" + zoom / 100 + ")",
-                "-o-transform-origin": "0 0",
+                "-o-transform-origin": "50% 100%",
                 "-ms-transform": "scale(" + zoom / 100 + ")",
-                "-ms-transform-origin": "0 0"
+                "-ms-transform-origin": "50% 100%"
             });
         }
         $('#counter_zoom').html(zoom + '%' + " <span class='caret'></span>");

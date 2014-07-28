@@ -17,7 +17,7 @@ this.imagesBox = {
 
 	show: function() {
 		this.open = true;
-		$('#button_images').fadeOut().remove();
+		$('#button_images').tooltip('hide').fadeOut().remove();
 
 		this.imagesBox.show()
 			.draggable({

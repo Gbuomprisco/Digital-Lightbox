@@ -636,7 +636,7 @@ this.toolbar = {
     show: function() {
 
         var button_toolbar = $('#button_toolbar');
-        button_toolbar.fadeOut().remove();
+        button_toolbar.tooltip('hide').fadeOut().remove();
         if (!this.last_style) {
             this.last_style = this.toolbox.css(['top', 'left', 'width', 'height', 'opacity']);
         }

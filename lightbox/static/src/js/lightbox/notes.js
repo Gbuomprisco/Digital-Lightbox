@@ -537,9 +537,9 @@ this.comments = {
 
     create_note: function(title, id, content) {
         var notes_html = "<div class = 'note' data-id = '" + id + "'><p style='padding:0' class='note_box_title col-lg-9 col-lm-9 col-xs-9'>" + title + "</p>";
-        notes_html += "<span title='Edit Note' class='glyphicon glyphicon-pencil edit_comment_from_box'></span> ";
-        notes_html += "<span title='Stick to workspace' class='glyphicon glyphicon-send stick_to_workspace'></span>";
-        notes_html += " <span title='Delete Note' class='glyphicon glyphicon-remove remove_comment_from_box'></span></p><div class='note_box_content'>" + content + "</div></div>";
+        notes_html += "<span data-toggle='tooltip' data-placement='bottom' title='Edit Note' class='glyphicon glyphicon-pencil edit_comment_from_box'></span> ";
+        notes_html += "<span data-toggle='tooltip' data-placement='bottom' title='Stick to workspace' class='glyphicon glyphicon-send stick_to_workspace'></span>";
+        notes_html += " <span data-toggle='tooltip' data-placement='bottom' title='Delete Note' class='glyphicon glyphicon-remove remove_comment_from_box'></span></p><div class='note_box_content'>" + content + "</div></div>";
         return notes_html;
     },
 
@@ -683,7 +683,7 @@ this.comments = {
         } else {
             notes_alert.hide().html('');
         }
-
+        notes_container.find('[data-toggle="tooltip"]').tooltip();
         $('.note_folders').fadeOut(100).remove();
     },
 

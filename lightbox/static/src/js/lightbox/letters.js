@@ -253,15 +253,14 @@ this.letters = {
         wrap.children().resizable({
             aspectRatio: true,
             resize: function(event, ui) {
-
                 _self.toolbar.refreshSize();
                 event.stopPropagation();
                 return false;
             }
         });
         $('#image_' + letter.attr('id')).css({
-            'top': page_position['top'] - 600,
-            'left': $(window).scrollLeft() + 100
+            'top': page_position.top,
+            'left': $('#image_' + letter.attr('id')).prev().position().left + 100
         }).draggable({
             revert: false,
             scroll: true,

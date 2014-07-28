@@ -154,7 +154,7 @@ img {
 	}
 }
 
-.edit_comment_from_box, .remove_comment_from_box, .read_note{
+.edit_comment_from_box, .remove_comment_from_box, .read_note, .stick_to_workspace{
 	opacity: 0.6;
 	.transition(all, 0.5s);
 	&:hover{
@@ -409,6 +409,8 @@ img {
 			box-shadow: 0px 0px 4px 1px #444;
 			background: #fff;
 			color: #444;
+			padding-top: 0.2em;
+			padding-bottom: 0.4em;
 			font-size: 4.5vmin;
 			.transition(all, 0.15s linear);
 			&:hover{
@@ -797,7 +799,7 @@ li.no-before, li.no-before:before{
 	text-align: center;
 	height: 36px;
 	z-index: 1600;
-	border-color: #fff;
+	border: none;
 	font-weight: bold;
 	font-size: 12px;
 	line-height: 2;
@@ -1275,10 +1277,27 @@ button, input {
 	color: #444;
 }
 
+.tooltip.right .tooltip-arrow {
+	border-right-color: #fff;
+}
+
 .tooltip.bottom .tooltip-arrow, .tooltip.bottom-left .tooltip-arrow, .tooltip.bottom-right .tooltip-arrow {
 	border-bottom-color: #fff;
 }
 
 .popover.right .arrow, .popover.right .arrow:after {
 	border-right-color: #fff;
+}
+
+.dropdown-menu {
+	background-color: #fff;
+	border: none;
+}
+
+.dropdown-menu li a {
+	color: #444;
+}
+
+.dropdown-menu .active a, .dropdown-menu .active a:focus, .dropdown-menu .active a:hover, .dropdown-menu li a:focus, .dropdown-menu li a:hover {
+	background-color: rgba(0, 0, 0, .5);
 }

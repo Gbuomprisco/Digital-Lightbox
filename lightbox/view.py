@@ -5,12 +5,10 @@ from django.db.models import Q
 from django.utils import simplejson
 from digipal.models import Image, Annotation
 import urllib, cStringIO
-from StringIO import StringIO
+import re
 import uuid
 import lxml.etree as ET
-import Image as Img
-from digipal.templatetags.html_escape import iip_img
-from django.conf import settings
+from PIL import Image as Img
 import os
 
 def search(request):
@@ -45,7 +43,7 @@ def read_image(request):
 			image_id = request.POST.get('id', '')
 			src_width = request.POST.get('width', '')
 			src_height = request.POST.get('height', '')
-			manuscript = request.POST.get('manuscript', '')
+			manuscript = request.POST.get('manuscript', '') or "Uploads"
 			box = request.POST.get('box','')
 			is_letter = request.POST.get('is_letter', '')
 			if is_letter == "false":
@@ -64,10 +62,11 @@ def read_image(request):
 				unique_id = uuid.uuid4()
 				return HttpResponse('<img data-bool="true" data-manuscript_id = "' + image_id + '" data-manuscript= "' + manuscript + '" data-title ="Region from ' + manuscript + '" class="letter" id="letter_' + image_id + '_' + str(unique_id) + '"  data-size = "' + str(area.size[0]) + ',' + str(area.size[1]) + '"  src="data:image/png;base64,' + image + '" />')
 			else:
-				image = image.replace('data:image/png;base64,', '')
+				imgstr = re.search(r'base64,(.*)', image).group(1)
 				width = int(src_width)
 				height = int(src_height)
-				file_image = cStringIO.StringIO(image.decode('base64'))
+				file_image = cStringIO.StringIO((imgstr.decode('base64')))
+				file_image.seek(0)
 				image_resize = Img.open(file_image)
 				img = image_resize.resize((width, height), Img.ANTIALIAS)
 				box_to_crop = simplejson.loads(box)
@@ -78,7 +77,7 @@ def read_image(request):
 				region = tmp.getvalue().encode('base64')
 				tmp.close()
 				unique_id = uuid.uuid4()
-				return HttpResponse('<img data-size = "' + str(width) + ',' + str(height) + '" data-title ="Region from ' + manuscript + '" class="letter" id="letter_' + image_id + '_' + str(unique_id) + '"  data-size = "' + str(img.size) +'" src="data:image/png;base64,' + region + '" />')
+				return HttpResponse('<img data-manuscript= "' + manuscript + '" data-manuscript_id = "' + image_id + '" data-size = "' + str(width) + ',' + str(height) + '" data-title ="Region from ' + manuscript + '" class="letter" id="letter_' + image_id + '_' + str(unique_id) + '"  data-size = "' + str(img.size) +'" src="data:image/png;base64,' + region + '" />')
 
 
 

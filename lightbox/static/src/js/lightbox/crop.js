@@ -65,7 +65,7 @@ this.crop = {
         var height = image.find('img').height();
 
         var is_letter = function() {
-            if (image.data('is_letter')) {
+            if (image.data('is_letter') || image.data('external')) {
                 return true;
             } else {
                 return false;

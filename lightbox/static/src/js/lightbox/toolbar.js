@@ -518,22 +518,10 @@ this.toolbar = {
      * Deselects all images with class .image_active
      */
     deselectAll: function() {
-        var images = $(_self.workspaceImages.workspace).find('.image_active');
+        var images = $(_self.workspaceImages.workspace).find('.image_active.selected');
 
         $.each(images, function() {
-
-            $(this).find('.ui-wrapper').css('box-shadow', '0px 0px 10px 2px #444');
-            $(this).removeClass('selected');
-            $(this).data('selected', false);
-
-            $(this).draggable({
-                alsoDrag: false
-            });
-
-            if ($(this).find('.ui-wrapper').length) {
-                $(this).find('img').resizable('destroy');
-            }
-            _self.select_group.imagesSelected = [];
+            _self.select_group.deselect($(this));
         });
 
         $('#open_notes').fadeOut().remove();
@@ -549,16 +537,24 @@ this.toolbar = {
             var mini_image = $("#" + _self.minimap.namespace + this.attr('id'));
             var size = this.data('size').split(',');
 
+            var width = '180px';
+            var height = 'auto';
+
+            if (this.data('external')) {
+                width = this.data('size').split(',')[0] / 2;
+                height = this.data('size').split(',')[1] / 2;
+            }
+
             this.children().css({
-                'width': "180px",
+                'width': width,
                 'height': "auto"
             });
 
             if (document.body.style.webkitFilter !== undefined) {
 
                 this.css({
-                    'width': "180px",
-                    'height': "auto",
+                    'width': width,
+                    'height': height,
                     '-webkit-transform': "rotate(0deg)",
                     'transform': "rotate(0deg)",
                     '-webkit-filter': 'brightness(100%)'
@@ -567,8 +563,8 @@ this.toolbar = {
             } else {
 
                 this.css({
-                    'width': "180px",
-                    'height': "auto",
+                    'width': width,
+                    'height': height,
                     '-moz-transform': "rotate(0deg)",
                     '-o-transform': "rotate(0deg)",
                     '-ms-transform': "rotate(0deg)",
@@ -579,8 +575,8 @@ this.toolbar = {
             }
 
             this.find('img').css({
-                'width': "180px",
-                'height': "auto",
+                'width': width,
+                'height': height,
                 '-webkit-transform': "rotateX(0deg) rotateY(0deg)",
                 '-moz-transform': "rotateX(0deg) rotateY(0deg)",
                 '-o-transform': "rotateX(0deg) rotateY(0deg)",

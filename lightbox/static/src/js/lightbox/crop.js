@@ -82,67 +82,72 @@ this.crop = {
             'manuscript': image.data('title')
         };
 
-        $.ajax({
-            type: 'POST',
-            url: 'read-image/',
-            data: data,
-            beforeSend: function() {
-                if (!$('#letter_wait_box').length) {
-                    var loader = "<div class='modal' id='letter_wait_box'><span id='letter_crop_status'>Cropping region ...</span><div id='letters_buttons_loading_box'><img src='/static/img/ajax-loader2.gif' /></div>";
+        try {
+            $.ajax({
+                type: 'POST',
+                url: 'read-image/',
+                data: data,
+                beforeSend: function() {
+                    if (!$('#letter_wait_box').length) {
+                        var loader = "<div class='modal' id='letter_wait_box'><span id='letter_crop_status'>Cropping region ...</span><div id='letters_buttons_loading_box'><img src='/static/img/ajax-loader2.gif' /></div>";
 
-                    _self.selectors.body.append(loader);
-                    $('#letter_wait_box').fadeIn();
+                        _self.selectors.body.append(loader);
+                        $('#letter_wait_box').fadeIn();
 
-                } else {
-                    $('#letters_buttons_loading_box').hide().fadeIn().html("<img src='/static/img/ajax-loader2.gif' />");
-                    $('#letter_crop_status').hide().fadeIn().html("Cropping region ...");
-                }
-                /*
+                    } else {
+                        $('#letters_buttons_loading_box').hide().fadeIn().html("<img src='/static/img/ajax-loader2.gif' />");
+                        $('#letter_crop_status').hide().fadeIn().html("Cropping region ...");
+                    }
+                    /*
                             if($.letters.open){
                                 $('#top_box_letters').append('<img id="loading_letter_ajax" src="/static/img/ajax-loader.gif" />')
                             }
                             */
-            },
-            success: function(data) {
-                _self.letters.addLetter(data);
-                return false;
-            },
-            complete: function() {
-                var letter_wait_box = $('#letter_wait_box');
-                if (!_self.letters.open) {
-                    var buttons = "<button id='open-letter-box' class='btn btn-primary'>Open Letters Window</button> <button class='btn btn-danger' id='close-letter-box'>Close</button>";
+                },
+                success: function(data) {
+                    _self.letters.addLetter(data);
+                    return false;
+                },
+                complete: function() {
+                    var letter_wait_box = $('#letter_wait_box');
+                    if (!_self.letters.open) {
+                        var buttons = "<button id='open-letter-box' class='btn btn-primary'>Open Letters Window</button> <button class='btn btn-danger' id='close-letter-box'>Close</button>";
 
+                        $('#letters_buttons_loading_box').hide().fadeIn().html(buttons);
+                        $('#letter_crop_status').hide().fadeIn().html("Region cropped!");
+
+                        $('#close-letter-box').click(function() {
+                            letter_wait_box.fadeOut().remove();
+                        });
+
+                        $('#open-letter-box').click(function() {
+                            letter_wait_box.fadeOut().remove();
+                            _self.letters.open_lettersbox();
+                        });
+
+                        letter_wait_box.data('completed', true);
+
+                    } else {
+                        letter_wait_box.fadeOut().remove();
+                        $('#importing_letter_ajax').fadeOut().remove();
+                    }
+
+                },
+                error: function() {
+                    var buttons = "<button id='open-letter-box' class='btn btn-primary'>Open Regions Window</button>";
+                    buttons += " <button class='btn btn-danger' id='close-letter-box'>Close</button>";
                     $('#letters_buttons_loading_box').hide().fadeIn().html(buttons);
-                    $('#letter_crop_status').hide().fadeIn().html("Region cropped!");
-
-                    $('#close-letter-box').click(function() {
-                        letter_wait_box.fadeOut().remove();
-                    });
-
-                    $('#open-letter-box').click(function() {
-                        letter_wait_box.fadeOut().remove();
-                        _self.letters.open_lettersbox();
-                    });
-
-                    letter_wait_box.data('completed', true);
-                    return false;
-
-                } else {
-                    letter_wait_box.fadeOut().remove();
-                    $('#importing_letter_ajax').fadeOut().remove();
-                    return false;
+                    $('#letter_crop_status').hide().fadeIn().html("Something went wrong :(. Try again.!");
                 }
 
-            },
-            error: function() {
-                var buttons = "<button id='open-letter-box' class='btn btn-primary'>Open Regions Window</button>";
-                buttons += " <button class='btn btn-danger' id='close-letter-box'>Close</button>";
-                $('#letters_buttons_loading_box').hide().fadeIn().html(buttons);
-                $('#letter_crop_status').hide().fadeIn().html("Something went wrong. Try again.!");
-            }
-
-        });
-
+            });
+        } catch (e) {
+            console.warn(e);
+            var buttons = "<button id='open-letter-box' class='btn btn-primary'>Open Regions Window</button>";
+            buttons += " <button class='btn btn-danger' id='close-letter-box'>Close</button>";
+            $('#letters_buttons_loading_box').hide().fadeIn().html(buttons);
+            $('#letter_crop_status').hide().fadeIn().html("Something went wrong :(. Try again.!");
+        }
     }
 
 };

@@ -248,7 +248,7 @@ this.letters = {
         } else {
             wrap.data("title", letter.data('title'));
         }
-        wrap.data('size', letter.data('size'));
+        wrap.data('size', (letter.data('size').split(',')[0] / 2) + "," + (letter.data('size').split(',')[1] / 2));
         var page_position = $('#overview').offset();
         wrap.children().resizable({
             aspectRatio: true,
@@ -258,9 +258,13 @@ this.letters = {
                 return false;
             }
         });
+        var left = $(window).scrollLeft();
+        if ($('#image_' + letter.attr('id')).prev().length) {
+            left = $('#image_' + letter.attr('id')).prev().position().left;
+        }
         $('#image_' + letter.attr('id')).css({
             'top': page_position.top,
-            'left': $('#image_' + letter.attr('id')).prev().position().left + 100
+            'left': left
         }).draggable({
             revert: false,
             scroll: true,

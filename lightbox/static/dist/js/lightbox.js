@@ -208,67 +208,72 @@ this.crop = {
             'manuscript': image.data('title')
         };
 
-        $.ajax({
-            type: 'POST',
-            url: 'read-image/',
-            data: data,
-            beforeSend: function() {
-                if (!$('#letter_wait_box').length) {
-                    var loader = "<div class='modal' id='letter_wait_box'><span id='letter_crop_status'>Cropping region ...</span><div id='letters_buttons_loading_box'><img src='/static/img/ajax-loader2.gif' /></div>";
+        try {
+            $.ajax({
+                type: 'POST',
+                url: 'read-image/',
+                data: data,
+                beforeSend: function() {
+                    if (!$('#letter_wait_box').length) {
+                        var loader = "<div class='modal' id='letter_wait_box'><span id='letter_crop_status'>Cropping region ...</span><div id='letters_buttons_loading_box'><img src='/static/img/ajax-loader2.gif' /></div>";
 
-                    _self.selectors.body.append(loader);
-                    $('#letter_wait_box').fadeIn();
+                        _self.selectors.body.append(loader);
+                        $('#letter_wait_box').fadeIn();
 
-                } else {
-                    $('#letters_buttons_loading_box').hide().fadeIn().html("<img src='/static/img/ajax-loader2.gif' />");
-                    $('#letter_crop_status').hide().fadeIn().html("Cropping region ...");
-                }
-                /*
+                    } else {
+                        $('#letters_buttons_loading_box').hide().fadeIn().html("<img src='/static/img/ajax-loader2.gif' />");
+                        $('#letter_crop_status').hide().fadeIn().html("Cropping region ...");
+                    }
+                    /*
                             if($.letters.open){
                                 $('#top_box_letters').append('<img id="loading_letter_ajax" src="/static/img/ajax-loader.gif" />')
                             }
                             */
-            },
-            success: function(data) {
-                _self.letters.addLetter(data);
-                return false;
-            },
-            complete: function() {
-                var letter_wait_box = $('#letter_wait_box');
-                if (!_self.letters.open) {
-                    var buttons = "<button id='open-letter-box' class='btn btn-primary'>Open Letters Window</button> <button class='btn btn-danger' id='close-letter-box'>Close</button>";
+                },
+                success: function(data) {
+                    _self.letters.addLetter(data);
+                    return false;
+                },
+                complete: function() {
+                    var letter_wait_box = $('#letter_wait_box');
+                    if (!_self.letters.open) {
+                        var buttons = "<button id='open-letter-box' class='btn btn-primary'>Open Letters Window</button> <button class='btn btn-danger' id='close-letter-box'>Close</button>";
 
+                        $('#letters_buttons_loading_box').hide().fadeIn().html(buttons);
+                        $('#letter_crop_status').hide().fadeIn().html("Region cropped!");
+
+                        $('#close-letter-box').click(function() {
+                            letter_wait_box.fadeOut().remove();
+                        });
+
+                        $('#open-letter-box').click(function() {
+                            letter_wait_box.fadeOut().remove();
+                            _self.letters.open_lettersbox();
+                        });
+
+                        letter_wait_box.data('completed', true);
+
+                    } else {
+                        letter_wait_box.fadeOut().remove();
+                        $('#importing_letter_ajax').fadeOut().remove();
+                    }
+
+                },
+                error: function() {
+                    var buttons = "<button id='open-letter-box' class='btn btn-primary'>Open Regions Window</button>";
+                    buttons += " <button class='btn btn-danger' id='close-letter-box'>Close</button>";
                     $('#letters_buttons_loading_box').hide().fadeIn().html(buttons);
-                    $('#letter_crop_status').hide().fadeIn().html("Region cropped!");
-
-                    $('#close-letter-box').click(function() {
-                        letter_wait_box.fadeOut().remove();
-                    });
-
-                    $('#open-letter-box').click(function() {
-                        letter_wait_box.fadeOut().remove();
-                        _self.letters.open_lettersbox();
-                    });
-
-                    letter_wait_box.data('completed', true);
-                    return false;
-
-                } else {
-                    letter_wait_box.fadeOut().remove();
-                    $('#importing_letter_ajax').fadeOut().remove();
-                    return false;
+                    $('#letter_crop_status').hide().fadeIn().html("Something went wrong :(. Try again.!");
                 }
 
-            },
-            error: function() {
-                var buttons = "<button id='open-letter-box' class='btn btn-primary'>Open Regions Window</button>";
-                buttons += " <button class='btn btn-danger' id='close-letter-box'>Close</button>";
-                $('#letters_buttons_loading_box').hide().fadeIn().html(buttons);
-                $('#letter_crop_status').hide().fadeIn().html("Something went wrong. Try again.!");
-            }
-
-        });
-
+            });
+        } catch (e) {
+            console.warn(e);
+            var buttons = "<button id='open-letter-box' class='btn btn-primary'>Open Regions Window</button>";
+            buttons += " <button class='btn btn-danger' id='close-letter-box'>Close</button>";
+            $('#letters_buttons_loading_box').hide().fadeIn().html(buttons);
+            $('#letter_crop_status').hide().fadeIn().html("Something went wrong :(. Try again.!");
+        }
     }
 
 };
@@ -1556,11 +1561,11 @@ this.init = function() {
                 'margin-top': "0",
                 "overflow": "hidden",
                 "-moz-transform": "scale(" + zoom_value / 100 + ")",
-                "-moz-transform-origin": "50% 100%",
+                "-moz-transform-origin": "0 0",
                 "-o-transform": "scale(" + zoom_value / 100 + ")",
-                "-o-transform-origin": "50% 100%",
+                "-o-transform-origin": "0 0",
                 "-ms-transform": "scale(" + zoom_value / 100 + ")",
-                "-ms-transform-origin": "50% 100%"
+                "-ms-transform-origin": "0 0"
             }).animate({
                 'zoom': zoom_value + '%',
                 "width": $(window).width(),
@@ -2145,7 +2150,7 @@ this.letters = {
         } else {
             wrap.data("title", letter.data('title'));
         }
-        wrap.data('size', letter.data('size'));
+        wrap.data('size', (letter.data('size').split(',')[0] / 2) + "," + (letter.data('size').split(',')[1] / 2));
         var page_position = $('#overview').offset();
         wrap.children().resizable({
             aspectRatio: true,
@@ -2155,9 +2160,13 @@ this.letters = {
                 return false;
             }
         });
+        var left = $(window).scrollLeft();
+        if ($('#image_' + letter.attr('id')).prev().length) {
+            left = $('#image_' + letter.attr('id')).prev().position().left;
+        }
         $('#image_' + letter.attr('id')).css({
             'top': page_position.top,
-            'left': $('#image_' + letter.attr('id')).prev().position().left + 100
+            'left': left
         }).draggable({
             revert: false,
             scroll: true,
@@ -4355,22 +4364,10 @@ this.toolbar = {
      * Deselects all images with class .image_active
      */
     deselectAll: function() {
-        var images = $(_self.workspaceImages.workspace).find('.image_active');
+        var images = $(_self.workspaceImages.workspace).find('.image_active.selected');
 
         $.each(images, function() {
-
-            $(this).find('.ui-wrapper').css('box-shadow', '0px 0px 10px 2px #444');
-            $(this).removeClass('selected');
-            $(this).data('selected', false);
-
-            $(this).draggable({
-                alsoDrag: false
-            });
-
-            if ($(this).find('.ui-wrapper').length) {
-                $(this).find('img').resizable('destroy');
-            }
-            _self.select_group.imagesSelected = [];
+            _self.select_group.deselect($(this));
         });
 
         $('#open_notes').fadeOut().remove();
@@ -4386,16 +4383,24 @@ this.toolbar = {
             var mini_image = $("#" + _self.minimap.namespace + this.attr('id'));
             var size = this.data('size').split(',');
 
+            var width = '180px';
+            var height = 'auto';
+
+            if (this.data('external')) {
+                width = this.data('size').split(',')[0] / 2;
+                height = this.data('size').split(',')[1] / 2;
+            }
+
             this.children().css({
-                'width': "180px",
+                'width': width,
                 'height': "auto"
             });
 
             if (document.body.style.webkitFilter !== undefined) {
 
                 this.css({
-                    'width': "180px",
-                    'height': "auto",
+                    'width': width,
+                    'height': height,
                     '-webkit-transform': "rotate(0deg)",
                     'transform': "rotate(0deg)",
                     '-webkit-filter': 'brightness(100%)'
@@ -4404,8 +4409,8 @@ this.toolbar = {
             } else {
 
                 this.css({
-                    'width': "180px",
-                    'height': "auto",
+                    'width': width,
+                    'height': height,
                     '-moz-transform': "rotate(0deg)",
                     '-o-transform': "rotate(0deg)",
                     '-ms-transform': "rotate(0deg)",
@@ -4416,8 +4421,8 @@ this.toolbar = {
             }
 
             this.find('img').css({
-                'width': "180px",
-                'height': "auto",
+                'width': width,
+                'height': height,
                 '-webkit-transform': "rotateX(0deg) rotateY(0deg)",
                 '-moz-transform': "rotateX(0deg) rotateY(0deg)",
                 '-o-transform': "rotateX(0deg) rotateY(0deg)",

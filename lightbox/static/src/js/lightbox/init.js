@@ -274,11 +274,11 @@ this.init = function() {
                 'margin-top': "0",
                 "overflow": "hidden",
                 "-moz-transform": "scale(" + zoom_value / 100 + ")",
-                "-moz-transform-origin": "50% 100%",
+                "-moz-transform-origin": "0 0",
                 "-o-transform": "scale(" + zoom_value / 100 + ")",
-                "-o-transform-origin": "50% 100%",
+                "-o-transform-origin": "0 0",
                 "-ms-transform": "scale(" + zoom_value / 100 + ")",
-                "-ms-transform-origin": "50% 100%"
+                "-ms-transform-origin": "0 0"
             }).animate({
                 'zoom': zoom_value + '%',
                 "width": $(window).width(),

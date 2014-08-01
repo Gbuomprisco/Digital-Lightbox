@@ -118,7 +118,7 @@ this.import = {
             _self.import.selectItem($(this));
         });
 
-        $('.folder').click(function() {
+        $('.folder').dblclick(function() {
             _self.import.loadFile($selectedItem.attr('id'));
             $selectedItem.children('img').css('opacity', 1);
             $selectedItem = undefined;
@@ -167,14 +167,10 @@ this.import = {
                     _self.import.selectItem($(this));
                 });
 
-                $('.folder').click(function() {
-                    if (typeof $selectedItem != "undefined") {
-                        _self.import.loadFile($selectedItem.attr('id'));
-                        $selectedItem.children('img').css('opacity', 1);
-                        $selectedItem = undefined;
-                    } else {
-                        return false;
-                    }
+                $('.folder').dblclick(function() {
+                    _self.import.loadFile($selectedItem.attr('id'));
+                    $selectedItem.children('img').css('opacity', 1);
+                    $selectedItem = undefined;
                 });
 
                 $('#load_session_button').click(function() {

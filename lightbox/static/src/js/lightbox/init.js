@@ -502,6 +502,7 @@ this.init = function() {
                 "-ms-transform-origin": "50% 100%"
             });
         }
+        zoom_value = zoom / 100;
         $('#counter_zoom').html(zoom + '%' + " <span class='caret'></span>");
     });
 

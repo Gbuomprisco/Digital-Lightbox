@@ -119,7 +119,7 @@ this.export = {
                 'filter': $(images[i]).find('img').css('-webkit-filter'),
                 'transform': $(images[i]).find('img').css('transform'),
                 'is_letter': $(images[i]).data('is_letter'),
-                'classes': $(images[i]).attr('class')
+                'classes': $(images[i]).find('img').attr('class')
             };
 
             var image = {

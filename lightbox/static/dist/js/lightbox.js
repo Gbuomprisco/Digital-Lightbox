@@ -398,7 +398,7 @@ this.export = {
                 'filter': $(images[i]).find('img').css('-webkit-filter'),
                 'transform': $(images[i]).find('img').css('transform'),
                 'is_letter': $(images[i]).data('is_letter'),
-                'classes': $(images[i]).attr('class')
+                'classes': $(images[i]).find('img').attr('class')
             };
 
             var image = {
@@ -938,7 +938,7 @@ this.import = {
             _self.import.selectItem($(this));
         });
 
-        $('.folder').click(function() {
+        $('.folder').dblclick(function() {
             _self.import.loadFile($selectedItem.attr('id'));
             $selectedItem.children('img').css('opacity', 1);
             $selectedItem = undefined;
@@ -987,14 +987,10 @@ this.import = {
                     _self.import.selectItem($(this));
                 });
 
-                $('.folder').click(function() {
-                    if (typeof $selectedItem != "undefined") {
-                        _self.import.loadFile($selectedItem.attr('id'));
-                        $selectedItem.children('img').css('opacity', 1);
-                        $selectedItem = undefined;
-                    } else {
-                        return false;
-                    }
+                $('.folder').dblclick(function() {
+                    _self.import.loadFile($selectedItem.attr('id'));
+                    $selectedItem.children('img').css('opacity', 1);
+                    $selectedItem = undefined;
                 });
 
                 $('#load_session_button').click(function() {
@@ -1816,6 +1812,7 @@ this.init = function() {
                 "-ms-transform-origin": "50% 100%"
             });
         }
+        zoom_value = zoom / 100;
         $('#counter_zoom').html(zoom + '%' + " <span class='caret'></span>");
     });
 

@@ -1019,28 +1019,28 @@ li.no-before, li.no-before:before{
 
 // Filters
 .grayscale {
-	-webkit-filter: grayscale(100%);
-	-moz-filter: grayscale(100%);
-	-ms-filter: grayscale(100%);
-	-o-filter: grayscale(100%);
+	-webkit-filter: grayscale(100%) !important;
+	-moz-filter: grayscale(100%) !important;
+	-ms-filter: grayscale(100%) !important;
+	-o-filter: grayscale(100%) !important;
 	filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale"); /* Firefox 10+, Firefox on Android */
     filter: gray; /* IE6-9 */
 }
 
 .contrast {
-	-webkit-filter: contrast(200%);
-	-moz-filter: contrast(200%);
-	-ms-filter: contrast(200%);
-	-o-filter: contrast(200%);
-	filter: url('data:image/svg+xml;utf8,<svg height="0" xmlns="http://www.w3.org/2000/svg"><filter id="contrast"><feComponentTransfer><feFuncR type="linear" slope="[amount]" intercept="-(0.5 * [amount]) + 0.5"/><feFuncG type="linear" slope="[amount]" intercept="-(0.5 * [amount]) + 0.5"/><feFuncB type="linear" slope="[amount]" intercept="-(0.5 * [amount]) + 0.5"/></feComponentTransfer></filter></svg>');
+	-webkit-filter: contrast(200%) !important;
+	-moz-filter: contrast(200%) !important;
+	-ms-filter: contrast(200%) !important;
+	-o-filter: contrast(200%) !important;
+	filter: url('data:image/svg+xml;utf8,<svg height="0" xmlns="http://www.w3.org/2000/svg"><filter id="contrast"><feComponentTransfer><feFuncR type="linear" slope="[amount]" intercept="-(0.5 * [amount]) + 0.5"/><feFuncG type="linear" slope="[amount]" intercept="-(0.5 * [amount]) + 0.5"/><feFuncB type="linear" slope="[amount]" intercept="-(0.5 * [amount]) + 0.5"/></feComponentTransfer></filter></svg>') !important;
 }
 
 .invert{
-	-ms-filter:invert(1);
-	-webkit-filter:invert(1);
-	-moz-filter:invert(1);
-	-o-filter:invert(1);
-	filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'invert\'><feColorMatrix in='SourceGraphic' type='matrix' values='-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0'/></filter></svg>#invert");
+	-ms-filter:invert(1) !important;
+	-webkit-filter:invert(1) !important;
+	-moz-filter:invert(1) !important;
+	-o-filter:invert(1) !important;
+	filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'invert\'><feColorMatrix in='SourceGraphic' type='matrix' values='-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0'/></filter></svg>#invert") !important;
 }
 
 .manuscript_pack{
@@ -1188,19 +1188,19 @@ html, body, img{
 }
 
 .flippedX {
-	-webkit-transform: rotateY(180deg);
-	-moz-transform: rotateY(180deg);
-	-ms-transform: rotateY(180deg);
-	-o-transform: rotateY(180deg);
-	transform: rotateY(180deg);
+	-webkit-transform: rotateY(180deg) !important;
+	-moz-transform: rotateY(180deg) !important;
+	-ms-transform: rotateY(180deg) !important;
+	-o-transform: rotateY(180deg) !important;
+	transform: rotateY(180deg) !important;
 }
 
 .flippedY {
-	-webkit-transform: rotateX(180deg);
-	-moz-transform: rotateX(180deg);
-	-ms-transform: rotateX(180deg);
-	-o-transform: rotateX(180deg);
-	transform: rotateX(180deg);
+	-webkit-transform: rotateX(180deg) !important;
+	-moz-transform: rotateX(180deg) !important;
+	-ms-transform: rotateX(180deg) !important;
+	-o-transform: rotateX(180deg) !important;
+	transform: rotateX(180deg) !important;
 }
 
 #counter-zoom-div {

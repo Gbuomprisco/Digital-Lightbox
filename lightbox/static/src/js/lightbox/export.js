@@ -113,11 +113,13 @@ this.export = {
 
         for (var i = 0; i < images.length; i++) {
 
-            console.log(images);
             var propriety = {
                 'opacity': $(images[i]).find('img').css('opacity'),
                 'brightness': get_brightness(),
-                'is_letter': $(images[i]).data('is_letter')
+                'filter': $(images[i]).find('img').css('-webkit-filter'),
+                'transform': $(images[i]).find('img').css('transform'),
+                'is_letter': $(images[i]).data('is_letter'),
+                'classes': $(images[i]).attr('class')
             };
 
             var image = {
@@ -126,6 +128,7 @@ this.export = {
                 'size': size($(images[i])),
                 'original_size': original_size($(images[i])),
                 'properties': propriety,
+                'workspace': $(images[i]).closest('.workspace').attr('id'),
                 "z-index": zIndex($(images[i]))
             };
 

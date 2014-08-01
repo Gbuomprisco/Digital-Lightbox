@@ -108,6 +108,9 @@ this.import = {
 
         for (var i = 0; i < this.files.length; i++) {
             folder += "<div class='folder' id='" + this.files[i][0] + "'><img src='/static/img/folder.png' /><div class='folder_title'>" + this.files[i][0] + "</div></div>";
+            if (i && i % 7 === 0) {
+                folder += '<br clear="all">';
+            }
         }
         $("#import").children('.box_container').html(folder);
 
@@ -145,6 +148,9 @@ this.import = {
                 var files = _self.import.files;
                 for (var i = 0; i < files.length; i++) {
                     folder += "<div class='folder col-lg-3' id='" + files[i][0] + "'><img src='/static/img/folder.png' /><div class='folder_title'>" + files[i][0] + "</div></div>";
+                    if (i && i % 7 === 0) {
+                        folder += '<br clear="all">';
+                    }
                 }
 
                 var breadcrumb = "<div class='row-fluid'><div style='line-height:2;margin:0;'";
@@ -308,11 +314,23 @@ this.import = {
         for (var i = 0; i < images.length; i++) {
             var src = unescape(images[i]['src']);
             var image = "<div data-size = '" + images[i]['original_size'] + "' class='image_active' id='" + images[i]['image'] + "'><img src='" + unescape(src) + "' /></div>";
-            _self.selectors.workspace1.append(image);
+            $("#" + images[i].workspace).append(image);
             $("#" + images[i]['image']).css({
-                "position": "relative",
+                "position": "absolute",
                 "top": images[i]['position']['top'],
                 "left": images[i]['position']['left'],
+                "max-width": "none",
+                "-webkit-filter": images_properties[i]['properties']['filter'],
+                "-moz-filter": images_properties[i]['properties']['filter'],
+                "filter": images_properties[i]['properties']['filter'],
+                "-ms-filter": images_properties[i]['properties']['filter'],
+                "-o-filter": images_properties[i]['properties']['filter'],
+                "filter": images_properties[i]['properties']['filter'],
+                "-webkit-transform": images_properties[i]['properties']['transform'],
+                "-moz-transform": images_properties[i]['properties']['transform'],
+                "-ms-transform": images_properties[i]['properties']['transform'],
+                "-o-transform": images_properties[i]['properties']['transform'],
+                "transform": images_properties[i]['properties']['transform'],
                 "max-width": "none",
                 "z-index": images[i]['properties']['z-index']
             }).draggable({
@@ -341,7 +359,7 @@ this.import = {
                 }
             }).children('img').css({
                 "opacity": images[i]['properties']['opacity']
-            });
+            }).addClass(images[i]['properties'].classes);
 
             $('#' + images[i]['image']).dblclick(function(event) {
                 _self.select_group.select($(this));
@@ -358,18 +376,13 @@ this.import = {
             if (images_properties) {
                 var image = '<div data-external="true" data-size = "' + images_properties[i]['original_size'] + '" data-title = "' + images[i][2] + '" class="image_active" id = "' + parseInt(images[i][1]) + '">' + images[i][0] + "<label>" + images[i][2] + "</label> <div class='image_desc col-lg-8 col-md-8 col-xs-8 offset1 image_desc'> <p><b>Manuscript</b>: " + images[i][2] + "</p> " + "<p><b>Repository</b>: " + images[i][3] + "<p><b>Place</b>: " + images[i][4] + "</p></div><br clear='all' /></div>";
 
-                $(image).css({
-                    'left': $(window).scrollLeft() + 150,
-                    'top': $(window).scrollTop() + 50
-                });
-
-                _self.selectors.workspace1.append(image);
+                $("#" + images_properties[i].workspace).append(image);
 
                 if (images_properties[i]['image'] == images[i][1]) {
 
                     var image_src = $('#' + images[i][1]).find('img');
                     $('#' + images[i][1]).css({
-                        "position": "relative",
+                        "position": "absolute",
                         "top": images_properties[i]['position']['top'],
                         "left": images_properties[i]['position']['left'],
                         "max-width": "none",
@@ -387,6 +400,17 @@ this.import = {
                         }
                     }).children('img').css({
                         "opacity": images_properties[i]['properties']['opacity'],
+                        "-webkit-filter": images_properties[i]['properties']['filter'],
+                        "-moz-filter": images_properties[i]['properties']['filter'],
+                        "filter": images_properties[i]['properties']['filter'],
+                        "-ms-filter": images_properties[i]['properties']['filter'],
+                        "-o-filter": images_properties[i]['properties']['filter'],
+                        "filter": images_properties[i]['properties']['filter'],
+                        "-webkit-transform": images_properties[i]['properties']['transform'],
+                        "-moz-transform": images_properties[i]['properties']['transform'],
+                        "-ms-transform": images_properties[i]['properties']['transform'],
+                        "-o-transform": images_properties[i]['properties']['transform'],
+                        "transform": images_properties[i]['properties']['transform'],
                         "max-width": "none",
                         "width": images_properties[i]['size']['width'],
                         'height': images_properties[i]['size']['height']
@@ -397,7 +421,7 @@ this.import = {
                             event.stopPropagation();
                             return false;
                         }
-                    });
+                    }).addClass(images_properties[i]['properties'].classes).removeClass('col-md-4 col-xs-4 col-lg-4');
 
                     $("#" + images[i][1]).dblclick(function(event) {
                         _self.select_group.select($(this));

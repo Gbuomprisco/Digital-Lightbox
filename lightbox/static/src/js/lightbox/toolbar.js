@@ -964,6 +964,18 @@ this.toolbar = {
                     image['rotate'] = get_rotation(value.css('transform'));
                     image['width'] = value.find('img').css('width');
 
+                    if (value.find('img').hasClass('flippedX')) {
+                        _self.toolbar.selectors.flipx.addClass("active");
+                    }
+
+                    if (value.find('img').hasClass('flippedY')) {
+                        _self.toolbar.selectors.flipy.addClass("active");
+                    }
+
+                    if (value.find('img').hasClass('invert')) {
+                        _self.toolbar.selectors.invert.addClass("active");
+                    }
+
                     var brightness;
                     if (document.body.style.webkitFilter !== undefined) {
 

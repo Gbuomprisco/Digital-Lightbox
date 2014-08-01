@@ -46,7 +46,8 @@ def read_image(request):
 			manuscript = request.POST.get('manuscript', '') or "Uploads"
 			box = request.POST.get('box','')
 			is_letter = request.POST.get('is_letter', '')
-			if is_letter == "false":
+			is_external = request.POST.get('is_external', '')
+			if is_letter == "false" or is_external == 'true':
 				file = cStringIO.StringIO(urllib.urlopen(image).read())
 				image_resize = Img.open(file)
 				width = int(src_width)

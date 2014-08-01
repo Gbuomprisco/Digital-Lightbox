@@ -205,7 +205,8 @@ this.crop = {
             'height': height,
             'width': width,
             'box': JSON.stringify(_self.crop.coords),
-            'manuscript': image.data('title')
+            'manuscript': image.data('title'),
+            'is_external': image.data('external')
         };
 
         try {

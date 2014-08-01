@@ -425,6 +425,30 @@ this.export = {
         return images_properties;
     },
 
+    export_stickable_notes: function() {
+        var notes = [];
+        var note = {};
+        var notes_on_workspace = $('.stickable_note');
+        notes_on_workspace.each(function() {
+            note.position = $(this).offset();
+            note.content = $(this).text();
+            note.id = $(this).attr('id');
+            note.workspace = $(this).closest(".workspace").attr('id');
+            note.data = {
+                'image': $(this).data('image'),
+                'title': $(this).data('title'),
+                'id': $(this).data('id')
+            };
+            note.size = {
+                'width': $(this).width(),
+                'height': $(this).height()
+            };
+            note.classes = $(this).attr('class');
+            notes.push(note);
+        });
+        return notes;
+    },
+
     export_letters: function() {
         var letters = _self.letters.regions;
         if (letters.length) {
@@ -481,10 +505,12 @@ this.export = {
             };
         };
 
+        var stickable_notes = this.export_stickable_notes();
         var general_properties = {
             'toolbar': create_toolbar(),
             'comments': _self.comments.notes,
             'letters': letters,
+            'stickable_notes': stickable_notes,
             'window': windowPosition()
         };
 
@@ -1083,7 +1109,7 @@ this.import = {
         _self.import.reloadImages(images, json['image_properties']);
         _self.import.importComments(comments);
         _self.import.importLetters(letters);
-
+        _self.import.importStickableNotes(json['session_properties']['stickable_notes']);
         if (toolbar) {
             _self.import.restoreToolbar(toolbar);
         }
@@ -1136,17 +1162,17 @@ this.import = {
                 "top": images[i]['position']['top'],
                 "left": images[i]['position']['left'],
                 "max-width": "none",
-                "-webkit-filter": images_properties[i]['properties']['filter'],
-                "-moz-filter": images_properties[i]['properties']['filter'],
-                "filter": images_properties[i]['properties']['filter'],
-                "-ms-filter": images_properties[i]['properties']['filter'],
-                "-o-filter": images_properties[i]['properties']['filter'],
-                "filter": images_properties[i]['properties']['filter'],
-                "-webkit-transform": images_properties[i]['properties']['transform'],
-                "-moz-transform": images_properties[i]['properties']['transform'],
-                "-ms-transform": images_properties[i]['properties']['transform'],
-                "-o-transform": images_properties[i]['properties']['transform'],
-                "transform": images_properties[i]['properties']['transform'],
+                "-webkit-filter": images[i]['properties']['filter'],
+                "-moz-filter": images[i]['properties']['filter'],
+                "filter": images[i]['properties']['filter'],
+                "-ms-filter": images[i]['properties']['filter'],
+                "-o-filter": images[i]['properties']['filter'],
+                "filter": images[i]['properties']['filter'],
+                "-webkit-transform": images[i]['properties']['transform'],
+                "-moz-transform": images[i]['properties']['transform'],
+                "-ms-transform": images[i]['properties']['transform'],
+                "-o-transform": images[i]['properties']['transform'],
+                "transform": images[i]['properties']['transform'],
                 "max-width": "none",
                 "z-index": images[i]['properties']['z-index']
             }).draggable({
@@ -1264,6 +1290,22 @@ this.import = {
         _self.comments.notes = comments;
         for (var i = 0; i < comments.length; i++) {
             _self.comments.update_notes(comments[i]);
+        }
+    },
+
+    importStickableNotes: function(notes) {
+        for (var i = 0; i < notes.length; i++) {
+            var workspace = $('#' + notes[i].workspace);
+            _self.comments.create_stickable_note(notes[i].id, notes[i].data.image, notes[i].data.title, notes[i].content);
+            var note = $("#" + notes[i].id);
+            $("#" + notes[i].workspace).append(note);
+            note.css({
+                'position': 'absolute',
+                'top': notes[i].position.top,
+                'left': notes[i].position.left,
+                'width': notes[i].size.width,
+                'height': notes[i].size.height
+            }).addClass(notes[i].classes);
         }
     },
 
@@ -1531,7 +1573,7 @@ this.init = function() {
         $("html, body").css('background', '#444');
 
         windows_flag = 0;
-        counter_zoom.fadeIn().html(Math.floor(zoom_value * 100) + '%');
+        counter_zoom.fadeIn().html(Math.floor(zoom_value * 100) + '%' + " <span class='caret'></span>");
 
         var images = $(".image_active");
         $.each(images, function() {

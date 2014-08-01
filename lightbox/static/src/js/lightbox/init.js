@@ -221,7 +221,7 @@ this.init = function() {
         $("html, body").css('background', '#444');
 
         windows_flag = 0;
-        counter_zoom.fadeIn().html(Math.floor(zoom_value * 100) + '%');
+        counter_zoom.fadeIn().html(Math.floor(zoom_value * 100) + '%' + " <span class='caret'></span>");
 
         var images = $(".image_active");
         $.each(images, function() {

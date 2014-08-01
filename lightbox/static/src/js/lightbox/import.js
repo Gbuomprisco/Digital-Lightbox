@@ -263,7 +263,7 @@ this.import = {
         _self.import.reloadImages(images, json['image_properties']);
         _self.import.importComments(comments);
         _self.import.importLetters(letters);
-
+        _self.import.importStickableNotes(json['session_properties']['stickable_notes']);
         if (toolbar) {
             _self.import.restoreToolbar(toolbar);
         }
@@ -316,17 +316,17 @@ this.import = {
                 "top": images[i]['position']['top'],
                 "left": images[i]['position']['left'],
                 "max-width": "none",
-                "-webkit-filter": images_properties[i]['properties']['filter'],
-                "-moz-filter": images_properties[i]['properties']['filter'],
-                "filter": images_properties[i]['properties']['filter'],
-                "-ms-filter": images_properties[i]['properties']['filter'],
-                "-o-filter": images_properties[i]['properties']['filter'],
-                "filter": images_properties[i]['properties']['filter'],
-                "-webkit-transform": images_properties[i]['properties']['transform'],
-                "-moz-transform": images_properties[i]['properties']['transform'],
-                "-ms-transform": images_properties[i]['properties']['transform'],
-                "-o-transform": images_properties[i]['properties']['transform'],
-                "transform": images_properties[i]['properties']['transform'],
+                "-webkit-filter": images[i]['properties']['filter'],
+                "-moz-filter": images[i]['properties']['filter'],
+                "filter": images[i]['properties']['filter'],
+                "-ms-filter": images[i]['properties']['filter'],
+                "-o-filter": images[i]['properties']['filter'],
+                "filter": images[i]['properties']['filter'],
+                "-webkit-transform": images[i]['properties']['transform'],
+                "-moz-transform": images[i]['properties']['transform'],
+                "-ms-transform": images[i]['properties']['transform'],
+                "-o-transform": images[i]['properties']['transform'],
+                "transform": images[i]['properties']['transform'],
                 "max-width": "none",
                 "z-index": images[i]['properties']['z-index']
             }).draggable({
@@ -444,6 +444,22 @@ this.import = {
         _self.comments.notes = comments;
         for (var i = 0; i < comments.length; i++) {
             _self.comments.update_notes(comments[i]);
+        }
+    },
+
+    importStickableNotes: function(notes) {
+        for (var i = 0; i < notes.length; i++) {
+            var workspace = $('#' + notes[i].workspace);
+            _self.comments.create_stickable_note(notes[i].id, notes[i].data.image, notes[i].data.title, notes[i].content);
+            var note = $("#" + notes[i].id);
+            $("#" + notes[i].workspace).append(note);
+            note.css({
+                'position': 'absolute',
+                'top': notes[i].position.top,
+                'left': notes[i].position.left,
+                'width': notes[i].size.width,
+                'height': notes[i].size.height
+            }).addClass(notes[i].classes);
         }
     },
 

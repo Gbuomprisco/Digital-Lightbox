@@ -146,6 +146,30 @@ this.export = {
         return images_properties;
     },
 
+    export_stickable_notes: function() {
+        var notes = [];
+        var note = {};
+        var notes_on_workspace = $('.stickable_note');
+        notes_on_workspace.each(function() {
+            note.position = $(this).offset();
+            note.content = $(this).text();
+            note.id = $(this).attr('id');
+            note.workspace = $(this).closest(".workspace").attr('id');
+            note.data = {
+                'image': $(this).data('image'),
+                'title': $(this).data('title'),
+                'id': $(this).data('id')
+            };
+            note.size = {
+                'width': $(this).width(),
+                'height': $(this).height()
+            };
+            note.classes = $(this).attr('class');
+            notes.push(note);
+        });
+        return notes;
+    },
+
     export_letters: function() {
         var letters = _self.letters.regions;
         if (letters.length) {
@@ -202,10 +226,12 @@ this.export = {
             };
         };
 
+        var stickable_notes = this.export_stickable_notes();
         var general_properties = {
             'toolbar': create_toolbar(),
             'comments': _self.comments.notes,
             'letters': letters,
+            'stickable_notes': stickable_notes,
             'window': windowPosition()
         };
 

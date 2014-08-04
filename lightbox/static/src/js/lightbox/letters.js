@@ -248,7 +248,9 @@ this.letters = {
         } else {
             wrap.data("title", letter.data('title'));
         }
-        wrap.data('size', (letter.data('size').split(',')[0] / 2) + "," + (letter.data('size').split(',')[1] / 2));
+        if (letter.data('size')) {
+            wrap.data('size', (letter.data('size').split(',')[0] / 2) + "," + (letter.data('size').split(',')[1] / 2));
+        }
         var page_position = $('#overview').offset();
         wrap.children().resizable({
             aspectRatio: true,

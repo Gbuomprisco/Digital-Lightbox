@@ -1299,7 +1299,6 @@ this.import = {
             var workspace = $('#' + notes[i].workspace);
             _self.comments.create_stickable_note(notes[i].id, notes[i].data.image, notes[i].data.title, notes[i].content);
             var note = $("#" + notes[i].id);
-            $("#" + notes[i].workspace).append(note);
             note.css({
                 'position': 'absolute',
                 'top': notes[i].position.top,
@@ -1307,6 +1306,8 @@ this.import = {
                 'width': notes[i].size.width,
                 'height': notes[i].size.height
             }).addClass(notes[i].classes);
+            $("#" + notes[i].workspace).append(note);
+
         }
     },
 
@@ -1342,6 +1343,7 @@ this.import = {
         $('.image_active').remove();
         $('.image').remove();
         $('.letter').remove();
+        $('.stickable_note').remove();
         _self.minimap.clean_minimap();
         _self.comments.clean_notes();
         _self.select_group.imagesSelected = [];
@@ -4669,10 +4671,12 @@ this.toolbar = {
 
         this.selectors.buttons.flipx.click(function() {
             _self.toolbar.flip($(this), 'x');
+
         });
 
         this.selectors.buttons.flipy.click(function() {
             _self.toolbar.flip($(this), 'y');
+
         });
 
         this.selectors.buttons.group.click(function() {
@@ -4880,15 +4884,15 @@ this.toolbar = {
                     image['width'] = value.find('img').css('width');
 
                     if (value.find('img').hasClass('flippedX')) {
-                        _self.toolbar.selectors.flipx.addClass("active");
+                        _self.toolbar.selectors.buttons.flipx.addClass("active");
                     }
 
                     if (value.find('img').hasClass('flippedY')) {
-                        _self.toolbar.selectors.flipy.addClass("active");
+                        _self.toolbar.selectors.buttons.flipy.addClass("active");
                     }
 
                     if (value.find('img').hasClass('invert')) {
-                        _self.toolbar.selectors.invert.addClass("active");
+                        _self.toolbar.selectors.buttons.invert.addClass("active");
                     }
 
                     var brightness;

@@ -452,7 +452,6 @@ this.import = {
             var workspace = $('#' + notes[i].workspace);
             _self.comments.create_stickable_note(notes[i].id, notes[i].data.image, notes[i].data.title, notes[i].content);
             var note = $("#" + notes[i].id);
-            $("#" + notes[i].workspace).append(note);
             note.css({
                 'position': 'absolute',
                 'top': notes[i].position.top,
@@ -460,6 +459,8 @@ this.import = {
                 'width': notes[i].size.width,
                 'height': notes[i].size.height
             }).addClass(notes[i].classes);
+            $("#" + notes[i].workspace).append(note);
+
         }
     },
 
@@ -495,6 +496,7 @@ this.import = {
         $('.image_active').remove();
         $('.image').remove();
         $('.letter').remove();
+        $('.stickable_note').remove();
         _self.minimap.clean_minimap();
         _self.comments.clean_notes();
         _self.select_group.imagesSelected = [];

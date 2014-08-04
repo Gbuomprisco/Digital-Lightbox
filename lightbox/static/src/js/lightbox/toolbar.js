@@ -754,10 +754,12 @@ this.toolbar = {
 
         this.selectors.buttons.flipx.click(function() {
             _self.toolbar.flip($(this), 'x');
+
         });
 
         this.selectors.buttons.flipy.click(function() {
             _self.toolbar.flip($(this), 'y');
+
         });
 
         this.selectors.buttons.group.click(function() {
@@ -965,15 +967,15 @@ this.toolbar = {
                     image['width'] = value.find('img').css('width');
 
                     if (value.find('img').hasClass('flippedX')) {
-                        _self.toolbar.selectors.flipx.addClass("active");
+                        _self.toolbar.selectors.buttons.flipx.addClass("active");
                     }
 
                     if (value.find('img').hasClass('flippedY')) {
-                        _self.toolbar.selectors.flipy.addClass("active");
+                        _self.toolbar.selectors.buttons.flipy.addClass("active");
                     }
 
                     if (value.find('img').hasClass('invert')) {
-                        _self.toolbar.selectors.invert.addClass("active");
+                        _self.toolbar.selectors.buttons.invert.addClass("active");
                     }
 
                     var brightness;

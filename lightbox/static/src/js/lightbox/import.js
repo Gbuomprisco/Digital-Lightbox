@@ -147,7 +147,7 @@ this.import = {
                 var folder = '';
                 var files = _self.import.files;
                 for (var i = 0; i < files.length; i++) {
-                    folder += "<div class='folder col-lg-3' id='" + files[i][0] + "'><img src='/static/img/folder.png' /><div class='folder_title'>" + files[i][0] + "</div></div>";
+                    folder += "<div class='folder col-md-2 col-sm-4' id='" + files[i][0] + "'><img src='/static/img/folder.png' /><div class='folder_title'>" + files[i][0] + "</div></div>";
                     if (i && i % 7 === 0) {
                         folder += '<br clear="all">';
                     }

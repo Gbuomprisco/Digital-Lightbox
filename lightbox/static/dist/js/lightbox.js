@@ -994,7 +994,7 @@ this.import = {
                 var folder = '';
                 var files = _self.import.files;
                 for (var i = 0; i < files.length; i++) {
-                    folder += "<div class='folder col-lg-3' id='" + files[i][0] + "'><img src='/static/img/folder.png' /><div class='folder_title'>" + files[i][0] + "</div></div>";
+                    folder += "<div class='folder col-md-2 col-sm-4' id='" + files[i][0] + "'><img src='/static/img/folder.png' /><div class='folder_title'>" + files[i][0] + "</div></div>";
                     if (i && i % 7 === 0) {
                         folder += '<br clear="all">';
                     }
@@ -2120,10 +2120,10 @@ this.letters = {
         var manuscript_title = $(data).data('manuscript');
         var manuscript_id = $(data).data('manuscript_id');
         var manuscript = $("<div>");
-        manuscript.attr('class', 'manuscript_pack').addClass('col-lg-3');
+        manuscript.attr('class', 'manuscript_pack').addClass('col-md-2 col-sm-4');
         manuscript.attr('id', 'manuscript_' + manuscript_id);
         manuscript.data('title', manuscript_title);
-        manuscript.append("<img src='/static/img/folder_pictures.png' />");
+        manuscript.append("<img src='/static/img/folder.png' />");
         manuscript.append("<div class='folder_title'>" + manuscript_title + "</div>");
         var is_selected = function() {
             if ($(data).data('selected')) {
@@ -2178,9 +2178,9 @@ this.letters = {
             manuscript_id = regions[i].id;
 
             manuscript = $("<div>");
-            manuscript.attr('class', 'manuscript_pack').addClass('col-lg-3');
+            manuscript.attr('class', 'manuscript_pack').addClass('col-md-2 col-sm-4');
             manuscript.attr('id', 'manuscript_' + manuscript_id);
-            manuscript.append("<img src='/static/img/folder_pictures.png' />");
+            manuscript.append("<img src='/static/img/folder.png' />");
             manuscript.append("<div class='folder_title'>" + manuscript_title + "</div>");
 
             manuscript_data = {
@@ -2319,9 +2319,9 @@ this.letters = {
 
         $('.manuscript_pack').fadeOut();
         $('#letters_container').append(breadcrumb.fadeIn(300));
-        var li = "<li><a class='link' id='to_regions'>Regions</a></li>";
+        var li = "<li><a class='link' id='to_regions' data-toggle='tooltip' title='Go back to regions'>Regions</a></li>";
         li += "<li class='active'>" + data.data('manuscript').title + "</li>";
-        li += "<li class='pull-right no-before'><span id='to_regions_icon' class='glyphicon glyphicon-arrow-left' style='cursor:pointer;'></span></li>";
+        li += "<li class='pull-right no-before'><span id='to_regions_icon' data-toggle='tooltip' title='Go back to regions' class='glyphicon glyphicon-arrow-left' style='cursor:pointer;'></span></li>";
         $('#breadcrumb_letters').html(li);
         var n = 0;
         this.updateLetters(data);
@@ -2383,6 +2383,8 @@ this.letters = {
         $('#to_regions_icon').click(function() {
             _self.letters.to_regions();
         });
+
+        $('[data-toggle="tooltip"]').tooltip();
     },
 
     to_regions: function() {
@@ -5138,36 +5140,147 @@ $(document).ready(function() {
 						'pattern': input.val(),
 						'n': n
 					};
-					$.ajax({
-						type: 'POST',
-						url: 'search/',
-						data: data,
-						beforeSend: function() {
-							ajax_loader.fadeIn();
-						},
-						success: function(data) {
-							if (data != "False") {
-								var images = '';
-								var count = data['count'];
-								var data_manuscripts = data['manuscripts'];
-								for (i = 0; i < data_manuscripts.length; i++) {
-									var title = data_manuscripts[i][2] + ', ' + data_manuscripts[i][4];
-									images += '<div data-toggle="tooltip" title="' + title + '"  data-size = "' + data_manuscripts[i][5] + '" data-title = "' + data_manuscripts[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data_manuscripts[i][1] + '">' + data_manuscripts[i][0] + '</div>';
+
+					if ($.trim(data.pattern)) {
+						$.ajax({
+							type: 'POST',
+							url: 'search/',
+							data: data,
+							beforeSend: function() {
+								ajax_loader.fadeIn();
+							},
+							success: function(data) {
+								console.log(data)
+								if (data != "False" && data.count && data.manuscripts.length) {
+									var images = '';
+									var count = data['count'];
+									var data_manuscripts = data['manuscripts'];
+									for (i = 0; i < data_manuscripts.length; i++) {
+										var title = data_manuscripts[i][2] + ', ' + data_manuscripts[i][4];
+										images += '<div data-toggle="tooltip" title="' + title + '"  data-size = "' + data_manuscripts[i][5] + '" data-title = "' + data_manuscripts[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data_manuscripts[i][1] + '">' + data_manuscripts[i][0] + '</div>';
+									}
+									images_container.html(images);
+
+									$('#results_counter').hide().fadeIn().html("<span class='label label-default'>Results: " + count + "</span>");
+
+									$(".image[data-toggle='tooltip']").tooltip({
+										"placement": "bottom"
+									});
+
+								} else {
+									$('#results_counter').hide().fadeIn().html("<span class='label label-default'>Results: 0</span>");
+									images_container.html("No results found");
+									ajax_loader.fadeOut();
 								}
-								images_container.html(images);
+							},
+							complete: function() {
+								this.first_requestRunning = false;
+								var images_element = $('.image');
 
-								$('#results_counter').hide().fadeIn().html("<span class='label label-default'>Results: " + count + "</span>");
-
-								$(".image[data-toggle='tooltip']").tooltip({
-									"placement": "bottom"
+								images_element.click(function() {
+									$lightbox.imagesBox.select_image($(this));
 								});
 
-							} else {
+								$('#load_more').attr('disabled', false).click(load_scroll);
+
+								images_container.data('requestRunning', false);
+
+								function load_scroll() {
+									if ($(this).data('requestRunning')) { // don't do anything if an AJAX request is pending
+										return;
+									}
+
+									data.x = data.n;
+									data.n += 6;
+
+									$.ajax({
+										type: 'POST',
+										url: 'search/',
+										data: data,
+										beforeSend: function() {
+											ajax_loader.fadeIn();
+										},
+										success: function(data) {
+											var images = '';
+											if (data != "False") {
+												data = data['manuscripts'];
+												for (var i = 0; i < data.length; i++) {
+													var title = data[i][2] + ', ' + data[i][4];
+													images += '<div data-toggle="tooltip" title="' + title + '" data-size = "' + data[i][5] + '" data-title = "' + data[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data[i][1] + '">' + data[i][0] + '</div>';
+												}
+
+												images_container.append(images);
+
+											} else {
+
+												$.fn.notify({
+													"close-button": true,
+													"type": "error",
+													'text': 'You should insert at least one search term',
+													"position": {
+														'top': "8%",
+														'left': '79%'
+													}
+												});
+
+												ajax_loader.fadeOut();
+
+											}
+										},
+										complete: function(data) {
+											$(this).data('requestRunning', false);
+											var image_elements = $('.image');
+
+											image_elements.unbind('click');
+
+											image_elements.click(function() {
+												$lightbox.imagesBox.select_image($(this));
+											});
+
+											image_elements.find('img').on('load', function() {
+
+												$(".image[data-toggle='tooltip']").tooltip({
+													"placement": "bottom"
+												});
+
+												ajax_loader.fadeOut();
+
+												image_elements.find('img').fadeIn();
+
+											});
+										}
+
+									});
+								}
+
+								function isScrollBottom(div) {
+									if ((div.scrollTop + div.clientHeight == div.scrollHeight) || (div.scrollTop + div.clientHeight > div.scrollHeight)) {
+										return true;
+									}
+								}
+								var div = document.getElementById('images_container');
+
+								images_container.scroll(function() {
+									if (isScrollBottom(div)) {
+										load_scroll();
+										ajax_loader.fadeOut();
+									}
+								});
+
+								$(this).data('requestRunning', true);
+
+								$('.image').find('img').on('load', function() {
+									ajax_loader.fadeOut();
+									$(this).fadeIn();
+								});
+
+							},
+
+							error: function() {
 
 								$.fn.notify({
 									"close-button": true,
-									"type": "error",
-									'text': 'You should insert at least one search term',
+									'text': 'Something went wrong. Try again.',
 									"position": {
 										'top': "8%",
 										'left': '79%'
@@ -5175,125 +5288,19 @@ $(document).ready(function() {
 								});
 								ajax_loader.fadeOut();
 							}
-						},
-						complete: function() {
-							this.first_requestRunning = false;
-							var images_element = $('.image');
-
-							images_element.click(function() {
-								$lightbox.imagesBox.select_image($(this));
-							});
-
-							$('#load_more').attr('disabled', false).click(load_scroll);
-
-							images_container.data('requestRunning', false);
-
-							function load_scroll() {
-								if ($(this).data('requestRunning')) { // don't do anything if an AJAX request is pending
-									return;
-								}
-
-								data.x = data.n;
-								data.n += 6;
-
-								$.ajax({
-									type: 'POST',
-									url: 'search/',
-									data: data,
-									beforeSend: function() {
-										ajax_loader.fadeIn();
-									},
-									success: function(data) {
-										var images = '';
-										if (data != "False") {
-											data = data['manuscripts'];
-											for (var i = 0; i < data.length; i++) {
-												var title = data[i][2] + ', ' + data[i][4];
-												images += '<div data-toggle="tooltip" title="' + title + '" data-size = "' + data[i][5] + '" data-title = "' + data[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data[i][1] + '">' + data[i][0] + '</div>';
-											}
-
-											images_container.append(images);
-
-										} else {
-
-											$.fn.notify({
-												"close-button": true,
-												"type": "error",
-												'text': 'You should insert at least one search term',
-												"position": {
-													'top': "8%",
-													'left': '79%'
-												}
-											});
-
-											ajax_loader.fadeOut();
-
-										}
-									},
-									complete: function(data) {
-										$(this).data('requestRunning', false);
-										var image_elements = $('.image');
-
-										image_elements.unbind('click');
-
-										image_elements.click(function() {
-											$lightbox.imagesBox.select_image($(this));
-										});
-
-										image_elements.find('img').on('load', function() {
-
-											$(".image[data-toggle='tooltip']").tooltip({
-												"placement": "bottom"
-											});
-
-											ajax_loader.fadeOut();
-
-											image_elements.find('img').fadeIn();
-
-										});
-									}
-
-								});
+						});
+					} else {
+						$.fn.notify({
+							"close-button": true,
+							"type": "error",
+							'text': 'You should insert at least one search term',
+							"position": {
+								'top': "8%",
+								'left': '79%'
 							}
-
-							function isScrollBottom(div) {
-								if ((div.scrollTop + div.clientHeight == div.scrollHeight) || (div.scrollTop + div.clientHeight > div.scrollHeight)) {
-									return true;
-								}
-							}
-							var div = document.getElementById('images_container');
-
-							images_container.scroll(function() {
-								if (isScrollBottom(div)) {
-									load_scroll();
-									ajax_loader.fadeOut();
-								}
-							});
-
-							$(this).data('requestRunning', true);
-
-							$('.image').find('img').on('load', function() {
-								ajax_loader.fadeOut();
-								$(this).fadeIn();
-							});
-
-						},
-
-						error: function() {
-
-							$.fn.notify({
-								"close-button": true,
-								'text': 'Something went wrong. Try again.',
-								"position": {
-									'top': "8%",
-									'left': '79%'
-								}
-							});
-							ajax_loader.fadeOut();
-						}
-					});
+						});
+					}
 					this.first_requestRunning = true;
-					return false;
 				}
 				button.click(load_data);
 				$(document).on('keydown', function(e) {

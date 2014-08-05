@@ -33,36 +33,147 @@ $(document).ready(function() {
 						'pattern': input.val(),
 						'n': n
 					};
-					$.ajax({
-						type: 'POST',
-						url: 'search/',
-						data: data,
-						beforeSend: function() {
-							ajax_loader.fadeIn();
-						},
-						success: function(data) {
-							if (data != "False") {
-								var images = '';
-								var count = data['count'];
-								var data_manuscripts = data['manuscripts'];
-								for (i = 0; i < data_manuscripts.length; i++) {
-									var title = data_manuscripts[i][2] + ', ' + data_manuscripts[i][4];
-									images += '<div data-toggle="tooltip" title="' + title + '"  data-size = "' + data_manuscripts[i][5] + '" data-title = "' + data_manuscripts[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data_manuscripts[i][1] + '">' + data_manuscripts[i][0] + '</div>';
+
+					if ($.trim(data.pattern)) {
+						$.ajax({
+							type: 'POST',
+							url: 'search/',
+							data: data,
+							beforeSend: function() {
+								ajax_loader.fadeIn();
+							},
+							success: function(data) {
+								console.log(data)
+								if (data != "False" && data.count && data.manuscripts.length) {
+									var images = '';
+									var count = data['count'];
+									var data_manuscripts = data['manuscripts'];
+									for (i = 0; i < data_manuscripts.length; i++) {
+										var title = data_manuscripts[i][2] + ', ' + data_manuscripts[i][4];
+										images += '<div data-toggle="tooltip" title="' + title + '"  data-size = "' + data_manuscripts[i][5] + '" data-title = "' + data_manuscripts[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data_manuscripts[i][1] + '">' + data_manuscripts[i][0] + '</div>';
+									}
+									images_container.html(images);
+
+									$('#results_counter').hide().fadeIn().html("<span class='label label-default'>Results: " + count + "</span>");
+
+									$(".image[data-toggle='tooltip']").tooltip({
+										"placement": "bottom"
+									});
+
+								} else {
+									$('#results_counter').hide().fadeIn().html("<span class='label label-default'>Results: 0</span>");
+									images_container.html("<h4 style='margin:1%'>No results found</h4>");
+									ajax_loader.fadeOut();
 								}
-								images_container.html(images);
+							},
+							complete: function() {
+								this.first_requestRunning = false;
+								var images_element = $('.image');
 
-								$('#results_counter').hide().fadeIn().html("<span class='label label-default'>Results: " + count + "</span>");
-
-								$(".image[data-toggle='tooltip']").tooltip({
-									"placement": "bottom"
+								images_element.click(function() {
+									$lightbox.imagesBox.select_image($(this));
 								});
 
-							} else {
+								$('#load_more').attr('disabled', false).click(load_scroll);
+
+								images_container.data('requestRunning', false);
+
+								function load_scroll() {
+									if ($(this).data('requestRunning')) { // don't do anything if an AJAX request is pending
+										return;
+									}
+
+									data.x = data.n;
+									data.n += 6;
+
+									$.ajax({
+										type: 'POST',
+										url: 'search/',
+										data: data,
+										beforeSend: function() {
+											ajax_loader.fadeIn();
+										},
+										success: function(data) {
+											var images = '';
+											if (data != "False") {
+												data = data['manuscripts'];
+												for (var i = 0; i < data.length; i++) {
+													var title = data[i][2] + ', ' + data[i][4];
+													images += '<div data-toggle="tooltip" title="' + title + '" data-size = "' + data[i][5] + '" data-title = "' + data[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data[i][1] + '">' + data[i][0] + '</div>';
+												}
+
+												images_container.append(images);
+
+											} else {
+
+												$.fn.notify({
+													"close-button": true,
+													"type": "error",
+													'text': 'You should insert at least one search term',
+													"position": {
+														'top': "8%",
+														'left': '79%'
+													}
+												});
+
+												ajax_loader.fadeOut();
+
+											}
+										},
+										complete: function(data) {
+											$(this).data('requestRunning', false);
+											var image_elements = $('.image');
+
+											image_elements.unbind('click');
+
+											image_elements.click(function() {
+												$lightbox.imagesBox.select_image($(this));
+											});
+
+											image_elements.find('img').on('load', function() {
+
+												$(".image[data-toggle='tooltip']").tooltip({
+													"placement": "bottom"
+												});
+
+												ajax_loader.fadeOut();
+
+												image_elements.find('img').fadeIn();
+
+											});
+										}
+
+									});
+								}
+
+								function isScrollBottom(div) {
+									if ((div.scrollTop + div.clientHeight == div.scrollHeight) || (div.scrollTop + div.clientHeight > div.scrollHeight)) {
+										return true;
+									}
+								}
+								var div = document.getElementById('images_container');
+
+								images_container.scroll(function() {
+									if (isScrollBottom(div)) {
+										load_scroll();
+										ajax_loader.fadeOut();
+									}
+								});
+
+								$(this).data('requestRunning', true);
+
+								$('.image').find('img').on('load', function() {
+									ajax_loader.fadeOut();
+									$(this).fadeIn();
+								});
+
+							},
+
+							error: function() {
 
 								$.fn.notify({
 									"close-button": true,
-									"type": "error",
-									'text': 'You should insert at least one search term',
+									'text': 'Something went wrong. Try again.',
 									"position": {
 										'top': "8%",
 										'left': '79%'
@@ -70,125 +181,19 @@ $(document).ready(function() {
 								});
 								ajax_loader.fadeOut();
 							}
-						},
-						complete: function() {
-							this.first_requestRunning = false;
-							var images_element = $('.image');
-
-							images_element.click(function() {
-								$lightbox.imagesBox.select_image($(this));
-							});
-
-							$('#load_more').attr('disabled', false).click(load_scroll);
-
-							images_container.data('requestRunning', false);
-
-							function load_scroll() {
-								if ($(this).data('requestRunning')) { // don't do anything if an AJAX request is pending
-									return;
-								}
-
-								data.x = data.n;
-								data.n += 6;
-
-								$.ajax({
-									type: 'POST',
-									url: 'search/',
-									data: data,
-									beforeSend: function() {
-										ajax_loader.fadeIn();
-									},
-									success: function(data) {
-										var images = '';
-										if (data != "False") {
-											data = data['manuscripts'];
-											for (var i = 0; i < data.length; i++) {
-												var title = data[i][2] + ', ' + data[i][4];
-												images += '<div data-toggle="tooltip" title="' + title + '" data-size = "' + data[i][5] + '" data-title = "' + data[i][2] + '" class="col-lg-4 col-md-4 col-xs-4 image" id = "' + data[i][1] + '">' + data[i][0] + '</div>';
-											}
-
-											images_container.append(images);
-
-										} else {
-
-											$.fn.notify({
-												"close-button": true,
-												"type": "error",
-												'text': 'You should insert at least one search term',
-												"position": {
-													'top': "8%",
-													'left': '79%'
-												}
-											});
-
-											ajax_loader.fadeOut();
-
-										}
-									},
-									complete: function(data) {
-										$(this).data('requestRunning', false);
-										var image_elements = $('.image');
-
-										image_elements.unbind('click');
-
-										image_elements.click(function() {
-											$lightbox.imagesBox.select_image($(this));
-										});
-
-										image_elements.find('img').on('load', function() {
-
-											$(".image[data-toggle='tooltip']").tooltip({
-												"placement": "bottom"
-											});
-
-											ajax_loader.fadeOut();
-
-											image_elements.find('img').fadeIn();
-
-										});
-									}
-
-								});
+						});
+					} else {
+						$.fn.notify({
+							"close-button": true,
+							"type": "error",
+							'text': 'You should insert at least one search term',
+							"position": {
+								'top': "8%",
+								'left': '79%'
 							}
-
-							function isScrollBottom(div) {
-								if ((div.scrollTop + div.clientHeight == div.scrollHeight) || (div.scrollTop + div.clientHeight > div.scrollHeight)) {
-									return true;
-								}
-							}
-							var div = document.getElementById('images_container');
-
-							images_container.scroll(function() {
-								if (isScrollBottom(div)) {
-									load_scroll();
-									ajax_loader.fadeOut();
-								}
-							});
-
-							$(this).data('requestRunning', true);
-
-							$('.image').find('img').on('load', function() {
-								ajax_loader.fadeOut();
-								$(this).fadeIn();
-							});
-
-						},
-
-						error: function() {
-
-							$.fn.notify({
-								"close-button": true,
-								'text': 'Something went wrong. Try again.',
-								"position": {
-									'top': "8%",
-									'left': '79%'
-								}
-							});
-							ajax_loader.fadeOut();
-						}
-					});
+						});
+					}
 					this.first_requestRunning = true;
-					return false;
 				}
 				button.click(load_data);
 				$(document).on('keydown', function(e) {

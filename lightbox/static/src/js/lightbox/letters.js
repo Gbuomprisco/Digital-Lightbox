@@ -149,10 +149,10 @@ this.letters = {
         var manuscript_title = $(data).data('manuscript');
         var manuscript_id = $(data).data('manuscript_id');
         var manuscript = $("<div>");
-        manuscript.attr('class', 'manuscript_pack').addClass('col-lg-3');
+        manuscript.attr('class', 'manuscript_pack').addClass('col-md-2 col-sm-4');
         manuscript.attr('id', 'manuscript_' + manuscript_id);
         manuscript.data('title', manuscript_title);
-        manuscript.append("<img src='/static/img/folder_pictures.png' />");
+        manuscript.append("<img src='/static/img/folder.png' />");
         manuscript.append("<div class='folder_title'>" + manuscript_title + "</div>");
         var is_selected = function() {
             if ($(data).data('selected')) {
@@ -207,9 +207,9 @@ this.letters = {
             manuscript_id = regions[i].id;
 
             manuscript = $("<div>");
-            manuscript.attr('class', 'manuscript_pack').addClass('col-lg-3');
+            manuscript.attr('class', 'manuscript_pack').addClass('col-md-2 col-sm-4');
             manuscript.attr('id', 'manuscript_' + manuscript_id);
-            manuscript.append("<img src='/static/img/folder_pictures.png' />");
+            manuscript.append("<img src='/static/img/folder.png' />");
             manuscript.append("<div class='folder_title'>" + manuscript_title + "</div>");
 
             manuscript_data = {
@@ -348,9 +348,9 @@ this.letters = {
 
         $('.manuscript_pack').fadeOut();
         $('#letters_container').append(breadcrumb.fadeIn(300));
-        var li = "<li><a class='link' id='to_regions'>Regions</a></li>";
+        var li = "<li><a class='link' id='to_regions' data-toggle='tooltip' title='Go back to regions'>Regions</a></li>";
         li += "<li class='active'>" + data.data('manuscript').title + "</li>";
-        li += "<li class='pull-right no-before'><span id='to_regions_icon' class='glyphicon glyphicon-arrow-left' style='cursor:pointer;'></span></li>";
+        li += "<li class='pull-right no-before'><span id='to_regions_icon' data-toggle='tooltip' title='Go back to regions' class='glyphicon glyphicon-arrow-left' style='cursor:pointer;'></span></li>";
         $('#breadcrumb_letters').html(li);
         var n = 0;
         this.updateLetters(data);
@@ -412,6 +412,8 @@ this.letters = {
         $('#to_regions_icon').click(function() {
             _self.letters.to_regions();
         });
+
+        $('[data-toggle="tooltip"]').tooltip();
     },
 
     to_regions: function() {

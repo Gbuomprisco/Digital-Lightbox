@@ -35,7 +35,7 @@ this.imagesBox = {
 	hide: function() {
 		this.open = false;
 
-		var button = " <div data-toggle='tooltip' data-placement='right' data-container='body' title='Browse Manuscripts' id='button_images' class='glyphicon glyphicon-search'></div>";
+		var button = " <div data-toggle='tooltip' data-placement='right' data-container='body' title='Browse manuscripts' id='button_images' class='glyphicon glyphicon-search'></div>";
 
 		var button_toolbar = $('#button_toolbar');
 		var buttons = $('#buttons');
@@ -124,9 +124,11 @@ this.imagesBox = {
 			for (var i = 0; i < images.length; i++) {
 
 				var new_images = $(images[i]).unbind().removeClass('image selected_image').addClass('image_active');
-
 				if (new_images.data('external')) {
-					var size = new_images.data('size').split(',');
+					var size;
+					if (new_images.data('size') !== 'undefined') {
+						size = new_images.data('size').split(',');
+					}
 
 					new_images.css({
 						width: size[0] / 2

@@ -428,7 +428,7 @@ this.import = {
                 }
 
             } else {
-                var image = '<div data-external="true" data-size = "' + images[i][4] + '" data-title = "' + images[i][2] + '" class="image" id = "' + parseInt(images[i][1]) + '">' + images[i][0] + " <label>" + images[i][2] + "</label><div class='col-lg-8 col-md-8 col-xs-8 offset1 image_desc'> <p><b>Manuscript</b>: " + images[i][2] + "</p> " + "<p><b>Repository</b>: " + images[i][3] + "<p><b>Place</b>: " + images[i][4] + "</p></div><br clear='all' /></div>";
+                var image = '<div data-external="true" data-size = "' + images[i][5] + '" data-title = "' + images[i][2] + '" class="image" id = "' + parseInt(images[i][1]) + '">' + images[i][0] + " <label>" + images[i][2] + "</label><div class='col-lg-8 col-md-8 col-xs-8 offset1 image_desc'> <p><b>Manuscript</b>: " + images[i][2] + "</p> " + "<p><b>Repository</b>: " + images[i][3] + "<p><b>Place</b>: " + images[i][4] + "</p></div><br clear='all' /></div>";
                 $("#hidden_div").append(image);
                 _self.imagesBox.imagesSelected.push($(image));
             }

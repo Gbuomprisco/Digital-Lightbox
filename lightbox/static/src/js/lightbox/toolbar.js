@@ -654,7 +654,7 @@ this.toolbar = {
 
         var buttons = $('#buttons');
         if (!$('#button_toolbar').length) {
-            buttons.prepend("<div data-toggle='tooltip' data-placement='right' data-container='body' title='Show Tools Box' id='button_toolbar' class='glyphicon glyphicon-cog'></div>");
+            buttons.prepend("<div data-toggle='tooltip' data-placement='right' data-container='body' title='Tools' id='button_toolbar' class='glyphicon glyphicon-cog'></div>");
         }
         var button_toolbar = $('#button_toolbar');
 

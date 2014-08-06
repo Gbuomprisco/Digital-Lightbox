@@ -744,9 +744,10 @@ this.letters = {
             var image = $('<img>');
             var wrap_image = $('<div>');
             var title;
+            var id = uniqueid();
             wrap_image.data('from_pc', true);
             wrap_image.data('is_letter', true);
-            wrap_image.attr('id', uniqueid());
+            wrap_image.attr('id', id);
             wrap_image.data('size', this.width + ',' + this.height);
             image.attr('src', src);
             if (file.name !== undefined && file.name.length > 28) {
@@ -759,6 +760,19 @@ this.letters = {
             _self.imagesBox.imagesSelected.push(wrap_image);
             _self.imagesBox.to_workspace();
             _self.imagesBox.imagesSelected = [];
+            if (!$('#' + id).length) {
+                $.fn.notify({
+                    'type': 'error',
+                    "close-button": true,
+                    'text': 'Something went wrong'
+                });
+            } else {
+                $.fn.notify({
+                    'type': 'success',
+                    "close-button": true,
+                    'text': 'Image successfully loaded'
+                });
+            }
             return false;
         };
         reader.readAsDataURL(file);

@@ -110,7 +110,7 @@ def external_image_request(request):
 					manuscript = Image.objects.get(id=image_id)
 					size = manuscript.dimensions()
 					image_tag = "<img src = '%s' />" % (manuscript.full())
-					image = [image_tag, manuscript.id, manuscript.display_label, manuscript.item_part.current_item.repository.name, manuscript.item_part.current_item.repository.place.name, str(size[0]) + ',' + str(size[1])]
+					image = [image_tag, manuscript.id, manuscript.display_label, manuscript.item_part.current_item.repository.name, manuscript.item_part.current_item.repository.place.name, str(size[0] / 30) + ',' + str(size[1] / 40)]
 					images.append(image)
 				except:
 					pass
@@ -123,8 +123,9 @@ def external_image_request(request):
 					a = Annotation.objects.get(graph=graph)
 					cts = a.get_coordinates()
 					coordinates = (cts[1][0] - cts[0][0], cts[1][1] - cts[0][1])
+					print coordinates
 					thumbnail = u'<img alt="%s" src="%s" />' % (a.graph, a.get_cutout_url(True, True))
-					annotation = [thumbnail, a.id, a.graph.get_short_label(), a.image.item_part.current_item.repository.name, str(coordinates[0]) + ',' + str(coordinates[1])]
+					annotation = [thumbnail, a.id, a.graph.get_short_label(), a.image.item_part.current_item.repository.name, a.image.item_part.current_item.repository.place.name, coordinates]
 					annotations.append(annotation)
 				except Exception as e:
 					pass

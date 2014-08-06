@@ -61,7 +61,7 @@ this.comments = {
 
         $('.removeComment').click(function() {
             var notes = _self.comments.notes;
-            var note = $(this).parent().parent('.comment');
+            var note = $(this).closest('.comment');
 
             for (var i = 0; i < notes.length; i++) {
                 for (var j = 0; j < notes[j].notes.length; j++) {
@@ -165,6 +165,10 @@ this.comments = {
         $('#link').on("click", function() {
             var selected = document.getSelection();
             document.execCommand("insertHTML", false, "<a href='" + selected + "'>" + selected + "</a>");
+        });
+
+        $('#cancel').on("click", function() {
+            $('.comment_content').html('');
         });
 
         $('#list').on('click', function() {
@@ -340,7 +344,7 @@ this.comments = {
         comment += "<div class='comment_wrapper'>";
         comment += "<input class='commentTitle' class='hidden' placeholder='Title ...' />";
         comment += "<div class='comment_content' contenteditable></div>";
-        comment += ' <div id="rich_buttons" class="btn-group" data-toggle="buttons-checkbox"><button type="button" id="bold" class="btn btn-sm" title="bold">B</button><button type="button" id="italic" class="btn btn-sm" title="italic">I</button><button type="button" id="underline" class="btn btn-sm" title="underline">U</button><button type="button" id="heading" class="btn btn-sm" title="heading"><span class="glyphicon glyphicon-header"></button><button type="button" id="link" class="btn btn-sm" title="link"><span class="glyphicon glyphicon-globe"></button><button type="button" id="list" class="btn btn-sm" title="list"><span class="glyphicon glyphicon-list"></button></div></div>';
+        comment += ' <div id="rich_buttons" class="btn-group" data-toggle="buttons-checkbox"><button type="button" id="bold" class="btn btn-sm" title="bold">B</button><button type="button" id="italic" class="btn btn-sm" title="italic">I</button><button type="button" id="underline" class="btn btn-sm" title="underline">U</button><button type="button" id="heading" class="btn btn-sm" title="heading"><span class="glyphicon glyphicon-header"></button><button type="button" id="link" class="btn btn-sm" title="link"><span class="glyphicon glyphicon-globe"></button><button type="button" id="list" class="btn btn-sm" title="list"><span class="glyphicon glyphicon-list"></button><button type="button" id="cancel" class="btn btn-sm" title="cancel"><span class="glyphicon glyphicon-trash"></button></div></div>';
 
         return comment;
     },

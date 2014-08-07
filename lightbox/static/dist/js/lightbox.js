@@ -805,7 +805,7 @@ this.imagesBox = {
 				if (!new_images.index()) {
 					n = $(window).scrollLeft() + 150;
 				} else {
-					n = (new_images.prev().width() + 150);
+					n = (new_images.prev().offset().left + 80);
 				}
 				var top = $(window).scrollTop() + 50;
 				var left = n;
@@ -813,7 +813,7 @@ this.imagesBox = {
 				$(images[i]).css({
 					'top': top,
 					'left': left,
-					'position': "relative"
+					'position': "absolute"
 				});
 
 				$(images[i]).dblclick(function(event) {
@@ -1197,6 +1197,7 @@ this.import = {
                 'height': images[i]['size']['height']
             }).resizable({
                 aspectRatio: true,
+                handles: "n, e, s, w",
                 resize: function(event, ui) {
                     _self.toolbar.refreshSize();
                     event.stopPropagation();
@@ -1260,6 +1261,7 @@ this.import = {
                         "width": images_properties[i]['size']['width'],
                         'height': images_properties[i]['size']['height']
                     }).resizable({
+                        handles: "n, e, s, w",
                         aspectRatio: true,
                         resize: function(event, ui) {
                             _self.toolbar.refreshSize();
@@ -1487,7 +1489,7 @@ this.init = function() {
 
             _self.selectors.html.add(_self.selectors.body).animate({
                 left: val_sx - (zoom_value * 100),
-                top: val_top - (zoom_vaue * 100)
+                top: val_top - (zoom_value * 100)
             }, 0);
         }
 
@@ -2227,6 +2229,7 @@ this.letters = {
         var page_position = $('#overview').offset();
         wrap.children().resizable({
             aspectRatio: true,
+            handles: "n, e, s, w",
             resize: function(event, ui) {
                 _self.toolbar.refreshSize();
                 event.stopPropagation();
@@ -3144,6 +3147,7 @@ this.comments = {
 
         $('#cancel').on("click", function() {
             $('.comment_content').html('');
+
         });
 
         $('#list').on('click', function() {
@@ -3348,6 +3352,7 @@ this.comments = {
                     }
                 }
             }
+            $('.tooltip').remove();
             $(note).stop().animate({
                 position: "absolute",
                 width: "0px",
@@ -3516,9 +3521,9 @@ this.comments = {
 
     create_note: function(title, id, content) {
         var notes_html = "<div class = 'note' data-id = '" + id + "'><p style='padding:0' class='note_box_title col-lg-9 col-lm-9 col-xs-9'>" + title + "</p>";
-        notes_html += "<span data-toggle='tooltip' data-placement='bottom' title='Edit Note' class='glyphicon glyphicon-pencil edit_comment_from_box'></span> ";
-        notes_html += "<span data-toggle='tooltip' data-placement='bottom' title='Stick to workspace' class='glyphicon glyphicon-send stick_to_workspace'></span>";
-        notes_html += " <span data-toggle='tooltip' data-placement='bottom' title='Delete Note' class='glyphicon glyphicon-remove remove_comment_from_box'></span></p><div class='note_box_content'>" + content + "</div></div>";
+        notes_html += "<span data-toggle='tooltip' data-container='body' data-placement='bottom' title='Edit Note' class='glyphicon glyphicon-pencil edit_comment_from_box'></span> ";
+        notes_html += "<span data-toggle='tooltip' data-container='body' data-placement='bottom' title='Stick to workspace' class='glyphicon glyphicon-send stick_to_workspace'></span>";
+        notes_html += " <span data-toggle='tooltip' data-container='body' data-placement='bottom' title='Delete Note' class='glyphicon glyphicon-remove remove_comment_from_box'></span></p><div class='note_box_content'>" + content + "</div></div>";
         return notes_html;
     },
 
@@ -3805,6 +3810,7 @@ this.select_group = {
             aspectRatio: true,
             animate: false,
             alsoResize: '.image_active.selected, .image_active.selected > div, .image_active.selected > div > img',
+            handles: "n, e, s, w",
             resize: function(event, ui) {
                 if (_self.select_group.imagesSelected.length <= 1) {
                     $("#" + _self.minimap.namespace + ui.element.parent().attr('id')).animate({
@@ -3882,7 +3888,7 @@ this.select_group = {
         if (grouped) {
             _self.toolbar.selectors.buttons.group.html('Ungroup').addClass('ungroup');
         } else {
-            _self.toolbar.selectors.buttons.group.html('Group').removeClass('ungroup');;
+            _self.toolbar.selectors.buttons.group.html('Group').removeClass('ungroup');
         }
 
         _self.toolbar.refresh();
@@ -3894,7 +3900,6 @@ this.select_group = {
         var notes = $('.stickable_note.selected');
         var groupList = [];
         var groupNotes = [];
-
         if (_self.toolbar.selectors.buttons.group.hasClass('ungroup')) {
 
             for (var i = 0; i < this.imagesSelected.length; i++) {

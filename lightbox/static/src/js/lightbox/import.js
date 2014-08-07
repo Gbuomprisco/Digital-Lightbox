@@ -348,6 +348,7 @@ this.import = {
                 'height': images[i]['size']['height']
             }).resizable({
                 aspectRatio: true,
+                handles: "n, e, s, w",
                 resize: function(event, ui) {
                     _self.toolbar.refreshSize();
                     event.stopPropagation();
@@ -411,6 +412,7 @@ this.import = {
                         "width": images_properties[i]['size']['width'],
                         'height': images_properties[i]['size']['height']
                     }).resizable({
+                        handles: "n, e, s, w",
                         aspectRatio: true,
                         resize: function(event, ui) {
                             _self.toolbar.refreshSize();

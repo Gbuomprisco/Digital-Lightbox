@@ -254,6 +254,7 @@ this.letters = {
         var page_position = $('#overview').offset();
         wrap.children().resizable({
             aspectRatio: true,
+            handles: "n, e, s, w",
             resize: function(event, ui) {
                 _self.toolbar.refreshSize();
                 event.stopPropagation();

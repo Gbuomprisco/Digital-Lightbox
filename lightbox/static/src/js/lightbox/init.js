@@ -130,7 +130,7 @@ this.init = function() {
 
             _self.selectors.html.add(_self.selectors.body).animate({
                 left: val_sx - (zoom_value * 100),
-                top: val_top - (zoom_vaue * 100)
+                top: val_top - (zoom_value * 100)
             }, 0);
         }
 

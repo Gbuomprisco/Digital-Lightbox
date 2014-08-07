@@ -31,6 +31,7 @@ this.select_group = {
             aspectRatio: true,
             animate: false,
             alsoResize: '.image_active.selected, .image_active.selected > div, .image_active.selected > div > img',
+            handles: "n, e, s, w",
             resize: function(event, ui) {
                 if (_self.select_group.imagesSelected.length <= 1) {
                     $("#" + _self.minimap.namespace + ui.element.parent().attr('id')).animate({
@@ -108,7 +109,7 @@ this.select_group = {
         if (grouped) {
             _self.toolbar.selectors.buttons.group.html('Ungroup').addClass('ungroup');
         } else {
-            _self.toolbar.selectors.buttons.group.html('Group').removeClass('ungroup');;
+            _self.toolbar.selectors.buttons.group.html('Group').removeClass('ungroup');
         }
 
         _self.toolbar.refresh();
@@ -120,7 +121,6 @@ this.select_group = {
         var notes = $('.stickable_note.selected');
         var groupList = [];
         var groupNotes = [];
-
         if (_self.toolbar.selectors.buttons.group.hasClass('ungroup')) {
 
             for (var i = 0; i < this.imagesSelected.length; i++) {

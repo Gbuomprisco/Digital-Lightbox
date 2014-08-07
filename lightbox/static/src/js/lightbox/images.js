@@ -163,7 +163,7 @@ this.imagesBox = {
 				if (!new_images.index()) {
 					n = $(window).scrollLeft() + 150;
 				} else {
-					n = (new_images.prev().width() + 150);
+					n = (new_images.prev().offset().left + 80);
 				}
 				var top = $(window).scrollTop() + 50;
 				var left = n;
@@ -171,7 +171,7 @@ this.imagesBox = {
 				$(images[i]).css({
 					'top': top,
 					'left': left,
-					'position': "relative"
+					'position': "absolute"
 				});
 
 				$(images[i]).dblclick(function(event) {

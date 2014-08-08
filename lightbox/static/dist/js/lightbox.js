@@ -1885,7 +1885,7 @@ this.init = function() {
         if (!url.length) {
             url = "/";
         }
-        location.href = url;
+        location.href = encodeURIComponent(url);
     });
 
 

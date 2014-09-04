@@ -191,7 +191,7 @@ this.comments = {
             if (!$('#open_notes').length) {
                 for (var i = 0; i < notes.length; i++) {
                     if (notes[i].image == image.attr('id')) {
-                        var button = $("<button class = 'btn btn-sm btn-warning' id='open_notes'>Open notes</button>");
+                        var button = $("<button class = 'btn btn-xs btn-warning' id='open_notes'>Open notes</button>");
                         createComment.after(button.hide().fadeIn());
                         break;
                     }

@@ -144,7 +144,10 @@ this.toolbar = {
                 clone: $('#clone'),
                 flipx: $('#flip-x'),
                 flipy: $('#flip-y'),
-                group: $('#group')
+                group: $('#group'),
+            },
+            checkbox: {
+                showLabels: $('#show-labels')
             },
             title: $('#name_image')
         };
@@ -155,7 +158,7 @@ this.toolbar = {
      */
 
     makeTools: function() {
-        this.toolbox.load('/static/js/tools_template.html', function() {
+        this.toolbox.load('/static/src/js/tools_template.html', function() {
             _self.toolbar.makeSelectors();
             _self.toolbar.stylize();
             _self.toolbar.buttons();
@@ -418,6 +421,15 @@ this.toolbar = {
                 "close-button": true,
                 'text': 'Choice two images to compare.'
             });
+        }
+    },
+
+    showLabels: function(isChecked) {
+        var labels = $('.image_active label');
+        if (isChecked) {
+            labels.fadeIn();
+        } else {
+            labels.fadeOut();
         }
     },
 
@@ -769,6 +781,10 @@ this.toolbar = {
         this.selectors.buttons.createComment.click(function() {
             var id = _self.select_group.imagesSelected[0].attr('id');
             _self.comments.init(false, id, false, false, false, false, false, false);
+        });
+
+        this.selectors.checkbox.showLabels.on("change", function(event) {
+            _self.toolbar.showLabels($(this).is(':checked'));
         });
 
         this.opacity();

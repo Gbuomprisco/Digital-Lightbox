@@ -238,7 +238,7 @@ this.crop = {
                 complete: function() {
                     var letter_wait_box = $('#letter_wait_box');
                     if (!_self.letters.open) {
-                        var buttons = "<button id='open-letter-box' class='btn btn-primary'>Open Letters Window</button> <button class='btn btn-danger' id='close-letter-box'>Close</button>";
+                        var buttons = "<button id='open-letter-box' class='btn btn-primary'>Show cropped regions</button> <button class='btn btn-danger' id='close-letter-box'>Close</button>";
 
                         $('#letters_buttons_loading_box').hide().fadeIn().html(buttons);
                         $('#letter_crop_status').hide().fadeIn().html("Region cropped!");
@@ -1845,12 +1845,13 @@ this.init = function() {
     });
 
 
+
     $('.zoom-button').on('click', function() {
         var zoom = $(this).data('zoom');
         if (document.body.style.webkitFilter !== undefined) {
             $(_self.workspaceImages.workspace).animate({
                 "zoom": zoom / 100
-            }, 200)
+            }, 200);
         } else {
             $(_self.workspaceImages.workspace).css({
                 "-moz-transform": "scale(" + zoom / 100 + ")",
@@ -1882,10 +1883,16 @@ this.init = function() {
 
     $('#back_to_digipal').on('click', function() {
         var url = _self.utils.getParameter('from');
+        var UrlDigipal;
         if (!url.length) {
-            url = "/";
+            UrlDigipal = "http://" + location.host;
+            location.href = UrlDigipal;
+        } else {
+            var urlArray = url[0].split('/');
+            urlArray[urlArray.length - 1] = (urlArray[urlArray.length - 1]);
+            UrlDigipal = urlArray.join('/');
+            location.href = "http://" + location.host + UrlDigipal;
         }
-        location.href = encodeURIComponent(url);
     });
 
 
@@ -3169,7 +3176,7 @@ this.comments = {
             if (!$('#open_notes').length) {
                 for (var i = 0; i < notes.length; i++) {
                     if (notes[i].image == image.attr('id')) {
-                        var button = $("<button class = 'btn btn-sm btn-warning' id='open_notes'>Open notes</button>");
+                        var button = $("<button class = 'btn btn-xs btn-warning' id='open_notes'>Open notes</button>");
                         createComment.after(button.hide().fadeIn());
                         break;
                     }
@@ -4088,7 +4095,10 @@ this.toolbar = {
                 clone: $('#clone'),
                 flipx: $('#flip-x'),
                 flipy: $('#flip-y'),
-                group: $('#group')
+                group: $('#group'),
+            },
+            checkbox: {
+                showLabels: $('#show-labels')
             },
             title: $('#name_image')
         };
@@ -4099,7 +4109,7 @@ this.toolbar = {
      */
 
     makeTools: function() {
-        this.toolbox.load('/static/js/tools_template.html', function() {
+        this.toolbox.load('/static/src/js/tools_template.html', function() {
             _self.toolbar.makeSelectors();
             _self.toolbar.stylize();
             _self.toolbar.buttons();
@@ -4362,6 +4372,15 @@ this.toolbar = {
                 "close-button": true,
                 'text': 'Choice two images to compare.'
             });
+        }
+    },
+
+    showLabels: function(isChecked) {
+        var labels = $('.image_active label');
+        if (isChecked) {
+            labels.fadeIn();
+        } else {
+            labels.fadeOut();
         }
     },
 
@@ -4713,6 +4732,10 @@ this.toolbar = {
         this.selectors.buttons.createComment.click(function() {
             var id = _self.select_group.imagesSelected[0].attr('id');
             _self.comments.init(false, id, false, false, false, false, false, false);
+        });
+
+        this.selectors.checkbox.showLabels.on("change", function(event) {
+            _self.toolbar.showLabels($(this).is(':checked'));
         });
 
         this.opacity();

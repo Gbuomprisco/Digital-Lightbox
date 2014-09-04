@@ -112,7 +112,7 @@ this.crop = {
                 complete: function() {
                     var letter_wait_box = $('#letter_wait_box');
                     if (!_self.letters.open) {
-                        var buttons = "<button id='open-letter-box' class='btn btn-primary'>Open Letters Window</button> <button class='btn btn-danger' id='close-letter-box'>Close</button>";
+                        var buttons = "<button id='open-letter-box' class='btn btn-primary'>Show cropped regions</button> <button class='btn btn-danger' id='close-letter-box'>Close</button>";
 
                         $('#letters_buttons_loading_box').hide().fadeIn().html(buttons);
                         $('#letter_crop_status').hide().fadeIn().html("Region cropped!");

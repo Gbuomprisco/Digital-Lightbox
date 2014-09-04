@@ -486,12 +486,13 @@ this.init = function() {
     });
 
 
+
     $('.zoom-button').on('click', function() {
         var zoom = $(this).data('zoom');
         if (document.body.style.webkitFilter !== undefined) {
             $(_self.workspaceImages.workspace).animate({
                 "zoom": zoom / 100
-            }, 200)
+            }, 200);
         } else {
             $(_self.workspaceImages.workspace).css({
                 "-moz-transform": "scale(" + zoom / 100 + ")",
@@ -523,10 +524,16 @@ this.init = function() {
 
     $('#back_to_digipal').on('click', function() {
         var url = _self.utils.getParameter('from');
+        var UrlDigipal;
         if (!url.length) {
-            url = "/";
+            UrlDigipal = "http://" + location.host;
+            location.href = UrlDigipal;
+        } else {
+            var urlArray = url[0].split('/');
+            urlArray[urlArray.length - 1] = (urlArray[urlArray.length - 1]);
+            UrlDigipal = urlArray.join('/');
+            location.href = "http://" + location.host + UrlDigipal;
         }
-        location.href = encodeURIComponent(url);
     });
 
 

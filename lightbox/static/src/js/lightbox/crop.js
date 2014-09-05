@@ -80,7 +80,6 @@ this.crop = {
         _self.crop.active = false;
         $('.stickable_note').removeClass('selected');
         $('#deactivate_crop_image').addClass('hidden');
-        event.stopPropagation();
     },
 
 

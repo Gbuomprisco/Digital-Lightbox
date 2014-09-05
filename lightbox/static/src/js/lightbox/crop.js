@@ -29,14 +29,13 @@ this.crop = {
                     $(this).unbind('click');
                 });
                 $(_self.workspaceImages.workspace).on('dblclick', function(event) {
-                    if (_self.crop.active) {
-                        jcrop_api.destroy();
+
+                    jcrop_api.destroy();
+                    _self.crop.destroy();
+                    $(this).unbind('dblclick').on('dblclick', function() {
                         _self.crop.destroy();
-                        $(_self.workspaceImages.workspace).unbind('dblclick').on('dblclick', function() {
-                            jcrop_api.destroy();
-                            _self.crop.destroy();
-                        });
-                    }
+                    });
+
                 });
             },
 

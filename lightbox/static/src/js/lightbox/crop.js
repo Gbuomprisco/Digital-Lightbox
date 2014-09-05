@@ -22,6 +22,22 @@ this.crop = {
                 jcrop_api = this;
                 _self.crop.active = true;
                 _self.toolbar.selectors.buttons.crop_image.fadeIn();
+                $('#deactivate_crop_image').removeClass('hidden');
+                $('#deactivate_crop_image').on('click', function() {
+                    jcrop_api.destroy();
+                    _self.crop.destroy();
+                    $(this).unbind('click');
+                });
+                $(_self.workspaceImages.workspace).on('dblclick', function(event) {
+                    if (_self.crop.active) {
+                        jcrop_api.destroy();
+                        _self.crop.destroy();
+                        $(_self.workspaceImages.workspace).unbind('dblclick').on('dblclick', function() {
+                            jcrop_api.destroy();
+                            _self.crop.destroy();
+                        });
+                    }
+                });
             },
 
             onChange: this.show_coords,
@@ -32,6 +48,7 @@ this.crop = {
                 jcrop_api.destroy();
                 _self.toolbar.selectors.buttons.cropButton.removeClass('active');
                 _self.toolbar.selectors.buttons.crop_image.fadeOut();
+                $('#deactivate_crop_image').addClass('hidden');
             }
         });
     },
@@ -55,7 +72,15 @@ this.crop = {
     },
 
     destroy: function() {
-
+        if (!_self.crop.active) {
+            _self.toolbar.deselectAll();
+        }
+        _self.toolbar.selectors.buttons.cropButton.removeClass('active');
+        _self.toolbar.selectors.buttons.crop_image.fadeOut();
+        _self.crop.active = false;
+        $('.stickable_note').removeClass('selected');
+        $('#deactivate_crop_image').addClass('hidden');
+        event.stopPropagation();
     },
 
 
@@ -143,7 +168,6 @@ this.crop = {
 
             });
         } catch (e) {
-            console.warn(e);
             var buttons = "<button id='open-letter-box' class='btn btn-primary'>Open Regions Window</button>";
             buttons += " <button class='btn btn-danger' id='close-letter-box'>Close</button>";
             $('#letters_buttons_loading_box').hide().fadeIn().html(buttons);

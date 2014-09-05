@@ -223,19 +223,6 @@ this.init = function() {
         windows_flag = 0;
         counter_zoom.fadeIn().html(Math.floor(zoom_value * 100) + '%' + " <span class='caret'></span>");
 
-        var images = $(".image_active");
-        $.each(images, function() {
-            var id = $(this).attr('id');
-            if (_self.workspaceImages.workspace != $(this).data('workspace')) {
-                $("#" + _self.minimap.namespace + id).css({
-                    'display': 'none'
-                });
-            } else {
-                $("#" + _self.minimap.namespace + id).css({
-                    'display': 'block'
-                });
-            }
-        });
 
         if (!isWebkit) {
             $('#workspace1').removeClass('workspace-absolute-1');
@@ -350,7 +337,8 @@ this.init = function() {
     if (_self.utils.getParameter('images').length || _self.utils.getParameter('annotations').length) {
         _self.loadExternalImages.init('images');
         _self.loadExternalImages.init('annotations');
-        _self.imagesBox.hide();
+    } else {
+        _self.imagesBox.show();
     }
 
     var window_width = $(document).width();

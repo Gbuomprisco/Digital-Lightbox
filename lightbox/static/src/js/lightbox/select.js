@@ -10,7 +10,9 @@ this.select_group = {
         image.draggable({
             alsoDrag: false
         });
-        image.find('img').resizable('destroy');
+        if (image.find('img').hasClass('resizable')) {
+            image.find('img').resizable('destroy');
+        }
         for (var i = 0; i < this.imagesSelected.length; i++) {
             if ($(this.imagesSelected[i]).attr('id') == image.attr('id')) {
                 this.imagesSelected.splice(i, 1);
@@ -103,7 +105,10 @@ this.select_group = {
                     _image.addClass('selected');
                 }
             }
-            _self.toolbar.show();
+
+            if (!_self.toolbar.is_visible()) {
+                _self.toolbar.show();
+            }
         }
 
         if (grouped) {
